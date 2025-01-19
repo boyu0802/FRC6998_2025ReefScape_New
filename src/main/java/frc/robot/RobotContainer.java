@@ -38,7 +38,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(DriveRequestType.Velocity);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -46,9 +46,9 @@ public class RobotContainer {
     
     private final SendableChooser<Command> autoChooser;
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        autoChooser = AutoBuilder.buildAutoChooser("Example");
         SmartDashboard.putData("Auto Mode", autoChooser);
-
+        //selectAuto();
         configureBindings();
     }
 
@@ -58,9 +58,9 @@ public class RobotContainer {
         
         drivetrain.setDefaultCommand(
           drivetrain.applyRequest(() ->
-            drive.withVelocityX(Math.copySign(joystick.getLeftY()*joystick.getLeftY(),joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(Math.copySign(joystick.getLeftX()*joystick.getLeftX(),joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(joystick.getRightX() * MaxAngularRate)
+            drive.withVelocityX(Math.copySign(joystick.getLeftY()*joystick.getLeftY(),-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(Math.copySign(joystick.getLeftX()*joystick.getLeftX(),-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
             ) // Drive counterclockwise with negative X (left)
     
         );
