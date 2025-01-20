@@ -5,9 +5,16 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Test"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Preload_Mid to J"
+                }
+              }
+            ]
           }
         }
       ]
