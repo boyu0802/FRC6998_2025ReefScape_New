@@ -8,8 +8,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystem.CommandSwerveDrivetrain;
-import static frc.robot.Constants.MaxSpeed;
-import static frc.robot.Constants.MaxAngularRate;
+import static frc.robot.Constants.SwerveConstants.MaxSpeed;
+import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 
 public class DriveCommand extends Command {
     private final CommandSwerveDrivetrain drivetrain;
