@@ -10,8 +10,10 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.CommandSwerveDrivetrain;
+
+import static edu.wpi.first.wpilibj.RobotBase.isSimulation;
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 
@@ -29,7 +33,7 @@ public class RobotContainer {
     //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
-    
+
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     
@@ -43,6 +47,9 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    // Optional to mirror the NetworkTables-logged data to a file on disk
+
     
     private final SendableChooser<Command> autoChooser;
     public RobotContainer() {
@@ -50,6 +57,8 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Mode", autoChooser);
         //selectAuto();
         configureBindings();
+        DataLogManager.start();
+
     }
 
     private void configureBindings() {

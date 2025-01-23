@@ -1,4 +1,4 @@
-package frc.robot.subsystem.coral;
+package frc.robot.subsystem.algae;
 
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -7,7 +7,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutAngle;
@@ -18,42 +17,43 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.CoralConstants.*;
+import static frc.robot.Constants.CoralConstants.CORAL_INTAKECONFIG;
+import static frc.robot.Constants.CoralConstants.CORAL_WRISTCONFIG;
 import static frc.robot.RobotMap.INTAKE_ID;
 import static frc.robot.RobotMap.WRIST_ID;
 
 @Logged(name = "CoralSubsystem")
-public class CoralSubsystem extends SubsystemBase {
+public class AlgaeSubsystem extends SubsystemBase {
 
-    @Logged(name = "Coral_intake", importance = Logged.Importance.DEBUG)
-    private final SparkFlex m_coralIntake = new SparkFlex(INTAKE_ID.getDeviceNumber(),MotorType.kBrushless);
+    @Logged(name = "Algae_intake", importance = Logged.Importance.DEBUG)
+    private final SparkFlex m_algaeIntake = new SparkFlex(INTAKE_ID.getDeviceNumber(),MotorType.kBrushless);
 
-    @Logged(name = "Coral_wrist", importance = Logged.Importance.DEBUG)
-    private final TalonFX m_coralWrist = new TalonFX(WRIST_ID.getDeviceNumber());
+    @Logged(name = "Algae_wrist", importance = Logged.Importance.DEBUG)
+    private final TalonFX m_algaeWrist = new TalonFX(WRIST_ID.getDeviceNumber());
 
     private final PositionTorqueCurrentFOC m_positionTorque = new PositionTorqueCurrentFOC(0).withSlot(0);
     private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
     private final VoltageOut m_voltageOut = new VoltageOut(0); // for SysId test.
 
     //TODO: SysId Testing.
-    private final MutVoltage intakeSysIdVoltage = Volts.mutable(0);
-    private final MutAngle intakeSysIdAngle = Units.Radians.mutable(0);
-    private final MutAngularVelocity intakeSysIdVelocity = RotationsPerSecond.mutable(0);
-    private final MutVoltage wrist_sysIdVoltage = Volts.mutable(0);
-    private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);
-    private final MutAngularVelocity wrist_sysIdVelocity = DegreesPerSecond.mutable(0);
+    private final MutVoltage coralIntakeSysIdVoltage = Volts.mutable(0);
+    private final MutAngle coralIntakeSysIdAngle = Units.Radians.mutable(0);
+    private final MutAngularVelocity coralIntakeSysIdVelocity = RotationsPerSecond.mutable(0);
+    private final MutVoltage coralWristSysIdVoltage = Volts.mutable(0);
+    private final MutAngle coralWristSysIdAngle = Degrees.mutable(0);
+    private final MutAngularVelocity coralWristSysIdVelocity = DegreesPerSecond.mutable(0);
 
 
 
-    public CoralSubsystem() {
+    public AlgaeSubsystem() {
         setName("CoralSubsystem");
 
-        m_coralIntake.configure(
+        m_algaeIntake.configure(
                 CORAL_INTAKECONFIG,
                 SparkBase.ResetMode.kResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);
 
-        m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+        m_algaeWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
     }
 
     private final SysIdRoutine m_IntakesysIdRoutine =
@@ -62,18 +62,18 @@ public class CoralSubsystem extends SubsystemBase {
                     new SysIdRoutine.Config(),
                     new SysIdRoutine.Mechanism(
                             // Tell SysId how to plumb the driving voltage to the motor(s).
-                            m_coralIntake::setVoltage,
+                            m_algaeIntake::setVoltage,
                             // Tell SysId how to record a frame of data for each motor on the mechanism being
                             // characterized.
                             log -> {
                                 // Record a frame for the shooter motor.
                                 log.motor("intake-coral")
-                                        .voltage(intakeSysIdVoltage.mut_replace(
-                                                m_coralIntake.getBusVoltage(), Volts))
-                                        .angularPosition(intakeSysIdAngle.mut_replace(
-                                                m_coralIntake.getEncoder().getPosition(), Rotations))
-                                        .angularVelocity(intakeSysIdVelocity.mut_replace(
-                                                m_coralIntake.getEncoder().getVelocity(), RotationsPerSecond));
+                                        .voltage(coralIntakeSysIdVoltage.mut_replace(
+                                                m_algaeIntake.getBusVoltage(), Volts))
+                                        .angularPosition(coralIntakeSysIdAngle.mut_replace(
+                                                m_algaeIntake.getEncoder().getPosition(), Rotations))
+                                        .angularVelocity(coralIntakeSysIdVelocity.mut_replace(
+                                                m_algaeIntake.getEncoder().getVelocity(), RotationsPerSecond));
                             },
                             // Tell SysId to make generated commands require this subsystem, suffix test state in
                             // WPILog with this subsystem's name ("shooter")
@@ -84,20 +84,18 @@ public class CoralSubsystem extends SubsystemBase {
                     // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
                     new SysIdRoutine.Config(),
                     new SysIdRoutine.Mechanism(
-                            volts -> m_coralWrist.setControl(m_voltageOut.withOutput(volts)),
+                            volts -> m_algaeWrist.setControl(m_voltageOut.withOutput(volts)),
                             log ->{
                                 // Record a frame for the shooter motor.
                                 log.motor("wrist-coral")
-                                        .voltage(wrist_sysIdVoltage.mut_replace(
-                                                m_coralWrist.getMotorVoltage().getValueAsDouble(), Volts))
-                                        .angularPosition(wrist_sysIdAngle.mut_replace(
-                                                m_coralWrist.getPosition().getValueAsDouble(), Rotations))
-                                        .angularVelocity(wrist_sysIdVelocity.mut_replace(
-                                                m_coralWrist.getVelocity().getValueAsDouble(), RotationsPerSecond));
+                                        .voltage(coralWristSysIdVoltage.mut_replace(
+                                                m_algaeWrist.getMotorVoltage().getValueAsDouble(), Volts))
+                                        .angularPosition(coralWristSysIdAngle.mut_replace(
+                                                m_algaeWrist.getPosition().getValueAsDouble(), Rotations))
+                                        .angularVelocity(coralWristSysIdVelocity.mut_replace(
+                                                m_algaeWrist.getVelocity().getValueAsDouble(), RotationsPerSecond));
                             },
                             this));
-
-
 
 
 
@@ -116,9 +114,5 @@ public class CoralSubsystem extends SubsystemBase {
     public Command sysid_wristQuasistatic(SysIdRoutine.Direction direction){
         return wristSysIdRoutine.quasistatic(direction);
     }
-
-
-
-
 
 }
