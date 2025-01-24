@@ -11,13 +11,13 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -43,7 +43,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     //TODO: SysId Testing.
     private final MutVoltage intakeSysIdVoltage = Volts.mutable(0);
-    private final MutAngle intakeSysIdAngle = Units.Radians.mutable(0);
+    private final MutAngle intakeSysIdAngle = Rotations.mutable(0);
     private final MutAngularVelocity intakeSysIdVelocity = RotationsPerSecond.mutable(0);
     private final MutVoltage wrist_sysIdVoltage = Volts.mutable(0);
     private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);
@@ -130,8 +130,11 @@ public class CoralSubsystem extends SubsystemBase {
     public double getCoralWristPosition(){
         return m_coralWrist.getPosition().getValueAsDouble();
     }
-    public boolean getCoral() {
+    public boolean getCoralLimit() {
         return coralIntakeLimitSwitch.get();
+    }
+    public void stopCoralIntake(){
+        m_coralIntake.set(0);
     }
 
 
@@ -141,7 +144,7 @@ public class CoralSubsystem extends SubsystemBase {
 
         SmartDashboard.getNumber("Coral Intake Velocity",getCoralIntakeVelocity());
         SmartDashboard.getNumber("Coral Wrist Position", getCoralWristPosition());
-        SmartDashboard.getBoolean("Coral Intake Limit Switch",getCoral());
+        SmartDashboard.getBoolean("Coral Intake Limit Switch", getCoralLimit());
     }
 
 
@@ -157,11 +160,37 @@ public class CoralSubsystem extends SubsystemBase {
     public Command sysid_wristDynamic(SysIdRoutine.Direction direction){
         return wristSysIdRoutine.dynamic(direction);
     }
+
     public Command sysid_intakeQuasistatic(SysIdRoutine.Direction direction){
         return m_IntakesysIdRoutine.quasistatic(direction);
     }
     public Command sysid_wristQuasistatic(SysIdRoutine.Direction direction){
         return wristSysIdRoutine.quasistatic(direction);
+    }
+
+
+    //TODO: Wait for code.
+    public Command collectCoralWithoutVision() {
+        return Commands.sequence(
+                Commands.print("running coral intake"),
+                Commands.run(()->setCoralIntakeVelocity(30)),
+                Commands.waitUntil(this::getCoralLimit),
+                Commands.waitSeconds(0.05),
+                Commands.run(this::stopCoralIntake),
+                Commands.print("coral collected")
+
+        );
+    }
+
+    public Command collectAlgaeWithoutVision() {
+        return Commands.sequence(
+                Commands.print("running algae intake"),
+                Commands.run(()->setCoralIntakeVelocity(10)),
+                Commands.waitUntil(this::getCoralLimit),
+                Commands.waitSeconds(0.05),
+                Commands.run(this::stopCoralIntake),
+                Commands.print("algae collected")
+        );
     }
 
 

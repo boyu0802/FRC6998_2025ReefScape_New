@@ -9,8 +9,8 @@ public class RobotMap {
 
     public static final int CORAL_INTAKE_LIMITSWITCH_ID = 0;
 
-    public static final CANDeviceId ALGAE_INTAKE_ID = new CANDeviceId(2);
-    public static final CANDeviceId ALGAE_WRIST_ID = new CANDeviceId(4);
+    public static final CANDeviceId GRAB_INTAKE_ID = new CANDeviceId(2);
+    public static final CANDeviceId GRAB_WRIST_ID = new CANDeviceId(4);
 
     public static final int ALGAE_INTAKE_LIMITSWITCH_ID = 1;
 

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -85,67 +86,6 @@ public class Constants {
         }
     }
 
-    public static final class AlgaeConstants {
-
-
-        public static final SparkMaxConfig ALGAE_INTAKECONFIG = new SparkMaxConfig();
-        public static final TalonFXConfiguration ALGAE_WRISTCONFIG = new TalonFXConfiguration();
-
-        public static final double ALGAE_INTAKE_GEAR_RATIO = 1 / 5;
-        public static final double WRIST_LENGTH = 34.176;
-        public static final double ALGAE_WRIST_GEAR_RATIO = 3 / 275;
-
-        // TODO : Need to be Tuned.
-        public static final SimpleMotorFeedforward INTAKE_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
-        public static final ArmFeedforward WRIST_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
-
-        public static final PIDConfig ALGAE_INTAKE_FEEDBACK = new PIDConfig(0, 0, 0);
-        public static final PIDConfig ALGAE_WRIST_FEEDBACK = new PIDConfig(0, 0, 0);
-
-
-        static {
-            ALGAE_INTAKECONFIG.encoder.positionConversionFactor(ALGAE_INTAKE_GEAR_RATIO);
-            ALGAE_INTAKECONFIG.encoder.velocityConversionFactor(ALGAE_INTAKE_GEAR_RATIO);
-
-            ALGAE_INTAKECONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12);
-            ALGAE_INTAKECONFIG.closedLoop
-                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    // Set PID values for position control
-                    // TODO: Need To be Tuned.
-                    .apply(ALGAE_INTAKE_FEEDBACK.createSparkMaxConfig())
-                    .iZone(0)
-                    .outputRange(-1, 1)
-                    .maxMotion
-                    // Set MAXMotion parameters for position control
-                    .maxVelocity(2000)
-                    .maxAcceleration(10000)
-                    .allowedClosedLoopError(0.25);
-        }
-
-        static {
-            ALGAE_WRIST_FEEDBACK.updatePidConfig(ALGAE_WRISTCONFIG);
-            ALGAE_WRISTCONFIG.Voltage
-                    .withPeakForwardVoltage(12)
-                    .withPeakReverseVoltage(-12);
-            ALGAE_WRISTCONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-            ALGAE_WRISTCONFIG.CurrentLimits.StatorCurrentLimit = 80;
-            ALGAE_WRISTCONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-            ALGAE_WRISTCONFIG.TorqueCurrent.PeakReverseTorqueCurrent = -40;
-
-            ALGAE_WRISTCONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-            ALGAE_WRISTCONFIG.MotorOutput.NeutralMode = Brake;
-            ALGAE_WRISTCONFIG.Feedback.SensorToMechanismRatio = ALGAE_WRIST_GEAR_RATIO;
-            ALGAE_WRISTCONFIG.ClosedLoopGeneral.ContinuousWrap = true;
-
-            ALGAE_WRISTCONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            ALGAE_WRISTCONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.4;
-            ALGAE_WRISTCONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            ALGAE_WRISTCONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.4;
-
-
-
-        }
-    }
 
     public static final class ElevatorConstants {
 
@@ -219,6 +159,120 @@ public class Constants {
             ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
             ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.4;
         }
+    }
+
+    public static final class HangConstants {
+        public static final SparkFlexConfig CATCH_HANG_CONFIG = new SparkFlexConfig();
+        public static final TalonFXConfiguration HANG_CONFIG = new TalonFXConfiguration();
+
+        public static final double HANG_LENGTH = 34.176;
+        public static final double HANG_GEAR_RATIO = 3 / 275;
+
+        // TODO : Need to be Tuned.
+        public static final SimpleMotorFeedforward HANG_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
+        public static final ArmFeedforward CATCH_HANG_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
+
+        public static final PIDConfig HANG_FEEDBACK = new PIDConfig(0, 0, 0);
+        public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0, 0, 0);
+
+        static {
+            CATCH_HANG_CONFIG.encoder.positionConversionFactor(HANG_GEAR_RATIO);
+            CATCH_HANG_CONFIG.encoder.velocityConversionFactor(HANG_GEAR_RATIO / 60);
+
+            CATCH_HANG_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12);
+            CATCH_HANG_CONFIG.closedLoop
+                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                    // Set PID values for position control
+                    // TODO: Need To be Tuned.
+                    .apply(HANG_FEEDBACK.createSparkMaxConfig())
+                    .iZone(0)
+                    .outputRange(-1, 1)
+                    .maxMotion
+                    // Set MAXMotion parameters for position control
+                    .maxVelocity(2000)
+                    .maxAcceleration(10000)
+                    .allowedClosedLoopError(0.25);
+        }
+        static {
+            CATCH_HANG_FEEDBACK.updatePidConfig(HANG_CONFIG);
+            HANG_CONFIG.Voltage
+                    .withPeakForwardVoltage(12)
+                    .withPeakReverseVoltage(-12);
+            HANG_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+            HANG_CONFIG.CurrentLimits.StatorCurrentLimit = 80;
+            HANG_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            HANG_CONFIG.MotorOutput.NeutralMode = Brake;
+            HANG_CONFIG.Feedback.SensorToMechanismRatio = HANG_GEAR_RATIO;
+            HANG_CONFIG.ClosedLoopGeneral.ContinuousWrap = true;
+
+            HANG_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            HANG_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.4;
+            HANG_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            HANG_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.4;
+        }
+
+        public static final class GrabSubsystem {
+
+            public static final SparkFlexConfig GRAB_WRIST_CONFIG = new SparkFlexConfig();
+            public static final SparkFlexConfig GRAB_INTAKE_CONFIG = new SparkFlexConfig();
+
+            public static final double GRAB_WRIST_GEAR_RATIO = 1 / 5;
+            public static final double GRAB_INTAKE_GEAR_RATIO = 1 / 5;
+            public static final double CORAL_WRIST_LENGTH = 34.176;
+            public static final double CORAL_WRIST_GEAR_RATIO = 3 / 275;
+
+            // TODO : Need to be Tuned.
+            public static final SimpleMotorFeedforward GRAB_INTAKE_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
+            public static final ArmFeedforward GRAB_WRIST_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
+
+            public static final PIDConfig GRAB_INTAKE_FEEDBACK = new PIDConfig(0, 0, 0);
+            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0, 0, 0);
+
+
+            static {
+                GRAB_INTAKE_CONFIG.encoder.positionConversionFactor(GRAB_INTAKE_GEAR_RATIO);
+                GRAB_INTAKE_CONFIG.encoder.velocityConversionFactor(GRAB_INTAKE_GEAR_RATIO /60);
+
+                GRAB_INTAKE_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12);
+                GRAB_INTAKE_CONFIG.closedLoop
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        // Set PID values for position control
+                        .apply(GRAB_INTAKE_FEEDBACK.createSparkMaxConfig())
+                        .iZone(0)
+                        .outputRange(-1, 1)
+                        .maxMotion
+                        // Set MAXMotion parameters for position control
+                        .maxVelocity(2000)
+                        .maxAcceleration(10000)
+                        .allowedClosedLoopError(0.25);
+            }
+            static {
+                GRAB_WRIST_CONFIG.encoder.positionConversionFactor(GRAB_WRIST_GEAR_RATIO);
+                GRAB_WRIST_CONFIG.encoder.velocityConversionFactor(GRAB_WRIST_GEAR_RATIO /60);
+
+                GRAB_WRIST_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12);
+                GRAB_WRIST_CONFIG.closedLoop
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        // Set PID values for position control
+                        // TODO: Need To be Tuned.
+                        .apply(GRAB_WRIST_FEEDBACK.createSparkMaxConfig())
+                        .iZone(0)
+                        .outputRange(-1, 1)
+                        .maxMotion
+                        // Set MAXMotion parameters for position control
+                        .maxVelocity(2000)
+                        .maxAcceleration(10000)
+                        .allowedClosedLoopError(0.25);
+            }
+
+
+        }
+
+
+
+
+
+
     }
 
 
