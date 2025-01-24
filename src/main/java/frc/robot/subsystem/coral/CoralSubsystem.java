@@ -3,7 +3,9 @@ package frc.robot.subsystem.coral;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -13,23 +15,27 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CoralConstants.*;
-import static frc.robot.RobotMap.INTAKE_ID;
-import static frc.robot.RobotMap.WRIST_ID;
+import static frc.robot.RobotMap.*;
 
 @Logged(name = "CoralSubsystem")
 public class CoralSubsystem extends SubsystemBase {
 
     @Logged(name = "Coral_intake", importance = Logged.Importance.DEBUG)
-    private final SparkFlex m_coralIntake = new SparkFlex(INTAKE_ID.getDeviceNumber(),MotorType.kBrushless);
+    private final SparkFlex m_coralIntake = new SparkFlex(CORAL_INTAKE_ID.getDeviceNumber(),MotorType.kBrushless);
 
     @Logged(name = "Coral_wrist", importance = Logged.Importance.DEBUG)
-    private final TalonFX m_coralWrist = new TalonFX(WRIST_ID.getDeviceNumber());
+    private final TalonFX m_coralWrist = new TalonFX(CORAL_WRIST_ID.getDeviceNumber());
+
+    private final DigitalInput coralIntakeLimitSwitch = new DigitalInput(CORAL_INTAKE_LIMITSWITCH_ID);
+    private final CANcoder m_coralWristEncoder = new CANcoder(CORAL_WRIST_ENCODER_ID.getDeviceNumber());
 
     private final PositionTorqueCurrentFOC m_positionTorque = new PositionTorqueCurrentFOC(0).withSlot(0);
     private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
@@ -54,6 +60,10 @@ public class CoralSubsystem extends SubsystemBase {
                 SparkBase.PersistMode.kPersistParameters);
 
         m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+
+        m_coralWristEncoder.setPosition(0);
+        m_coralIntake.getEncoder().setPosition(0);
+        m_coralWrist.setPosition(0);
     }
 
     private final SysIdRoutine m_IntakesysIdRoutine =
@@ -69,7 +79,7 @@ public class CoralSubsystem extends SubsystemBase {
                                 // Record a frame for the shooter motor.
                                 log.motor("intake-coral")
                                         .voltage(intakeSysIdVoltage.mut_replace(
-                                                m_coralIntake.getBusVoltage(), Volts))
+                                                m_coralIntake.getAppliedOutput()* m_coralIntake.getBusVoltage(), Volts))
                                         .angularPosition(intakeSysIdAngle.mut_replace(
                                                 m_coralIntake.getEncoder().getPosition(), Rotations))
                                         .angularVelocity(intakeSysIdVelocity.mut_replace(
@@ -82,7 +92,13 @@ public class CoralSubsystem extends SubsystemBase {
     private final SysIdRoutine wristSysIdRoutine =
             new SysIdRoutine(
                     // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-                    new SysIdRoutine.Config(),
+                    new SysIdRoutine.Config(
+                            Volts.of(1).per(Seconds),
+                            Volts.of(4),
+                            Seconds.of(5),
+                            null
+
+                    ),
                     new SysIdRoutine.Mechanism(
                             volts -> m_coralWrist.setControl(m_voltageOut.withOutput(volts)),
                             log ->{
@@ -96,6 +112,37 @@ public class CoralSubsystem extends SubsystemBase {
                                                 m_coralWrist.getVelocity().getValueAsDouble(), RotationsPerSecond));
                             },
                             this));
+
+
+
+
+    public void setCoralIntakeVelocity(double velocity){
+        m_coralIntake.getClosedLoopController().
+                setReference(velocity, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0,CORAL_INTAKE_FEED_FORWARD.calculate(velocity));
+    }
+    public void setCoralWristPosition(double position){
+        m_coralWrist.setControl(m_positionVoltage.withFeedForward(CORAL_WRIST_FEED_FORWARD.calculate(position,0)));
+    }
+
+    public double getCoralIntakeVelocity(){
+        return m_coralIntake.getEncoder().getVelocity();
+    }
+    public double getCoralWristPosition(){
+        return m_coralWrist.getPosition().getValueAsDouble();
+    }
+    public boolean getCoral() {
+        return coralIntakeLimitSwitch.get();
+    }
+
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
+        SmartDashboard.getNumber("Coral Intake Velocity",getCoralIntakeVelocity());
+        SmartDashboard.getNumber("Coral Wrist Position", getCoralWristPosition());
+        SmartDashboard.getBoolean("Coral Intake Limit Switch",getCoral());
+    }
 
 
 
@@ -116,6 +163,8 @@ public class CoralSubsystem extends SubsystemBase {
     public Command sysid_wristQuasistatic(SysIdRoutine.Direction direction){
         return wristSysIdRoutine.quasistatic(direction);
     }
+
+
 
 
 
