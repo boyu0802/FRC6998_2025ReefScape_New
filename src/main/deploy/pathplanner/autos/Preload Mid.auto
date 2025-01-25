@@ -27,6 +27,12 @@
           "data": {
             "pathName": "L to Station"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Station to L"
+          }
         }
       ]
     }

@@ -35,7 +35,7 @@ public class Constants {
         public static final SparkMaxConfig CORAL_INTAKECONFIG = new SparkMaxConfig();
         public static final TalonFXConfiguration CORAL_WRISTCONFIG = new TalonFXConfiguration();
 
-        public static final double CORAL_INTAKE_GEAR_RATIO = 1 / 5;
+        public static final double CORAL_INTAKE_GEAR_RATIO = 1 ;
         public static final double CORAL_WRIST_LENGTH = 34.176;
         public static final double CORAL_WRIST_GEAR_RATIO = 3 / 275;
 
@@ -94,8 +94,8 @@ public class Constants {
         public static final TalonFXConfiguration ELEVATOR_CONFIG_L = new TalonFXConfiguration();
         public static final TalonFXConfiguration ELEVATOR_CONFIG_R = new TalonFXConfiguration();
 
-        public static final double ELEVATOR_LENGTH = 34.176;
-        public static final double ELEVATOR_GEAR_RATIO = 3 / 275;
+        public static final double ELEVATOR_LENGTH = 60/Math.PI;
+        public static final double ELEVATOR_GEAR_RATIO = 1/9;
 
         // TODO : Need to be Tuned.
         public static final ElevatorFeedforward ELEVATOR_FEED_FORWARD = new ElevatorFeedforward(0, 0, 0,0);
@@ -155,9 +155,9 @@ public class Constants {
             ELEVATOR_CONFIG_R.ClosedLoopGeneral.ContinuousWrap = true;
 
             ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 100;
+            ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 15.3;
             ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.4;
+            ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.3;
         }
     }
 

@@ -1,2 +1,4 @@
-package frc.robot.subsystem.elevator;public class ElevatorSim {
+package frc.robot.subsystem.elevator;
+
+public class ElevatorSim    {
 }

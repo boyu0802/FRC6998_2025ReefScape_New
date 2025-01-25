@@ -1,13 +1,10 @@
 package frc.robot.commands.drive;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystem.CommandSwerveDrivetrain;
+import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 

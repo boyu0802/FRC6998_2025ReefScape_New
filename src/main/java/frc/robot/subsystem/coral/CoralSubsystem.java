@@ -23,15 +23,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CoralConstants.*;
-import static frc.robot.RobotMap.*;
+import static frc.robot.RobotMap.CORAL_INTAKE_ID;
+import static frc.robot.RobotMap.CORAL_WRIST_ID;
+import static frc.robot.RobotMap.CORAL_WRIST_ENCODER_ID;
+import static frc.robot.RobotMap.CORAL_INTAKE_LIMITSWITCH_ID;
 
-@Logged(name = "CoralSubsystem")
+//@Logged(name = "CoralSubsystem")
 public class CoralSubsystem extends SubsystemBase {
 
-    @Logged(name = "Coral_intake", importance = Logged.Importance.DEBUG)
+    //@Logged(name = "Coral_intake", importance = Logged.Importance.DEBUG)
     private final SparkFlex m_coralIntake = new SparkFlex(CORAL_INTAKE_ID.getDeviceNumber(),MotorType.kBrushless);
 
-    @Logged(name = "Coral_wrist", importance = Logged.Importance.DEBUG)
+    //@Logged(name = "Coral_wrist", importance = Logged.Importance.DEBUG)
     private final TalonFX m_coralWrist = new TalonFX(CORAL_WRIST_ID.getDeviceNumber());
 
     private final DigitalInput coralIntakeLimitSwitch = new DigitalInput(CORAL_INTAKE_LIMITSWITCH_ID);

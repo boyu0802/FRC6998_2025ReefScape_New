@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystem.CommandSwerveDrivetrain;
+import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.coral.CoralSubsystem;
 
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
