@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
 
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
@@ -37,15 +40,20 @@ public class RobotContainer {
     
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
+
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
             .withDriveRequestType(DriveRequestType.Velocity);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandXboxController testController = new CommandXboxController(1);
+    
+
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+
 
     // Optional to mirror the NetworkTables-logged data to a file on disk
 
@@ -91,15 +99,18 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        logger.elevatorTelemetry(elevatorSubsystem);
+        
+        
 
         // TODO: test by controller. (change with different subsystems)
-        testController.a().whileTrue(coralSubsystem.sysid_intakeDynamic(Direction.kForward));
-        testController.b().whileTrue(coralSubsystem.sysid_intakeDynamic(Direction.kReverse));
-        testController.x().whileTrue(coralSubsystem.sysid_intakeQuasistatic(Direction.kForward));
-        testController.y().whileTrue(coralSubsystem.sysid_intakeQuasistatic(Direction.kReverse));
+        testController.a().onTrue(coralSubsystem.sysid_intakeDynamic(Direction.kForward));
+        testController.b().onTrue(coralSubsystem.sysid_intakeDynamic(Direction.kReverse));
+        testController.x().onTrue(coralSubsystem.sysid_intakeQuasistatic(Direction.kForward));
+        testController.y().onTrue(coralSubsystem.sysid_intakeQuasistatic(Direction.kReverse));
 
-        testController.povUp().whileTrue(coralSubsystem.collectCoralWithoutVision());
-        testController.povDown().whileTrue(coralSubsystem.collectAlgaeWithoutVision());
+        testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
+        testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
     }
 
     public Command getAutonomousCommand() {

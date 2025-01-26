@@ -78,14 +78,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     private void toElevatorPosition(double position) {
 
     }
-    private double getElevatorPosition() {
+    public double getElevatorPosition() {
         return m_elevatorLeft.getPosition().getValueAsDouble() *Math.PI*2 * ELEVATOR_LENGTH;
     }
 
-    private double getElevatorVelocity() {
+    public double getElevatorVelocity() {
         return m_elevatorLeft.getVelocity().getValueAsDouble() *Math.PI*2* ELEVATOR_LENGTH;
     }
-    private double getElevatorRotations(){
+    public double getElevatorRotations(){
         return m_elevatorLeft.getPosition().getValueAsDouble();
     }
 

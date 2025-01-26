@@ -16,9 +16,12 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.subsystem.coral.CoralSubsystem;
+import frc.robot.subsystem.elevator.ElevatorSubsystem;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -47,10 +50,21 @@ public class Telemetry {
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
 
+
+    private final NetworkTable elevatoNetworkTable = inst.getTable("elevatorState");
+    private final StructPublisher<Pose2d> elevatorPose = elevatoNetworkTable.getStructTopic("Pose", Pose2d.struct).publish();
+    private final NetworkTable coralStateTable = inst.getTable("coralState");
+    private final DoublePublisher coralIntakeVelocity = inst.getDoubleTopic("CoralVelocity").publish();
+
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
     private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
     private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+
+    private MechanismRoot2d root = new Mechanism2d(5,3).getRoot("root", 2.5, 0.25);
+
+
+    
 
     /* Mechanisms to represent the swerve module states */
     private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
@@ -77,10 +91,17 @@ public class Telemetry {
         m_moduleMechanisms[3].getRoot("RootDirection", 0.5, 0.5)
             .append(new MechanismLigament2d("Direction", 0.1, 0, 0, new Color8Bit(Color.kWhite))),
     };
-
     private final double[] m_poseArray = new double[3];
     private final double[] m_moduleStatesArray = new double[8];
     private final double[] m_moduleTargetsArray = new double[8];
+
+    
+    private final Mechanism2d elevatorMechanism2d = new Mechanism2d(0.095, 0.575);
+
+    private final MechanismLigament2d elevatorLigament2d = root.append(
+        new MechanismLigament2d("elevatorControl",0.575, 90,4,new Color8Bit(Color.kAqua)));
+
+    
 
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     public void telemeterize(SwerveDriveState state) {
@@ -121,5 +142,17 @@ public class Telemetry {
 
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
+    }
+
+    public void coralTelemetry(CoralSubsystem coralSubsystem){
+        coralIntakeVelocity.set(coralSubsystem.getCoralIntakeVelocity());
+        SmartDashboard.putNumber("Coral/intake velocity",coralSubsystem.getCoralIntakeVelocity());
+
+    }
+    public void elevatorTelemetry(ElevatorSubsystem elevatorSubsystem){
+        elevatorLigament2d.setAngle(0);
+        elevatorLigament2d.setLength(elevatorSubsystem.getElevatorPosition());
+        SmartDashboard.putData("Elevator",elevatorMechanism2d);
+
     }
 }

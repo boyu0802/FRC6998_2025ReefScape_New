@@ -144,10 +144,11 @@ public class CoralSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
-        SmartDashboard.getNumber("Coral Intake Velocity",getCoralIntakeVelocity());
-        SmartDashboard.getNumber("Coral Wrist Position", getCoralWristPosition());
-        SmartDashboard.getBoolean("Coral Intake Limit Switch", getCoralLimit());
+        
+        SmartDashboard.putNumber("Coral/Coral Intake Velocity",getCoralIntakeVelocity());
+        SmartDashboard.putNumber("Coral/Coral Intake Position",getCoralIntakeVelocity()*60);
+        //SmartDashboard.getNumber("Coral/Coral Wrist Position", getCoralWristPosition());
+        //SmartDashboard.getBoolean("Coral/Intake Limit Switch", getCoralLimit());
     }
 
 
@@ -158,7 +159,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     //TODO: Wait for test.
     public Command sysid_intakeDynamic(SysIdRoutine.Direction direction){
-        return wristSysIdRoutine.dynamic(direction);
+        return m_IntakesysIdRoutine.dynamic(direction);
     }
     public Command sysid_wristDynamic(SysIdRoutine.Direction direction){
         return wristSysIdRoutine.dynamic(direction);

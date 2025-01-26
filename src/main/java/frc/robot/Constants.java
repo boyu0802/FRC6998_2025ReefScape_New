@@ -35,7 +35,7 @@ public class Constants {
         public static final SparkMaxConfig CORAL_INTAKECONFIG = new SparkMaxConfig();
         public static final TalonFXConfiguration CORAL_WRISTCONFIG = new TalonFXConfiguration();
 
-        public static final double CORAL_INTAKE_GEAR_RATIO = 1 ;
+        public static final double CORAL_INTAKE_GEAR_RATIO = 1 /3;
         public static final double CORAL_WRIST_LENGTH = 34.176;
         public static final double CORAL_WRIST_GEAR_RATIO = 3 / 275;
 
@@ -51,7 +51,7 @@ public class Constants {
             CORAL_INTAKECONFIG.encoder.positionConversionFactor(CORAL_INTAKE_GEAR_RATIO);
             CORAL_INTAKECONFIG.encoder.velocityConversionFactor(CORAL_INTAKE_GEAR_RATIO/60);
 
-            CORAL_INTAKECONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12);
+            CORAL_INTAKECONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12);
             CORAL_INTAKECONFIG.closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // Set PID values for position control
@@ -61,7 +61,7 @@ public class Constants {
                     .outputRange(-1, 1)
                     .maxMotion
                     // Set MAXMotion parameters for position control
-                    .maxVelocity(2000)
+                    .maxVelocity(2500)
                     .maxAcceleration(10000)
                     .allowedClosedLoopError(0.25);
         }
