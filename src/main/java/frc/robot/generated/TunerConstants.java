@@ -39,7 +39,7 @@ public class TunerConstants {
 
     /*TODO : Tune by SysID in 1/20. */
     private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(0.1).withKI(0).withKD(0)
+        .withKP(0.1).withKI(0.0000001).withKD(0)
         .withKS(0.082036).withKV(0.1228).withKA(0.0027696);
 
         
@@ -81,7 +81,7 @@ public class TunerConstants {
 
     // CAN bus that the devices are located on;
     // All swerve devices must share the same CAN bus
-    public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
+    public static final CANBus kCANBus = new CANBus("Chassis", "./logs/example.hoot");
 
     // Theoretical free speed (m/s) at 12 V applied output;
     // This needs to be tuned to your individual robot

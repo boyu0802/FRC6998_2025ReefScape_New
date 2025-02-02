@@ -5,13 +5,25 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "Preload_Mid to J"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "J to Station"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Station to K"
                 }
               }
             ]

@@ -52,7 +52,8 @@ public class Telemetry {
 
 
     private final NetworkTable elevatoNetworkTable = inst.getTable("elevatorState");
-    private final StructPublisher<Pose2d> elevatorPose = elevatoNetworkTable.getStructTopic("Pose", Pose2d.struct).publish();
+    private final DoublePublisher elevatorPose = elevatoNetworkTable.getDoubleTopic("elevatorHeight").publish();
+
     private final NetworkTable coralStateTable = inst.getTable("coralState");
     private final DoublePublisher coralIntakeVelocity = inst.getDoubleTopic("CoralVelocity").publish();
 
@@ -95,11 +96,11 @@ public class Telemetry {
     private final double[] m_moduleStatesArray = new double[8];
     private final double[] m_moduleTargetsArray = new double[8];
 
-    
-    private final Mechanism2d elevatorMechanism2d = new Mechanism2d(0.095, 0.575);
+
+    private final Mechanism2d elevatorMechanism2d = new Mechanism2d(1, 1);
 
     private final MechanismLigament2d elevatorLigament2d = root.append(
-        new MechanismLigament2d("elevatorControl",0.575, 90,4,new Color8Bit(Color.kAqua)));
+        new MechanismLigament2d("elevatorControl",0.575, 90,2,new Color8Bit(Color.kAqua)));
 
     
 
@@ -150,6 +151,7 @@ public class Telemetry {
 
     }
     public void elevatorTelemetry(ElevatorSubsystem elevatorSubsystem){
+        elevatorMechanism2d.getRoot("Position",0,elevatorSubsystem.getElevatorPosition()).append(elevatorLigament2d);
         elevatorLigament2d.setAngle(0);
         elevatorLigament2d.setLength(elevatorSubsystem.getElevatorPosition());
         SmartDashboard.putData("Elevator",elevatorMechanism2d);

@@ -10,19 +10,23 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.Constants.ElevatorConstants.ScoreState;
+import frc.robot.Constants.HangConstants.GrabSubsystem;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
+import frc.robot.subsystem.hang.HangSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
 
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
@@ -34,12 +38,12 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
 
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    //private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     
     
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    //private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
@@ -50,18 +54,23 @@ public class RobotContainer {
     
 
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    //public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+
+    private final GrabSubsystem grabSubsystem = new GrabSubsystem();
+    private final HangSubsystem hangSubsystem = new HangSubsystem();
+    
+    
 
 
     // Optional to mirror the NetworkTables-logged data to a file on disk
 
     
-    private final SendableChooser<Command> autoChooser;
+    //private final SendableChooser<Command> autoChooser;
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Example");
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        //autoChooser = AutoBuilder.buildAutoChooser("Example");
+        //SmartDashboard.putData("Auto Mode", autoChooser);
         //selectAuto();
         configureBindings();
         DataLogManager.start();
@@ -71,7 +80,8 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        
+        /* 
+        elevatorSubsystem.updateTelemetry();
         drivetrain.setDefaultCommand(
           drivetrain.applyRequest(() ->
             drive.withVelocityX(Math.copySign(joystick.getLeftY()*joystick.getLeftY(),-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
@@ -80,6 +90,8 @@ public class RobotContainer {
             ) // Drive counterclockwise with negative X (left)
     
         );
+
+        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
 
 
@@ -99,7 +111,14 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-        logger.elevatorTelemetry(elevatorSubsystem);
+        //logger.elevatorTelemetry(elevatorSubsystem);
+        */
+
+        //elevatorMechanism2d.getRoot("Position",0,elevatorSubsystem.getElevatorPosition()).append(elevatorLigament2d);
+        //elevatorLigament2d.setAngle(0);
+        //elevatorLigament2d.setLength(elevatorSubsystem.getElevatorPosition());
+        //SmartDashboard.putData("Elevator",elevatorMechanism2d);
+        
         
         
 
@@ -111,9 +130,26 @@ public class RobotContainer {
 
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
+        testController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
+        testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
+
+        simTest(elevatorSubsystem);
+
+        SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());
+
+
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        return new PrintCommand("null");
+        //autoChooser.getSelected();
     }
+
+    public void simTest(ElevatorSubsystem elevatorSubsystem){
+        SmartDashboard.putData("Elevator L1",(Sendable) elevatorSubsystem.setL1());
+        SmartDashboard.putData("Elevator L2",(Sendable) elevatorSubsystem.setL2());
+        SmartDashboard.putData("Elevator L3",(Sendable) elevatorSubsystem.setL3());
+        SmartDashboard.putData("Elevator L4",(Sendable) elevatorSubsystem.setL4());
+    }
+    
 }
