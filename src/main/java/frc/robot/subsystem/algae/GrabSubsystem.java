@@ -34,11 +34,11 @@ public class GrabSubsystem extends SubsystemBase {
 
     public void setGrabIntakeVelocity(double velocity){
         m_grabIntake.getClosedLoopController().
-                setReference(velocity, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0,CORAL_INTAKE_FEED_FORWARD.calculate(velocity));
+                setReference(velocity, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
     public void setGrabWristPosition(double position){
         m_grabWrist.getClosedLoopController().
-                setReference(position, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0,CORAL_INTAKE_FEED_FORWARD.calculate(position));
+                setReference(position, SparkFlex.ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
 
     public double getGrabIntakeVelocity(){

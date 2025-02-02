@@ -8,11 +8,13 @@ import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.VoltageConfigs;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -48,17 +50,20 @@ public class Constants {
         public static final double CORAL_WRIST_GEAR_RATIO = 225.0/4.0;
 
         // TODO : Need to be Tuned.
-        public static final SimpleMotorFeedforward CORAL_INTAKE_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
-        public static final ArmFeedforward CORAL_WRIST_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
-
         public static final PIDConfig CORAL_INTAKE_FEEDBACK = new PIDConfig(0.0005, 0, 0.00001,0.0292);
-        public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(0, 0, 0);
+        public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(24.244, 0, 0.13351);
+
+        public static final double CORAL_WRIST_KS = 0.2793/12;
+        public static final double CORAL_WRIST_KV = 6.2584/12;
+        public static final double CORAL_WRIST_KA = 0.061275/12;
+        public static final double CORAL_WRIST_KG = 0.016319/12;
 
         public static final double CORAL_INTAKE_VELOCITY = 30.0;
-        public static final double ALGAE_INTAKE_VELOCITY = 30.0;
-
-        public static final double CORAL_WRIST_FORWARD_SOFT_LIMIT = 95.0;
+        
+        public static final double CORAL_WRIST_FORWARD_SOFT_LIMIT = 90.0;
         public static final double CORAL_WRIST_REVERSE_SOFT_LIMIT = -60.0;
+
+        public static final double CORAL_ENCODER_OFFSET = 0.124755859375;
 
 
         public static final SparkMaxConfig CORAL_INTAKECONFIG = new SparkMaxConfig();
@@ -81,18 +86,27 @@ public class Constants {
             .withSlot0(new Slot0Configs()
                     .withKP(CORAL_WRIST_FEEDBACK.P)
                     .withKI(CORAL_WRIST_FEEDBACK.I)
-                    .withKD(CORAL_WRIST_FEEDBACK.D))
+                    .withKD(CORAL_WRIST_FEEDBACK.D)
+                    .withGravityType(GravityTypeValue.Arm_Cosine)
+                    .withKS(CORAL_WRIST_KS)
+                    .withKV(CORAL_WRIST_KV)
+                    .withKA(CORAL_WRIST_KA)
+                    .withKG(CORAL_WRIST_KG))
+            .withMotionMagic(new MotionMagicConfigs()
+                    .withMotionMagicCruiseVelocity(7.5)
+                    .withMotionMagicAcceleration(15)
+                    .withMotionMagicJerk(150))
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(100)
+                    .withForwardSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_FORWARD_SOFT_LIMIT))
                     .withReverseSoftLimitEnable(true)
-                    .withReverseSoftLimitThreshold(Units.degreesToRotations(-60)));
+                    .withReverseSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_REVERSE_SOFT_LIMIT)));
 
         public static final CANcoderConfiguration CORAL_WRIST_ENCODER_CONFIG = new CANcoderConfiguration()
             .withMagnetSensor(new MagnetSensorConfigs()
-                .withMagnetOffset(0.0048828125)
+                .withMagnetOffset(CORAL_ENCODER_OFFSET)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
-                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+                .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
         
 
@@ -117,43 +131,24 @@ public class Constants {
 
        
 
-        public static final double ELEVATOR_LENGTH = 0.6/Math.PI;
+        public static final double ELEVATOR_LENGTH = 0.06/Math.PI;
         public static final double ELEVATOR_GEAR_RATIO = 9.0;
 
         // TODO : Need to be Tuned.
         public static final ElevatorFeedforward ELEVATOR_FEED_FORWARD = new ElevatorFeedforward(0.4, 0, 0.4,0);
 
+        public static final double ELEVATOR_MAX_LENGTH = 1.3;
+        public static final double ELEVATOR_MIN_LENGTH = 0.01;
 
-        public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(0.1, 0, 0);
+        public static final double ELEVATOR_KS = 0.26859/12;
+        public static final double ELEVATOR_KV = 10.923/12;
+        public static final double ELEVATOR_KA = 1.7629/12;
+        public static final double ELEVATOR_KG = 0.24228/12;
+
+
+        public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(58.629, 0, 16.814);
 
         public static final TalonFXConfiguration ELEVATOR_CONFIG_L = new TalonFXConfiguration()
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimitEnable(true)
-                    .withStatorCurrentLimit(100))
-                .withVoltage(new VoltageConfigs()
-                    .withPeakForwardVoltage(12)
-                    .withPeakReverseVoltage(-12))
-                .withFeedback(new FeedbackConfigs()
-                    .withSensorToMechanismRatio(ELEVATOR_GEAR_RATIO))
-                    .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
-                    .withContinuousWrap(true))
-                .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(InvertedValue.Clockwise_Positive)
-                    .withNeutralMode(Brake))
-
-                .withSlot0(new Slot0Configs()
-                    .withKP(ELEVATOR_FEEDBACK.P)
-                    .withKI(ELEVATOR_FEEDBACK.I)
-                    .withKD(ELEVATOR_FEEDBACK.D))
-                .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                    .withForwardSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(100)
-                    .withReverseSoftLimitEnable(true)
-                    .withReverseSoftLimitThreshold(-0.4)
-                );
-            
-        public static final TalonFXConfiguration ELEVATOR_CONFIG_R = new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimitEnable(true)
@@ -172,21 +167,67 @@ public class Constants {
                 .withSlot0(new Slot0Configs()
                     .withKP(ELEVATOR_FEEDBACK.P)
                     .withKI(ELEVATOR_FEEDBACK.I)
-                    .withKD(ELEVATOR_FEEDBACK.D))
+                    .withKD(ELEVATOR_FEEDBACK.D)
+                    .withGravityType(GravityTypeValue.Elevator_Static)
+                    .withKG(ELEVATOR_KG)
+                    .withKS(ELEVATOR_KS)
+                    .withKV(ELEVATOR_KV)
+                    .withKA(ELEVATOR_KA))
+
+                .withMotionMagic(new MotionMagicConfigs()
+                    .withMotionMagicCruiseVelocity(5.0)
+                    .withMotionMagicAcceleration(10.0)
+                    .withMotionMagicJerk(100))
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(100)
+                    .withForwardSoftLimitThreshold(ELEVATOR_MAX_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
                     .withReverseSoftLimitEnable(true)
-                    .withReverseSoftLimitThreshold(-0.4)
-                ); 
+                    .withReverseSoftLimitThreshold(ELEVATOR_MIN_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                );
+            
+            public static final TalonFXConfiguration ELEVATOR_CONFIG_R = new TalonFXConfiguration()
+                .withCurrentLimits(
+                    new CurrentLimitsConfigs()
+                        .withStatorCurrentLimitEnable(true)
+                        .withStatorCurrentLimit(100))
+                    .withVoltage(new VoltageConfigs()
+                        .withPeakForwardVoltage(12)
+                        .withPeakReverseVoltage(-12))
+                    .withFeedback(new FeedbackConfigs()
+                        .withSensorToMechanismRatio(ELEVATOR_GEAR_RATIO))
+                        .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                        .withContinuousWrap(true))
+                    .withMotorOutput(new MotorOutputConfigs()
+                        .withInverted(InvertedValue.Clockwise_Positive)
+                        .withNeutralMode(Brake))
+    
+                    .withSlot0(new Slot0Configs()
+                        .withKP(ELEVATOR_FEEDBACK.P)
+                        .withKI(ELEVATOR_FEEDBACK.I)
+                        .withKD(ELEVATOR_FEEDBACK.D)
+                        .withGravityType(GravityTypeValue.Elevator_Static)
+                        .withKG(ELEVATOR_KG)
+                        .withKS(ELEVATOR_KS)
+                        .withKV(ELEVATOR_KV)
+                        .withKA(ELEVATOR_KA))
+                    .withMotionMagic(new MotionMagicConfigs()
+                        .withMotionMagicCruiseVelocity(5.0)
+                        .withMotionMagicAcceleration(10.0)
+                        .withMotionMagicJerk(100))
+                    .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                        .withForwardSoftLimitEnable(true)
+                        .withForwardSoftLimitThreshold(ELEVATOR_MAX_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                        .withReverseSoftLimitEnable(true)
+                        .withReverseSoftLimitThreshold(ELEVATOR_MIN_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                    );
 
 
         //TODO : Need to be Tuned. & add degrees(?)
-        public enum ScoreState {
-            L1(0.05, 0.0),
-            L2(0.8, 0.0),
-            L3(1.2, 0.0),
-            L4(1.6, 0.0),
+        public static enum ScoreState {
+            L1(0.05, 60.0),
+            L2(0.4, 30.0),
+            L3(0.8, 0.0),
+            L4(1.2, -45.0),
             NORMAL(0.0, 0.0),
             STATION(1.0, 0.0),;
 

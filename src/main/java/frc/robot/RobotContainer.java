@@ -119,21 +119,40 @@ public class RobotContainer {
         //elevatorLigament2d.setLength(elevatorSubsystem.getElevatorPosition());
         //SmartDashboard.putData("Elevator",elevatorMechanism2d);
         
+
         
         
 
         // TODO: test by controller. (change with different subsystems)
-        testController.a().onTrue(coralSubsystem.sysid_intakeDynamic(Direction.kForward));
-        testController.b().onTrue(coralSubsystem.sysid_intakeDynamic(Direction.kReverse));
-        testController.x().onTrue(coralSubsystem.sysid_intakeQuasistatic(Direction.kForward));
-        testController.y().onTrue(coralSubsystem.sysid_intakeQuasistatic(Direction.kReverse));
+        testController.a().and(testController.start()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kForward));
+        testController.b().and(testController.start()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kReverse));
+        testController.x().and(testController.start()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kForward));
+        testController.y().and(testController.start()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kReverse));
 
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
         testController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
 
-        simTest(elevatorSubsystem);
+        
+        /* 
+        testController.a().whileTrue(coralSubsystem.wristToL1());
+        testController.b().whileTrue(coralSubsystem.wristToL2());
+        testController.y().whileTrue(coralSubsystem.wristToL3());
+        testController.x().whileTrue(coralSubsystem.wristToL4());
+        
+        */
+        
+        
+        testController.a().whileTrue(elevatorSubsystem.setL1());
+        testController.b().whileTrue(elevatorSubsystem.setL2());
+        testController.y().whileTrue(elevatorSubsystem.setL3());
+        testController.x().whileTrue(elevatorSubsystem.setL4());
+        
+    
+
+
+
 
         SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());
 
@@ -143,13 +162,6 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return new PrintCommand("null");
         //autoChooser.getSelected();
-    }
-
-    public void simTest(ElevatorSubsystem elevatorSubsystem){
-        SmartDashboard.putData("Elevator L1",(Sendable) elevatorSubsystem.setL1());
-        SmartDashboard.putData("Elevator L2",(Sendable) elevatorSubsystem.setL2());
-        SmartDashboard.putData("Elevator L3",(Sendable) elevatorSubsystem.setL3());
-        SmartDashboard.putData("Elevator L4",(Sendable) elevatorSubsystem.setL4());
     }
     
 }

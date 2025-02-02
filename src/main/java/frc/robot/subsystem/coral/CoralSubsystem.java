@@ -1,5 +1,7 @@
 package frc.robot.subsystem.coral;
 
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -13,9 +15,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +30,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import edu.wpi.first.math.util.Units.*;
+import static frc.robot.Constants.ElevatorConstants.ScoreState;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CoralConstants.*;
@@ -52,14 +59,15 @@ public class CoralSubsystem extends SubsystemBase {
     //private final PositionTorqueCurrentFOC m_positionTorque = new PositionTorqueCurrentFOC(0).withSlot(0);
     private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
     private final VoltageOut m_voltageOut = new VoltageOut(0); // for SysId test.
-
+    private final MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0).withSlot(0);
+    
     //TODO: SysId Testing.
     private final MutVoltage intakeSysIdVoltage = Volts.mutable(0);
     private final MutAngle intakeSysIdAngle = Rotations.mutable(0);
     private final MutAngularVelocity intakeSysIdVelocity = RotationsPerSecond.mutable(0);
     private final MutVoltage wrist_sysIdVoltage = Volts.mutable(0);
     private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);
-    private final MutAngularVelocity wrist_sysIdVelocity = DegreesPerSecond.mutable(0);
+    private final MutAngularVelocity wrist_sysIdVelocity = RotationsPerSecond.mutable(0);
 
 
 
@@ -75,7 +83,7 @@ public class CoralSubsystem extends SubsystemBase {
         m_coralWristEncoder.getConfigurator().apply(CORAL_WRIST_ENCODER_CONFIG);
         //m_coralWristEncoder.setPosition(0);
         m_coralIntake.getEncoder().setPosition(0);
-        m_coralWrist.setPosition(getCoralWristPosition());
+        m_coralWrist.setPosition(getCoralAbsoultePosition());
     }
 
     private final SysIdRoutine m_IntakesysIdRoutine =
@@ -124,9 +132,9 @@ public class CoralSubsystem extends SubsystemBase {
                                         .voltage(wrist_sysIdVoltage.mut_replace(
                                                 m_coralWrist.getMotorVoltage().getValueAsDouble(), Volts))
                                         .angularPosition(wrist_sysIdAngle.mut_replace(
-                                                m_coralWrist.getPosition().getValueAsDouble(), Degrees))
+                                                m_coralWrist.getPosition().getValueAsDouble(), Rotations))
                                         .angularVelocity(wrist_sysIdVelocity.mut_replace(
-                                                m_coralWrist.getVelocity().getValueAsDouble(),DegreesPerSecond));
+                                                m_coralWrist.getVelocity().getValueAsDouble(),RotationsPerSecond));
                             },
                             this));
 
@@ -138,7 +146,11 @@ public class CoralSubsystem extends SubsystemBase {
                 setReference(velocity, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
     public void setCoralWristPosition(double position){
-        m_coralWrist.setControl(m_positionVoltage.withFeedForward(CORAL_WRIST_FEED_FORWARD.calculate(position,0)));
+        m_coralWrist.setControl(m_MotionMagicVoltage.withPosition(edu.wpi.first.math.util.Units.degreesToRotations(position)));
+    }
+
+    public void setCoralWristPosition(ScoreState state) {
+        setCoralWristPosition(state.armPosition);
     }
 
     public double getCoralIntakeVelocity(){
@@ -163,13 +175,18 @@ public class CoralSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         
-        SmartDashboard.putNumber("Coral/Coral Intake Velocity",getCoralIntakeVelocity());
-        SmartDashboard.putNumber("Coral/Coral Intake Position",getCoralIntakeVelocity()*60);
-        SmartDashboard.putNumber("Coral/intake voltage", m_coralIntake.getAppliedOutput()* m_coralIntake.getBusVoltage());
-        SmartDashboard.putNumber("Coral/Coral Intake Current",m_coralIntake.getOutputCurrent());
-        SmartDashboard.putBoolean("Coral/limit switch ", getCoralLimit());
+        SmartDashboard.putNumber("Coral/intake/ Coral Intake Velocity",getCoralIntakeVelocity());
+        SmartDashboard.putNumber("Coral/intake/ Coral Intake Position",getCoralIntakeVelocity()*60);
+        SmartDashboard.putNumber("Coral/intake/ voltage", m_coralIntake.getAppliedOutput()* m_coralIntake.getBusVoltage());
+        SmartDashboard.putNumber("Coral/intake/ Current",m_coralIntake.getOutputCurrent());
+        SmartDashboard.putBoolean("Coral/intake/ limit switch ", getCoralLimit());
+
+        SmartDashboard.putNumber("Coral/wrist/ Position", getCoralWristPosition());
+        SmartDashboard.putNumber("Coral/wrist/ Absolute Position", getCoralAbsoultePosition());
         //SmartDashboard.getNumber("Coral/Coral Wrist Position", getCoralWristPosition());
         //SmartDashboard.getBoolean("Coral/Intake Limit Switch", getCoralLimit());
+
+        
     }
 
     //TODO: Wait for test.
@@ -227,6 +244,19 @@ public class CoralSubsystem extends SubsystemBase {
                 Commands.runOnce(()->stopCoralIntake()),
                 Commands.print("algae outputted")
         );
+    }
+
+    public Command wristToL1(){
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L1));
+    }
+    public Command wristToL2(){
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L2));
+    }
+    public Command wristToL3(){
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L3));
+    }
+    public Command wristToL4(){
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L4));
     }
 
 

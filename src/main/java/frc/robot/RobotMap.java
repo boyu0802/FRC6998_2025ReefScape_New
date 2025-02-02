@@ -15,7 +15,7 @@ public class RobotMap {
     public static final int ALGAE_INTAKE_LIMITSWITCH_ID = 1;
 
     public static final CANDeviceId ELEVATOR_ID_LEFT = new CANDeviceId(9);
-    public static final CANDeviceId ELEVATOR_ID_RIGHT = new CANDeviceId(10);
+    public static final CANDeviceId ELEVATOR_ID_RIGHT = new CANDeviceId(13,"rio");
     public static final int ELEVATOR_LIMITSWITCH_ID = 2;
 
     public static final CANDeviceId HANG_ID = new CANDeviceId(12);

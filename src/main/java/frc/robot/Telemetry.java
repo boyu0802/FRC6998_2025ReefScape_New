@@ -150,6 +150,7 @@ public class Telemetry {
         SmartDashboard.putNumber("Coral/intake velocity",coralSubsystem.getCoralIntakeVelocity());
 
     }
+    /* 
     public void elevatorTelemetry(ElevatorSubsystem elevatorSubsystem){
         elevatorMechanism2d.getRoot("Position",0,elevatorSubsystem.getElevatorPosition()).append(elevatorLigament2d);
         elevatorLigament2d.setAngle(0);
@@ -157,4 +158,5 @@ public class Telemetry {
         SmartDashboard.putData("Elevator",elevatorMechanism2d);
 
     }
+    */
 }

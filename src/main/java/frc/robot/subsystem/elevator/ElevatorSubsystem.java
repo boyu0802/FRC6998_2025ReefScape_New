@@ -32,7 +32,7 @@ import static frc.robot.RobotMap.*;
 public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX m_elevatorLeft = new TalonFX(ELEVATOR_ID_LEFT.getDeviceNumber());
     private final TalonFX m_elevatorRight = new TalonFX(ELEVATOR_ID_RIGHT.getDeviceNumber());
-    private final DigitalInput m_elevatorLimitSwitch = new DigitalInput(ELEVATOR_LIMITSWITCH_ID);
+    //private final DigitalInput m_elevatorLimitSwitch = new DigitalInput(ELEVATOR_LIMITSWITCH_ID);
 
     private final VoltageOut elevator_voltageOut = new VoltageOut(0);
    // private final PositionTorqueCurrentFOC elevator_positionTorque = new PositionTorqueCurrentFOC(0).withSlot(0);
@@ -72,17 +72,17 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_elevatorRight.getConfigurator().apply(ELEVATOR_CONFIG_R);
         //m_elevatorLeft.setControl(elevator_positionTorque);
         //m_elevatorLeft.setControl(m_motionMagicDutyCycle);
-        //m_elevatorRight.setControl(new Follower(m_elevatorLeft.getDeviceID(),true));
+        m_elevatorRight.setControl(new Follower(m_elevatorLeft.getDeviceID(),true));
         // right using left as master
-        m_elevatorLeft.setPosition(0);
-        m_elevatorRight.setPosition(0);
+        m_elevatorLeft.setPosition(elevatorPositiontoRotations(0.088));
+        m_elevatorRight.setPosition(elevatorPositiontoRotations(0.088));
         //elevatorLigament2d.setLength(getElevatorPosition());
 
         SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
 
     }
 
-    private final SysIdRoutine elevatorSysIdRoutine =
+    private final SysIdRoutine m_elevatorSysIdRoutine =
             new SysIdRoutine(
                     // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
                     new SysIdRoutine.Config(
@@ -93,23 +93,23 @@ public class ElevatorSubsystem extends SubsystemBase {
 
                     ),
                     new SysIdRoutine.Mechanism(
-                            volts -> m_elevatorLeft.setControl(elevator_voltageOut.withOutput(volts)),
+                            volts -> {
+                                m_elevatorLeft.setControl(elevator_voltageOut.withOutput(volts));
+                                m_elevatorRight.setControl(new Follower(m_elevatorLeft.getDeviceID(), true));},
                             log ->{
                                 // Record a frame for the shooter motor.
                                 log.motor("elevator")
                                         .voltage(m_voltageOut.mut_replace(
                                                 m_elevatorLeft.getMotorVoltage().getValueAsDouble(), Volts))
                                         .linearPosition(m_distance.mut_replace(
-                                                getElevatorPosition(), Meters))
+                                                getLeftElevatorPosition(), Meters))
                                         .linearVelocity(m_velocity.mut_replace(
-                                                getElevatorVelocity(), MetersPerSecond));
+                                                getLeftElevatorVelocity(), MetersPerSecond));
                             },
                             this));
             
 
-    private boolean getLimit() {
-        return m_elevatorLimitSwitch.get();
-    }
+    
     private void resetToZero() {
         m_elevatorLeft.setPosition(0);
         m_elevatorRight.setPosition(0);
@@ -118,48 +118,61 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_elevatorLeft.setControl(elevator_voltageOut.withOutput(0));
     }
 
+
     
     public void setElevatorPosition(double position) {
-        m_elevatorLeft.setControl(m_motionMagicDutyCycle.withPosition(elevatorPositiontoRotations(position)).withFeedForward(ELEVATOR_FEED_FORWARD.calculate(position)));
+        m_elevatorLeft.setControl(m_motionMagicDutyCycle.withPosition(elevatorPositiontoRotations(position)));
+        //m_elevatorRight.setControl(m_motionMagicDutyCycle.withPosition(elevatorPositiontoRotations(position)));
     }
     public void setElevatorPosition(ScoreState state) {
         setElevatorPosition(state.elevatorPosition);
     }
     public double elevatorPositiontoRotations(double position){
-        return position/(Math.PI*2*ELEVATOR_LENGTH);
+        return position/(Math.PI*2*ELEVATOR_LENGTH)*ELEVATOR_GEAR_RATIO;
     }
-    public double getElevatorPosition() {
+    public double getLeftElevatorPosition() {
         return m_elevatorLeft.getPosition().getValueAsDouble() *Math.PI*2 * ELEVATOR_LENGTH;
     }
 
-    public double getElevatorVelocity() {
+    public double getLeftElevatorVelocity() {
         return m_elevatorLeft.getVelocity().getValueAsDouble() *Math.PI*2* ELEVATOR_LENGTH;
     }
-    public double getElevatorRotations(){
+    public double getLeftElevatorRotations(){
         return m_elevatorLeft.getPosition().getValueAsDouble();
+    }
+    public double getRightElevatorPosition(){
+        return m_elevatorRight.getPosition().getValueAsDouble() *Math.PI*2* ELEVATOR_LENGTH;
+    }
+    
+
+    public Command sysid_elevatorDynamic(SysIdRoutine.Direction direction){
+        return m_elevatorSysIdRoutine.dynamic(direction);
+    }
+    public Command sysid_elevatorQuasistatic(SysIdRoutine.Direction direction){
+        return m_elevatorSysIdRoutine.quasistatic(direction);
     }
 
     public Command setL1(){
         return Commands.parallel(
-            Commands.run(()->setElevatorPosition(ScoreState.L1)),
+            Commands.runOnce(()->setElevatorPosition(ScoreState.L1)),
             Commands.print("Setting Elevator to L1")
         );
     }
     public Command setL2(){
         return Commands.parallel(
-            Commands.run(()->setElevatorPosition(ScoreState.L2)),
+            Commands.runOnce(()->setElevatorPosition(ScoreState.L2)),
             Commands.print("Setting Elevator to L2")
         );
     }
     public Command setL3(){
         return Commands.parallel(
-            Commands.run(()->setElevatorPosition(ScoreState.L3)),
+            Commands.runOnce(()->setElevatorPosition(ScoreState.L3)),
             Commands.print("Setting Elevator to L3")
         );
     }
     public Command setL4(){
         return Commands.parallel(
-            Commands.run(()->setElevatorPosition(ScoreState.L4)),
+            Commands.runOnce(()->setElevatorPosition(ScoreState.L4)),
             Commands.print("Setting Elevator to L4")
         );
     }
@@ -172,7 +185,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_elevatorLeft.setPosition(elevatorSim.getPositionMeters());
         simVelocity = elevatorSim.getVelocityMetersPerSecond();
 
-        elevatorLigament2d.setLength(getElevatorPosition());
+        elevatorLigament2d.setLength(getLeftElevatorPosition());
         SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
         SmartDashboard.putNumber("elevator velocity", simVelocity);
         SmartDashboard.putNumber("test", 1);
@@ -182,15 +195,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic(){
         
-        SmartDashboard.putNumber("Elevator/elevatorPosition", getElevatorPosition());
-        SmartDashboard.putNumber("Elevator Velocity", getElevatorVelocity());
-        elevatorLigament2d.setLength(getElevatorPosition());
+        SmartDashboard.putNumber("Elevator/elevatorPosition", getLeftElevatorPosition());
+        SmartDashboard.putNumber("Elevator Velocity", getLeftElevatorVelocity());
+        SmartDashboard.putNumber("Elevator/Voltage", m_elevatorLeft.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Elevator/elevatorRightPosition", getRightElevatorPosition());
+        elevatorLigament2d.setLength(getLeftElevatorPosition());
         SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
+        SmartDashboard.putNumber("Elevator/ Rotations" ,m_elevatorLeft.getPosition().getValueAsDouble());
         
     }
 
     public void updateTelemetry(){
-        elevatorLigament2d.setLength(getElevatorPosition());
+        elevatorLigament2d.setLength(getLeftElevatorPosition());
         
     }
 
