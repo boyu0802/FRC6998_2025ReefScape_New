@@ -158,6 +158,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setElevatorPosition(ScoreState state) {
         setElevatorPosition(state.elevatorPosition);
     }
+    public void increaseElevatorPosition(double position) {
+        setElevatorPosition(currentPosition + 0.05);
+    }
+    public void decreaseElevatorPosition(double position) {
+        setElevatorPosition(currentPosition - 0.05);
+    }
     public double elevatorPositiontoRotations(double position){
         return position/ELEVATOR_LENGTH;
     }
@@ -218,6 +224,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         );
     }
 
+
+    public Command increaseElevatorPositionCmd(){
+        return Commands.parallel(
+            Commands.runOnce(()->increaseElevatorPosition(0.05)),
+            Commands.print("increaseElevatorPositionCmd")
+        
+            
+        );
+    }
+
+    public Command decreaseElevatorPositionCmd(){
+        return Commands.parallel(
+            Commands.runOnce(()->decreaseElevatorPosition(0.05)),
+            Commands.print("decreaseElevatorPositionCmd")
+        
+            
+        );
+    }
+    
     
     @Override
     public void periodic(){

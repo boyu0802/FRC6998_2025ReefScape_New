@@ -59,6 +59,7 @@ public class RobotContainer {
     private final CommandXboxController testController = new CommandXboxController(1);
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
+    private final CommandXboxController testController3 = new CommandXboxController(3);
     
 
 
@@ -163,7 +164,8 @@ public class RobotContainer {
         testController2.start().and(testController2.povRight()).whileTrue(grabSubsystem.sysid_wristQuasistatic(Direction.kForward));
         testController2.start().and(testController2.povLeft()).whileTrue(grabSubsystem.sysid_wristQuasistatic(Direction.kReverse));
 
-
+        testController3.povUp().onTrue(elevatorSubsystem.increaseElevatorPositionCmd());
+        testController3.povDown().onTrue(elevatorSubsystem.decreaseElevatorPositionCmd());
 
         
         SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());
