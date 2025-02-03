@@ -226,7 +226,7 @@ public class CoralSubsystem extends SubsystemBase {
     public Command collectAlgaeWithoutVision() {
         return Commands.sequence(
                 Commands.print("running algae intake"),
-                Commands.runOnce(()->setCoralIntakeVelocity(30)),
+                Commands.runOnce(()->setCoralIntakeVelocity(20)),
                 //Commands.waitUntil(this::getCoralLimit),
                 Commands.waitSeconds(2.0),
                 Commands.runOnce(()->setCoralIntakeVelocity(6.5)),

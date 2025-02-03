@@ -20,6 +20,7 @@ public class RobotMap {
 
     public static final CANDeviceId HANG_ID = new CANDeviceId(12);
     public static final CANDeviceId CATCH_HANG_ID = new CANDeviceId(2);
+    public static final CANDeviceId HANG_ENCODER_ID = new CANDeviceId(6);
 
 
 

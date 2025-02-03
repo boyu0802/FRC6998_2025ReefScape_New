@@ -93,9 +93,9 @@ public class Constants {
                     .withKA(CORAL_WRIST_KA)
                     .withKG(CORAL_WRIST_KG))
             .withMotionMagic(new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(7.5)
-                    .withMotionMagicAcceleration(15)
-                    .withMotionMagicJerk(150))
+                    .withMotionMagicCruiseVelocity(15)
+                    .withMotionMagicAcceleration(30)
+                    .withMotionMagicJerk(300))
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_FORWARD_SOFT_LIMIT))
@@ -131,22 +131,24 @@ public class Constants {
 
        
 
-        public static final double ELEVATOR_LENGTH = 0.06/Math.PI;
-        public static final double ELEVATOR_GEAR_RATIO = 9.0;
+        public static final double ELEVATOR_LENGTH = 0.06*2;
+        public static final double ELEVATOR_GEAR_RATIO = 9.0/ELEVATOR_LENGTH;
 
         // TODO : Need to be Tuned.
         public static final ElevatorFeedforward ELEVATOR_FEED_FORWARD = new ElevatorFeedforward(0.4, 0, 0.4,0);
 
         public static final double ELEVATOR_MAX_LENGTH = 1.3;
-        public static final double ELEVATOR_MIN_LENGTH = 0.01;
+        public static final double ELEVATOR_MIN_LENGTH = 0.0;
 
         public static final double ELEVATOR_KS = 0.26859/12;
         public static final double ELEVATOR_KV = 10.923/12;
         public static final double ELEVATOR_KA = 1.7629/12;
         public static final double ELEVATOR_KG = 0.24228/12;
 
+        public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
 
-        public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(58.629, 0, 16.814);
+
+        public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(56.629, 0, 0.16814);
 
         public static final TalonFXConfiguration ELEVATOR_CONFIG_L = new TalonFXConfiguration()
             .withCurrentLimits(
@@ -175,14 +177,15 @@ public class Constants {
                     .withKA(ELEVATOR_KA))
 
                 .withMotionMagic(new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(5.0)
-                    .withMotionMagicAcceleration(10.0)
-                    .withMotionMagicJerk(100))
+                    .withMotionMagicCruiseVelocity(1.0)
+                    .withMotionMagicAcceleration(2.0)
+                    //.withMotionMagicJerk(20.0)
+                    )
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
-                    .withForwardSoftLimitThreshold(ELEVATOR_MAX_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                    .withForwardSoftLimitThreshold(ELEVATOR_MAX_LENGTH)
                     .withReverseSoftLimitEnable(true)
-                    .withReverseSoftLimitThreshold(ELEVATOR_MIN_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                    .withReverseSoftLimitThreshold(ELEVATOR_MIN_LENGTH)
                 );
             
             public static final TalonFXConfiguration ELEVATOR_CONFIG_R = new TalonFXConfiguration()
@@ -211,14 +214,15 @@ public class Constants {
                         .withKV(ELEVATOR_KV)
                         .withKA(ELEVATOR_KA))
                     .withMotionMagic(new MotionMagicConfigs()
-                        .withMotionMagicCruiseVelocity(5.0)
-                        .withMotionMagicAcceleration(10.0)
-                        .withMotionMagicJerk(100))
+                        .withMotionMagicCruiseVelocity(1.0)
+                        .withMotionMagicAcceleration(2.0)
+                        //.withMotionMagicJerk(20.0)
+                        )
                     .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitEnable(true)
-                        .withForwardSoftLimitThreshold(ELEVATOR_MAX_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                        .withForwardSoftLimitThreshold(ELEVATOR_MAX_LENGTH)
                         .withReverseSoftLimitEnable(true)
-                        .withReverseSoftLimitThreshold(ELEVATOR_MIN_LENGTH/ELEVATOR_LENGTH*ELEVATOR_GEAR_RATIO/(2*Math.PI))
+                        .withReverseSoftLimitThreshold(ELEVATOR_MIN_LENGTH)
                     );
 
 
@@ -242,18 +246,29 @@ public class Constants {
 
     public static final class HangConstants {
         public static final SparkFlexConfig CATCH_HANG_CONFIG = new SparkFlexConfig();
-        public static final TalonFXConfiguration HANG_CONFIG = new TalonFXConfiguration();
-
         public static final double HANG_LENGTH = 34.176;
-        public static final double HANG_GEAR_RATIO = 275.0/3.0;
+        public static final double HANG_GEAR_RATIO = 100.0;
         public static final double CATCH_HANG_GEAR_RATIO = 1.0;
+        
 
         // TODO : Need to be Tuned.
         public static final SimpleMotorFeedforward HANG_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
         public static final ArmFeedforward CATCH_HANG_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
 
-        public static final PIDConfig HANG_FEEDBACK = new PIDConfig(0, 0, 0);
-        public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0, 0, 0);
+        public static final PIDConfig HANG_FEEDBACK = new PIDConfig(46.763, 0, 0.37275);
+        public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0.0015, 0, 0,0.011);
+
+        public static final double HANG_KS = 0.25775/12;
+        public static final double HANG_KV = 10.559/12;
+        public static final double HANG_KA = 0.50971/12;
+        public static final double HANG_KG = 0.10225/12;
+
+        public static final double CATCH_HANG_INTAKE_VELOCITY = 10.0;
+
+        public static final double HANG_FORWARD_LIMIT = 135.0;
+        public static final double HANG_REVERSE_LIMIT = -45.0;
+
+        public static final double HANG_ENCODER_OFFSET = 0.021728; 
 
         static {
             CATCH_HANG_CONFIG.encoder.positionConversionFactor(CATCH_HANG_GEAR_RATIO);
@@ -273,44 +288,79 @@ public class Constants {
                     .maxAcceleration(10000)
                     .allowedClosedLoopError(0.25);
         }
-        static {
-            CATCH_HANG_FEEDBACK.updatePidConfig(HANG_CONFIG);
-            HANG_CONFIG.Voltage
+
+        public static final TalonFXConfiguration HANG_CONFIG = new TalonFXConfiguration()
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimitEnable(true)
+                    .withStatorCurrentLimit(100))
+            .withVoltage(new VoltageConfigs()
                     .withPeakForwardVoltage(12)
-                    .withPeakReverseVoltage(-12);
-            HANG_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-            HANG_CONFIG.CurrentLimits.StatorCurrentLimit = 80;
-            HANG_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-            HANG_CONFIG.MotorOutput.NeutralMode = Brake;
-            HANG_CONFIG.Feedback.SensorToMechanismRatio = HANG_GEAR_RATIO;
-            HANG_CONFIG.ClosedLoopGeneral.ContinuousWrap = true;
+                    .withPeakReverseVoltage(-12))
+            .withFeedback(new FeedbackConfigs()
+                    .withSensorToMechanismRatio(HANG_GEAR_RATIO))
+                    .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                    .withContinuousWrap(true))
+            .withMotorOutput(new MotorOutputConfigs()
+                    .withInverted(InvertedValue.Clockwise_Positive)
+                    .withNeutralMode(Brake))
 
-            HANG_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            HANG_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.4;
-            HANG_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            HANG_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.4;
-        }
+            .withSlot0(new Slot0Configs()
+                    .withKP(HANG_FEEDBACK.P)
+                    .withKI(HANG_FEEDBACK.I)
+                    .withKD(HANG_FEEDBACK.D)
+                    .withGravityType(GravityTypeValue.Arm_Cosine)
+                    .withKS(HANG_KS)
+                    .withKV(HANG_KV)
+                    .withKA(HANG_KA)
+                    .withKG(HANG_KG))
+            .withMotionMagic(new MotionMagicConfigs()
+                    .withMotionMagicCruiseVelocity(0.01)
+                    .withMotionMagicAcceleration(0.02)
+                    .withMotionMagicJerk(0.2))
+            .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                    .withForwardSoftLimitEnable(true)
+                    .withForwardSoftLimitThreshold(Units.degreesToRotations(HANG_FORWARD_LIMIT))
+                    .withReverseSoftLimitEnable(true)
+                    .withReverseSoftLimitThreshold(Units.degreesToRotations(HANG_REVERSE_LIMIT)));
 
-        public static final class GrabSubsystem {
+        public static final CANcoderConfiguration HANG_ENCODER_CONFIG = new CANcoderConfiguration()
+            .withMagnetSensor(new MagnetSensorConfigs()
+                    .withMagnetOffset(HANG_ENCODER_OFFSET)
+                    .withAbsoluteSensorDiscontinuityPoint(0.5)
+                    .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+        
+
+        public static final class GrabConstants {
 
             public static final SparkFlexConfig GRAB_WRIST_CONFIG = new SparkFlexConfig();
             public static final SparkFlexConfig GRAB_INTAKE_CONFIG = new SparkFlexConfig();
 
             public static final double GRAB_WRIST_GEAR_RATIO = 1.0 / 75.0;
-            public static final double GRAB_INTAKE_GEAR_RATIO = 1.0 / 5;
+            public static final double GRAB_INTAKE_GEAR_RATIO = 1.0 / 5.0;
+
+            public static final double GRAB_KS = 1.1968/12;
+            public static final double GRAB_KV = 8.7628/12;
+            public static final double GRAB_KA = 1.2756/12;
+            public static final double GRAB_KG = 2.1732/12;
+
             
 
             // TODO : Need to be Tuned.
-            public static final SimpleMotorFeedforward GRAB_INTAKE_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
-            public static final ArmFeedforward GRAB_WRIST_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
+            //public static final SimpleMotorFeedforward GRAB_INTAKE_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
+            public static final ArmFeedforward GRAB_WRIST_FEED_FORWARD = new ArmFeedforward(GRAB_KS, GRAB_KG, GRAB_KV,GRAB_KA);
 
-            public static final PIDConfig GRAB_INTAKE_FEEDBACK = new PIDConfig(0, 0, 0);
-            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0, 0, 0);
+            public static final PIDConfig GRAB_INTAKE_FEEDBACK = new PIDConfig(0.0004, 0, 0.00001,0.00098);
+            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0.0323, 0, 0.00001567);
+
+            public static final double GRAB_WRIST_OFFSET_TOZERO = 93.4;
+
+         
 
 
             static {
                 GRAB_INTAKE_CONFIG.encoder.positionConversionFactor(GRAB_INTAKE_GEAR_RATIO);
-                GRAB_INTAKE_CONFIG.encoder.velocityConversionFactor(GRAB_INTAKE_GEAR_RATIO /60);
+                GRAB_INTAKE_CONFIG.encoder.velocityConversionFactor(GRAB_INTAKE_GEAR_RATIO /60.0);
 
                 GRAB_INTAKE_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(40).voltageCompensation(12);
                 GRAB_INTAKE_CONFIG.closedLoop
@@ -318,30 +368,37 @@ public class Constants {
                         // Set PID values for elevatorPosition control
                         .apply(GRAB_INTAKE_FEEDBACK.createSparkMaxConfig())
                         .iZone(0)
-                        .outputRange(-1, 1)
-                        .maxMotion
-                        // Set MAXMotion parameters for elevatorPosition control
-                        .maxVelocity(2000)
-                        .maxAcceleration(10000)
-                        .allowedClosedLoopError(0.25);
+                        .outputRange(-1, 1);
             }
             static {
                 GRAB_WRIST_CONFIG.encoder.positionConversionFactor(GRAB_WRIST_GEAR_RATIO);
-                GRAB_WRIST_CONFIG.encoder.velocityConversionFactor(GRAB_WRIST_GEAR_RATIO /60);
+                GRAB_WRIST_CONFIG.encoder.velocityConversionFactor((GRAB_WRIST_GEAR_RATIO/60.0));
+                //GRAB_WRIST_CONFIG.encoder.positionConversionFactor(360);
+                GRAB_WRIST_CONFIG.absoluteEncoder.positionConversionFactor(1.0);
+                GRAB_WRIST_CONFIG.absoluteEncoder.velocityConversionFactor(1.0/60.0);
+                GRAB_WRIST_CONFIG.absoluteEncoder.zeroOffset(0.3629281);
+                GRAB_WRIST_CONFIG.absoluteEncoder.inverted(true);
 
-                GRAB_WRIST_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12);
+                GRAB_WRIST_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12).inverted(false)
+                .softLimit
+                    .forwardSoftLimit(Units.degreesToRotations(105f))
+                    .forwardSoftLimitEnabled(true)
+                    .reverseSoftLimit(Units.degreesToRotations(15f))
+                    .reverseSoftLimitEnabled(true);
                 GRAB_WRIST_CONFIG.closedLoop
-                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                         // Set PID values for elevatorPosition control
                         // TODO: Need To be Tuned.
                         .apply(GRAB_WRIST_FEEDBACK.createSparkMaxConfig())
                         .iZone(0)
                         .outputRange(-1, 1)
                         .maxMotion
-                        // Set MAXMotion parameters for elevatorPosition control
-                        .maxVelocity(2000)
-                        .maxAcceleration(10000)
-                        .allowedClosedLoopError(0.25);
+                        .maxVelocity(720)
+                        .maxAcceleration(2400)
+                        .allowedClosedLoopError(Units.degreesToRotations(5.0));
+                
+
+                
             }
 
 
@@ -355,8 +412,6 @@ public class Constants {
             public static final PIDController ALGAE_VISION_FEEDBACK = new PIDController(0, 0, 0);
             public static final double ALGAE_VISION_AIM_TOLERANCE = 0;
             public static final double ALGAE_VISION_AIM_INTEGRATOR_RANGE = 0.5;
-            
-
             
         }
 
