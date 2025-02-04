@@ -121,8 +121,8 @@ public class GrabSubsystem extends SubsystemBase {
         return Commands.runOnce(()-> setGrabWristPosition(10.0));}
     
 
-    public Command setGrabto75deg(){
-        return Commands.runOnce(()-> setGrabWristPosition(75.0));
+    public Command setGrabto80deg(){
+        return Commands.runOnce(()-> setGrabWristPosition(80.0));
     }
 
     

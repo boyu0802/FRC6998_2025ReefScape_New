@@ -1,7 +1,10 @@
 package frc.robot.subsystem.hang;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -39,6 +42,9 @@ public class HangSubsystem extends SubsystemBase {
     private final MutAngle hang_sysIdAngle = Rotations.mutable(0);
     private final MutAngularVelocity hang_sysIdVelocity = RotationsPerSecond.mutable(0);
 
+    private final VelocityVoltage m_velocityVoltage = new VelocityVoltage(0).withSlot(0).withEnableFOC(true);
+
+    private final PositionTorqueCurrentFOC m_TorqueCurrentFOC = new PositionTorqueCurrentFOC(0).withSlot(0);
 
 
     public HangSubsystem() {
@@ -112,6 +118,10 @@ public class HangSubsystem extends SubsystemBase {
     private void setCatchHangVelocity(double velocity){
         m_catchHang.getClosedLoopController().setReference(velocity,SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
+    public void setHangVelocity(double velocity){
+        m_hangMotor.setControl(m_TorqueCurrentFOC.withPosition(Units.degreesToRotations(120)).withVelocity(0.1));
+    }
+    
 
     
     public Command setHangto0deg(){
@@ -119,15 +129,17 @@ public class HangSubsystem extends SubsystemBase {
     
 
     public Command setHangto90deg(){
-        return Commands.runOnce(()-> setHangPosition(90));
+        return Commands.runOnce(()-> setHangPosition(120));
     }
     public Command catchHang(){
         return Commands.sequence(
-                Commands.runOnce(()-> setCatchHangVelocity(0.5)),
+                Commands.runOnce(()-> setCatchHangVelocity(5.0)),
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(()-> stopCatchIntake())
         );
     }
+
+    
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Hang/ catch hang velocity", getHangIntakeVelocity());
@@ -137,6 +149,8 @@ public class HangSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Hang/ Accel", m_hangMotor.getAcceleration().getValueAsDouble());
         SmartDashboard.putNumber("Hang/ hang current",m_hangMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("Hang/ hang torque current",m_hangMotor.getTorqueCurrent().getValueAsDouble());
+
+        SmartDashboard.putNumber("Hang/ hang velocity", m_hangMotor.getVelocity().getValueAsDouble());
     }
 
                 

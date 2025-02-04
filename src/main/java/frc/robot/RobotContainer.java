@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -56,7 +57,8 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.Velocity);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController testController = new CommandXboxController(1);
+    private final CommandXboxController testController = new 
+    CommandXboxController(1);
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
     private final CommandXboxController testController3 = new CommandXboxController(3);
@@ -68,7 +70,7 @@ public class RobotContainer {
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
-    //private final HangSubsystem hangSubsystem = new HangSubsystem();
+    private final HangSubsystem hangSubsystem = new HangSubsystem();
     
     
 
@@ -93,17 +95,19 @@ public class RobotContainer {
         elevatorSubsystem.updateTelemetry();
         drivetrain.setDefaultCommand(
           drivetrain.applyRequest(() ->
-            drive.withVelocityX(Math.copySign(joystick.getLeftY()*joystick.getLeftY(),-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(Math.copySign(joystick.getLeftX()*joystick.getLeftX(),-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+            drive
+            .withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
             ) // Drive counterclockwise with negative X (left)
     
         );
 
         joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
 
-        //93.4 0.3629281
+        
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
@@ -117,7 +121,7 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        
 
         //drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
@@ -155,14 +159,15 @@ public class RobotContainer {
         testController.start().onTrue(elevatorSubsystem.setL3());
         testController.back().onTrue(elevatorSubsystem.setL4());
         
-        testController2.leftBumper().onTrue(grabSubsystem.setGrabto10deg());
-        testController2.rightBumper().onTrue(grabSubsystem.setGrabto75deg());
+        testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
+        testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
         
 
-        testController2.start().and(testController2.povUp()).whileTrue(grabSubsystem.sysid_wristDynamic(Direction.kForward));
-        testController2.start().and(testController2.povDown()).whileTrue(grabSubsystem.sysid_wristDynamic(Direction.kReverse));
-        testController2.start().and(testController2.povRight()).whileTrue(grabSubsystem.sysid_wristQuasistatic(Direction.kForward));
-        testController2.start().and(testController2.povLeft()).whileTrue(grabSubsystem.sysid_wristQuasistatic(Direction.kReverse));
+        testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(120))));
+        testController2.start().and(testController2.povDown()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
+        testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(-30))));
+        testController2.povLeft().onTrue(hangSubsystem.catchHang());
+        
 
         testController3.povUp().onTrue(elevatorSubsystem.increaseElevatorPositionCmd());
         testController3.povDown().onTrue(elevatorSubsystem.decreaseElevatorPositionCmd());

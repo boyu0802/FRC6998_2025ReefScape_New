@@ -22,6 +22,7 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
 
   }
+  
 
   @Override
   public void robotPeriodic() {

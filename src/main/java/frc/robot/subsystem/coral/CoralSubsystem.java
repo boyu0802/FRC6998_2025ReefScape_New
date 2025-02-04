@@ -238,7 +238,7 @@ public class CoralSubsystem extends SubsystemBase {
         return Commands.sequence(
                 Commands.print("running algae output"),
                 Commands.runOnce(()->setCoralIntakeVelocity(30)),
-                Commands.waitSeconds(0.1),
+                Commands.waitSeconds(0.2),
                 Commands.runOnce(()->setCoralIntakeVelocity(-30)),
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(()->stopCoralIntake()),

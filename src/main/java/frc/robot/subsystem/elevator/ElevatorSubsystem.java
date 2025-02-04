@@ -1,12 +1,11 @@
 package frc.robot.subsystem.elevator;
 
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
+
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -49,13 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
     private final MotionMagicVoltage m_motionMagicVoltage = new MotionMagicVoltage(0.01);
-
-    private final TrapezoidProfile m_profile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(1.5, 3)
-     );
-
-    TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-    TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+    private final DigitalInput m_elevatorLimit = new DigitalInput(6);
 
     //private final PositionDutyCycle
 
@@ -91,6 +84,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem() {
         m_elevatorLeft.getConfigurator().apply(ELEVATOR_CONFIG_L);
         m_elevatorRight.getConfigurator().apply(ELEVATOR_CONFIG_R);
+        
         //m_elevatorLeft.setControl(elevator_positionTorque);
         
         // right using left as master
@@ -145,6 +139,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         return currentPosition;
     }
 
+    public void setSoftwareLimits(boolean forward , boolean reverse){
+        ELEVATOR_CONFIG_L.SoftwareLimitSwitch.ForwardSoftLimitEnable = forward;
+        ELEVATOR_CONFIG_L.SoftwareLimitSwitch.ReverseSoftLimitEnable = reverse;
+        ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ForwardSoftLimitEnable = forward;
+        ELEVATOR_CONFIG_R.SoftwareLimitSwitch.ReverseSoftLimitEnable = reverse;
+
+        m_elevatorLeft.getConfigurator().apply(ELEVATOR_CONFIG_L);
+        m_elevatorRight.getConfigurator().apply(ELEVATOR_CONFIG_R);
+    }   
+
     
     public boolean isAtSetpoint() {
     return (Math.abs(getLeftElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE);
@@ -196,6 +200,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Commands.parallel(
             Commands.runOnce(()->setElevatorPosition(ScoreState.L1)),
             Commands.print("Setting Elevator to L1")
+            
            
             
         );
@@ -213,12 +218,14 @@ public class ElevatorSubsystem extends SubsystemBase {
             Commands.print("Setting Elevator to L3")
             
             
+            
         );
     }
     public Command setL4(){
         return Commands.parallel(
             Commands.runOnce(()->setElevatorPosition(ScoreState.L4)),
             Commands.print("Setting Elevator to L4")
+            
         
             
         );
@@ -257,7 +264,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         //SmartDashboard.putNumber("Elevator/score state",elevatorPositiontoRotations(0.8));
         SmartDashboard.putNumber("Elevator/ Velocity", getLeftElevatorVelocity());
         SmartDashboard.putNumber("Elevator/ current position ", currentPosition);
-        SmartDashboard.putBoolean("Elevator/ setpoinr", isAtSetpoint());
+        SmartDashboard.putBoolean("Elevator/ setpoint", isAtSetpoint());
     }
 
     public void updateTelemetry(){
