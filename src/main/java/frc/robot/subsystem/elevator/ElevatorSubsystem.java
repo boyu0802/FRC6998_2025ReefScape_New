@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorConstants.ScoreState;
+import frc.robot.Constants.ScoreState;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.*;
@@ -223,11 +223,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     public Command setL4(){
         return Commands.parallel(
-            Commands.runOnce(()->setElevatorPosition(ScoreState.L4)),
-            Commands.print("Setting Elevator to L4")
-            
-        
-            
+                Commands.runOnce(()->setElevatorPosition(ScoreState.L4)),
+                Commands.print("Setting Elevator to L4")
+
+
+
+        );
+    }
+
+    public Command setStation(){
+        return Commands.parallel(
+                Commands.runOnce(()->setElevatorPosition(ScoreState.STATION)),
+                Commands.print("Setting Elevator to STATION")
+
+
+
         );
     }
 

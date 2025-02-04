@@ -18,11 +18,13 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.ElevatorConstants.ScoreState;
+import frc.robot.Constants.ScoreState;
+import frc.robot.commands.SetElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
@@ -71,6 +73,8 @@ public class RobotContainer {
 
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
+    private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
+
     
     
 
@@ -141,23 +145,39 @@ public class RobotContainer {
 
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
-        testController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
+        testController.povRight().onTrue(Commands.sequence(
+                coralSubsystem.outputCoralWithoutVision()
+                //Commands.waitSeconds(0.2),
+                //elevatorSubsystem.setL1()
+        ));
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
 
-        
-        
-        testController.a().whileTrue(coralSubsystem.wristToL1());
-        testController.b().whileTrue(coralSubsystem.wristToL2());
-        testController.y().whileTrue(coralSubsystem.wristToL3());
-        testController.x().whileTrue(coralSubsystem.wristToL4());
-        
-    
-        
-        
-        testController.leftBumper().onTrue(elevatorSubsystem.setL1());
-        testController.rightBumper().onTrue(elevatorSubsystem.setL2());
-        testController.start().onTrue(elevatorSubsystem.setL3());
-        testController.back().onTrue(elevatorSubsystem.setL4());
+
+
+        testController.a().onTrue(Commands.parallel(
+                coralSubsystem.wristToCoral(),
+                elevatorSubsystem.setL1()
+        ));
+        testController.b().onTrue(Commands.parallel(
+                coralSubsystem.wristToCoral(),
+                elevatorSubsystem.setL2()
+        ));
+        testController.y().onTrue(Commands.parallel(
+                coralSubsystem.wristToCoral(),
+                elevatorSubsystem.setL3()
+        ));
+        testController.x().onTrue(Commands.parallel(
+            coralSubsystem.wristToCoral(),
+                elevatorSubsystem.setL4()
+        ));
+        testController.leftBumper().onTrue(Commands.parallel(
+            coralSubsystem.wristToNormal(),
+                elevatorSubsystem.setL1()
+        ));
+        testController.rightBumper().onTrue(Commands.parallel(
+            coralSubsystem.wristToStation(),
+                elevatorSubsystem.setStation()
+        ));
         
         testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
         testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());

@@ -39,6 +39,55 @@ public class Constants {
         REPLAY
     }
 
+    public static enum ScoreState {
+        L1(0.05, 60.0),
+        L2(0.4, -45.0),
+        L3(0.8, -45.0),
+        L4(1.2, -45.0),
+        NORMAL(0.05, 90.0),
+        STATION(0.2, 30.0);
+
+        public double elevatorPosition;
+        public double armPosition;
+        private ScoreState(double elevatorPosition,double armPosition) {
+            this.elevatorPosition = elevatorPosition;
+            this.armPosition = armPosition;
+        }
+    }
+
+    public static enum RobotState {
+        PREP_L1,
+        SCORE_L1,
+        PREP_L2,
+        SCORE_L2,
+        PREP_L3,
+        SCORE_L3,
+        PREP_L4,
+        SCORE_L4,
+        NORMAL,
+        PREP_STATION,
+        SCORE_STATION,
+        HANG,
+        L2_ALGAE,
+        L3_ALGAE,
+        PREP_PROCESSOR,
+        SCORE_PROCESSOR,
+        RESET
+
+    }
+
+    public static enum TargetState {
+        PREP_L1,
+        PREP_L2,
+        PREP_L3,
+        PREP_L4,
+        NORMAL,
+        PREP_STATION,
+        PREP_PROCESSOR,
+        HANG,
+        RESET
+    }
+
     public static final class SwerveConstants {
         public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // m/s
         public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
@@ -230,21 +279,7 @@ public class Constants {
 
 
         //TODO : Need to be Tuned. & add degrees(?)
-        public static enum ScoreState {
-            L1(0.05, 60.0),
-            L2(0.4, 30.0),
-            L3(0.8, 0.0),
-            L4(1.2, -45.0),
-            NORMAL(0.0, 0.0),
-            STATION(1.0, 0.0),;
 
-            public double elevatorPosition;
-            public double armPosition;
-            private ScoreState(double elevatorPosition,double armPosition) {
-                this.elevatorPosition = elevatorPosition;
-                this.armPosition = armPosition;
-            }
-        }
     }
 
     public static final class HangConstants {

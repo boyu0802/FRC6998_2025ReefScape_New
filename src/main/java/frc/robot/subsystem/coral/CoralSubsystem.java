@@ -30,9 +30,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.util.Units.*;
-import static frc.robot.Constants.ElevatorConstants.ScoreState;
+import static frc.robot.Constants.ScoreState;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CoralConstants.*;
@@ -40,6 +41,7 @@ import static frc.robot.RobotMap.CORAL_INTAKE_ID;
 import static frc.robot.RobotMap.CORAL_WRIST_ID;
 import static frc.robot.RobotMap.CORAL_WRIST_ENCODER_ID;
 import static frc.robot.RobotMap.CORAL_INTAKE_LIMITSWITCH_ID;
+import static java.lang.Math.abs;
 
 //@Logged(name = "CoralSubsystem")
 public class CoralSubsystem extends SubsystemBase {
@@ -68,6 +70,8 @@ public class CoralSubsystem extends SubsystemBase {
     private final MutVoltage wrist_sysIdVoltage = Volts.mutable(0);
     private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);
     private final MutAngularVelocity wrist_sysIdVelocity = RotationsPerSecond.mutable(0);
+
+    private double targetPosition = 90.0;
 
 
 
@@ -146,6 +150,7 @@ public class CoralSubsystem extends SubsystemBase {
                 setReference(velocity, SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
     public void setCoralWristPosition(double position){
+        targetPosition = position;
         m_coralWrist.setControl(m_MotionMagicVoltage.withPosition(edu.wpi.first.math.util.Units.degreesToRotations(position)));
     }
 
@@ -168,6 +173,10 @@ public class CoralSubsystem extends SubsystemBase {
     }
     public void stopCoralIntake(){
         m_coralIntake.set(0.0);
+    }
+
+    public boolean getCoralWristAtSetpoint(){
+        return abs(edu.wpi.first.math.util.Units.rotationsToDegrees(m_coralWrist.getPosition().getValueAsDouble()) - targetPosition) < 2.5;
     }
 
 
@@ -246,19 +255,16 @@ public class CoralSubsystem extends SubsystemBase {
         );
     }
 
-    public Command wristToL1(){
+    public Command wristToCoral(){
         return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L1));
     }
-    public Command wristToL2(){
-        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L2));
-    }
-    public Command wristToL3(){
-        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L3));
-    }
-    public Command wristToL4(){
-        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L4));
-    }
 
+    public Command wristToStation(){
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.STATION));
+    }
+    public Command wristToNormal(){
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.NORMAL));
+    }
 
 
 
