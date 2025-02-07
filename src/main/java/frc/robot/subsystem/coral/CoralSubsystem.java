@@ -256,7 +256,7 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     public Command wristToCoral(){
-        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L1));
+        return Commands.runOnce(()-> setCoralWristPosition(ScoreState.L3));
     }
 
     public Command wristToStation(){

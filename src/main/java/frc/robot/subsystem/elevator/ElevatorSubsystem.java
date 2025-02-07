@@ -50,6 +50,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MotionMagicVoltage m_motionMagicVoltage = new MotionMagicVoltage(0.01);
     private final DigitalInput m_elevatorLimit = new DigitalInput(6);
 
+    
+
     //private final PositionDutyCycle
 
     final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
@@ -131,9 +133,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_elevatorLeft.setPosition(0);
         m_elevatorRight.setPosition(0);
     }
-    private void stopElevator(){
-        m_elevatorLeft.setControl(new NeutralOut());
-        m_elevatorRight.setControl(new NeutralOut());
+    public void stopElevator(){
+        m_elevatorLeft.setControl(elevator_voltageOut.withOutput(0));
+        m_elevatorRight.setControl(elevator_voltageOut.withOutput(0));
     }
     private double getTargetPosition(){
         return currentPosition;
@@ -147,7 +149,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         m_elevatorLeft.getConfigurator().apply(ELEVATOR_CONFIG_L);
         m_elevatorRight.getConfigurator().apply(ELEVATOR_CONFIG_R);
-    }   
+    }
+    
+    public boolean getElevatorLimit(){
+        return m_elevatorLimit.get();
+    }
+    public void setVoltage(double voltage){
+        m_elevatorLeft.setControl(elevator_voltageOut.withOutput(voltage));
+        m_elevatorRight.setControl(new Follower(m_elevatorLeft.getDeviceID(),true));
+    }
 
     
     public boolean isAtSetpoint() {
@@ -235,9 +245,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Commands.parallel(
                 Commands.runOnce(()->setElevatorPosition(ScoreState.STATION)),
                 Commands.print("Setting Elevator to STATION")
-
-
-
         );
     }
 
@@ -259,7 +266,11 @@ public class ElevatorSubsystem extends SubsystemBase {
             
         );
     }
-    
+
+    public void resetPosition(){
+        m_elevatorLeft.setPosition(0);
+        m_elevatorRight.setPosition(0);
+    }
     
     @Override
     public void periodic(){

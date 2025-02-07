@@ -26,7 +26,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+
 import edu.wpi.first.math.util.Units;
 import frc.lib.control.PIDConfig;
 import frc.robot.generated.TunerConstants;
@@ -41,11 +41,11 @@ public class Constants {
 
     public static enum ScoreState {
         L1(0.05, 60.0),
-        L2(0.4, -45.0),
-        L3(0.8, -45.0),
-        L4(1.2, -45.0),
+        L2(0.25, -45.0),
+        L3(0.65, -45.0),
+        L4(1.29, -45.0),
         NORMAL(0.05, 90.0),
-        STATION(0.2, 30.0);
+        STATION(0.2, 60.0);
 
         public double elevatorPosition;
         public double armPosition;
@@ -187,7 +187,7 @@ public class Constants {
         // TODO : Need to be Tuned.
         public static final ElevatorFeedforward ELEVATOR_FEED_FORWARD = new ElevatorFeedforward(0.4, 0, 0.4,0);
 
-        public static final double ELEVATOR_MAX_LENGTH = 1.3;
+        public static final double ELEVATOR_MAX_LENGTH = 1.42;
         public static final double ELEVATOR_MIN_LENGTH = 0.0;
 
         public static final double ELEVATOR_KS = 0.26859/12;
@@ -198,6 +198,11 @@ public class Constants {
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
         public static final double ELEVAROR_MAX_VELOCITY = 1.5;
         public static final double ELEVAROR_MAX_ACCEL = 3.0;
+
+        public static final double WITH_ZERO_TIMEOUT = 3.0;
+        public static final double ZEROED_VOLTAGE = (-1.0);
+        public static final double ZEROED_VELOCITY = -0.02;
+
 
 
         public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(56.629, 0, 0.16814);
@@ -387,6 +392,9 @@ public class Constants {
             public static final double GRAB_KV = 8.7628/12;
             public static final double GRAB_KA = 1.2756/12;
             public static final double GRAB_KG = 2.1732/12;
+
+
+            public static final double GRAB_INTAKE_VELOCITY = 250.0;
 
             
 

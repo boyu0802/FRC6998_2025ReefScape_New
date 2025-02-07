@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
-import frc.robot.commands.SetElevatorCommand;
+import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
@@ -55,7 +55,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
+            .withDeadband(MaxSpeed * 0.06).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
             .withDriveRequestType(DriveRequestType.Velocity);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
@@ -73,7 +73,7 @@ public class RobotContainer {
 
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
-    private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
+    //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
 
     
     
@@ -127,7 +127,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         
 
-        //drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
         
 
@@ -179,8 +179,17 @@ public class RobotContainer {
                 elevatorSubsystem.setStation()
         ));
         
+
+        joystick.povUp().onTrue(grabSubsystem.setGrabto10deg());
+        joystick.povDown().onTrue(grabSubsystem.setGrabto75deg());
+        joystick.povLeft().onTrue(grabSubsystem.collectWithoutVision());
+        joystick.povRight().onTrue(grabSubsystem.reverseWithoutVision());
+
+        
+        
         testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
         testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
+        testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
         
 
         testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(120))));
@@ -199,6 +208,11 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+    }
+
+    public Command zeroCommand() {
+        return new ZeroElevatorCommand(elevatorSubsystem).withTimeout(3.0);
+       
     }
     
 }
