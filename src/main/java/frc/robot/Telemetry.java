@@ -51,10 +51,7 @@ public class Telemetry {
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
 
 
-    private final NetworkTable elevatoNetworkTable = inst.getTable("elevatorState");
-    private final DoublePublisher elevatorPose = elevatoNetworkTable.getDoubleTopic("elevatorHeight").publish();
-
-    private final NetworkTable coralStateTable = inst.getTable("coralState");
+    
     private final DoublePublisher coralIntakeVelocity = inst.getDoubleTopic("CoralVelocity").publish();
 
     /* Robot pose for field positioning */

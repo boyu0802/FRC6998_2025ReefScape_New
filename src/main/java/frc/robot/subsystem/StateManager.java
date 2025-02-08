@@ -7,8 +7,7 @@ import java.lang.annotation.Target;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.SetCoralWristCommand;
 import frc.robot.commands.SetElevatorCommand;
@@ -71,12 +70,19 @@ public class StateManager {
     public Command ElevatorSequence(TargetState targetState,RobotState robotState) {
         
         
+        
         switch (targetState) {
             
             case PREP_L1:
                 System.out.println("PREP_L1 button pressed! Current state: " + getRobotState());
-                if (robotState == RobotState.PREP_L1) { 
+                if (getRobotState() == RobotState.PREP_L1) { 
                     // 第二次按下時，執行 SCORE_L1
+                    if(robotState!=RobotState.PREP_L1){
+                        if (robotState != RobotState.SCORE_L1) {  // 防止重複設置
+                            setRobotState(RobotState.SCORE_L1);
+                            System.out.println("Robot State updated to: " + getRobotState());
+                        }
+                    }
                     setRobotState(RobotState.SCORE_L1);
                     //elevatorSubsystem.setCurrentState(RobotState.SCORE_L1);
                     return Commands.sequence(
