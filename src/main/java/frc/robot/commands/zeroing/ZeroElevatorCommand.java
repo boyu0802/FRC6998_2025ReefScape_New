@@ -31,7 +31,7 @@ public class ZeroElevatorCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        elevator.setVoltage(-0.2);
+        elevator.setVoltage(-1);
     }
 
     // Called once the command ends or is interrupted.
@@ -50,7 +50,7 @@ public class ZeroElevatorCommand extends Command {
     @Override
     public boolean isFinished() {
         
-        return (elevator.getElevatorLimit() || timer.hasElapsed(3.0));
+        return (elevator.getElevatorLimit());
     }
 
     

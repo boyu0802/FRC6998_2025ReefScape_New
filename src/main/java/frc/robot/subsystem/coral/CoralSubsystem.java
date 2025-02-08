@@ -82,12 +82,14 @@ public class CoralSubsystem extends SubsystemBase {
                 CORAL_INTAKECONFIG,
                 SparkBase.ResetMode.kResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);
-
-        m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+                
         m_coralWristEncoder.getConfigurator().apply(CORAL_WRIST_ENCODER_CONFIG);
+        m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+        
         //m_coralWristEncoder.setPosition(0);
         m_coralIntake.getEncoder().setPosition(0);
         m_coralWrist.setPosition(getCoralAbsoultePosition());
+        
     }
 
     private final SysIdRoutine m_IntakesysIdRoutine =
@@ -225,9 +227,9 @@ public class CoralSubsystem extends SubsystemBase {
     public Command outputCoralWithoutVision() {
         return Commands.sequence(
                 Commands.print("running coral output"),
-                Commands.runOnce(()->setCoralIntakeVelocity(-7.5)),
+                Commands.runOnce(()->setCoralIntakeVelocity(-7.5),this),
                 Commands.waitSeconds(0.5),
-                Commands.runOnce(()->stopCoralIntake()),
+                Commands.runOnce(()->stopCoralIntake(),this),
                 Commands.print("coral outputted")
         );
     }

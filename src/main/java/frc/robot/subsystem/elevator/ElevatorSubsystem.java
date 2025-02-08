@@ -4,18 +4,19 @@ package frc.robot.subsystem.elevator;
 import com.ctre.phoenix6.controls.Follower;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.NeutralOut;
+
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -28,7 +29,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.RobotState;
 import frc.robot.Constants.ScoreState;
+import frc.robot.subsystem.StateManager;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.*;
@@ -49,6 +52,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private final MotionMagicVoltage m_motionMagicVoltage = new MotionMagicVoltage(0.01);
     private final DigitalInput m_elevatorLimit = new DigitalInput(6);
+
+    public RobotState currentRobotState = RobotState.RESET;
 
     
 
@@ -98,6 +103,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         //m_elevatorRight.setControl(new Follower(m_elevatorLeft.getDeviceID(),true));
 
         //SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
+        
 
     }
 
@@ -129,10 +135,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             
 
     
-    private void resetToZero() {
-        m_elevatorLeft.setPosition(0);
-        m_elevatorRight.setPosition(0);
-    }
+    
+    
     public void stopElevator(){
         m_elevatorLeft.setControl(elevator_voltageOut.withOutput(0));
         m_elevatorRight.setControl(elevator_voltageOut.withOutput(0));
@@ -152,7 +156,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     
     public boolean getElevatorLimit(){
-        return m_elevatorLimit.get();
+        return (!m_elevatorLimit.get());
     }
     public void setVoltage(double voltage){
         m_elevatorLeft.setControl(elevator_voltageOut.withOutput(voltage));
@@ -194,6 +198,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     public double getRightElevatorPosition(){
         return m_elevatorRight.getPosition().getValueAsDouble();
     }
+
+    public void resetPosition(){
+        m_elevatorLeft.setPosition(0);
+        m_elevatorRight.setPosition(0);
+    }
+
+    
+    
     
 
     public Command sysid_elevatorDynamic(SysIdRoutine.Direction direction){
@@ -204,48 +216,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     public BooleanSupplier isAtSetpointSupplier() {
         return this::isAtSetpoint;
-    }
-
-    public Command setL1(){
-        return Commands.parallel(
-            Commands.runOnce(()->setElevatorPosition(ScoreState.L1)),
-            Commands.print("Setting Elevator to L1")
-            
-           
-            
-        );
-    }
-    public Command setL2(){
-        return Commands.parallel(
-            Commands.runOnce(()->setElevatorPosition(ScoreState.L2)),
-            Commands.print("Setting Elevator to L2")
-           
-        );
-    }
-    public Command setL3(){
-        return Commands.parallel(
-            Commands.runOnce(()->setElevatorPosition(ScoreState.L3)),
-            Commands.print("Setting Elevator to L3")
-            
-            
-            
-        );
-    }
-    public Command setL4(){
-        return Commands.parallel(
-                Commands.runOnce(()->setElevatorPosition(ScoreState.L4)),
-                Commands.print("Setting Elevator to L4")
-
-
-
-        );
-    }
-
-    public Command setStation(){
-        return Commands.parallel(
-                Commands.runOnce(()->setElevatorPosition(ScoreState.STATION)),
-                Commands.print("Setting Elevator to STATION")
-        );
     }
 
 
@@ -267,10 +237,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         );
     }
 
-    public void resetPosition(){
-        m_elevatorLeft.setPosition(0);
-        m_elevatorRight.setPosition(0);
-    }
+    
+
     
     @Override
     public void periodic(){
@@ -278,7 +246,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator/elevatorPosition", getLeftElevatorPosition());
         SmartDashboard.putNumber("Elevator Velocity", getLeftElevatorVelocity());
         SmartDashboard.putNumber("Elevator/Voltage", m_elevatorLeft.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Elevator/elevatorRightPosition", getRightElevatorPosition());
+        SmartDashboard.putNumber("Elevator/elevatorRightP   osition", getRightElevatorPosition());
         elevatorLigament2d.setLength(getLeftElevatorPosition());
         SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
         SmartDashboard.putNumber("Elevator/ Rotations" ,m_elevatorLeft.getPosition().getValueAsDouble());
@@ -286,6 +254,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator/ Velocity", getLeftElevatorVelocity());
         SmartDashboard.putNumber("Elevator/ current position ", currentPosition);
         SmartDashboard.putBoolean("Elevator/ setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Elevator/ getLimit", getElevatorLimit());
+        //SmartDashboard.putString("Command : RobotState", getRobotState().toString());
     }
 
     public void updateTelemetry(){

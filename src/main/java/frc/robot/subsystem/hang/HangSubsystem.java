@@ -119,7 +119,7 @@ public class HangSubsystem extends SubsystemBase {
         m_catchHang.getClosedLoopController().setReference(velocity,SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
     public void setHangVelocity(double velocity){
-        m_hangMotor.setControl(m_TorqueCurrentFOC.withPosition(Units.degreesToRotations(120)).withVelocity(0.1));
+        m_hangMotor.setControl(m_TorqueCurrentFOC.withVelocity(velocity));
     }
     
 

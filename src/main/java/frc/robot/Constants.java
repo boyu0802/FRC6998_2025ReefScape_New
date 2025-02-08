@@ -2,6 +2,7 @@ package frc.robot;
 
 import static com.ctre.phoenix6.signals.NeutralModeValue.Brake;
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.RobotMap.CORAL_WRIST_ID;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.configs.VoltageConfigs;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -43,7 +45,7 @@ public class Constants {
         L1(0.05, 60.0),
         L2(0.25, -45.0),
         L3(0.65, -45.0),
-        L4(1.29, -45.0),
+        L4(1.275, -45.0),
         NORMAL(0.05, 90.0),
         STATION(0.2, 60.0);
 
@@ -67,6 +69,8 @@ public class Constants {
         NORMAL,
         PREP_STATION,
         SCORE_STATION,
+        PREP_NET,
+        SCORE_NET,
         HANG,
         L2_ALGAE,
         L3_ALGAE,
@@ -117,6 +121,13 @@ public class Constants {
 
 
         public static final SparkMaxConfig CORAL_INTAKECONFIG = new SparkMaxConfig();
+
+        public static final CANcoderConfiguration CORAL_WRIST_ENCODER_CONFIG = new CANcoderConfiguration()
+        .withMagnetSensor(new MagnetSensorConfigs()
+            .withMagnetOffset(CORAL_ENCODER_OFFSET)
+            .withAbsoluteSensorDiscontinuityPoint(0.5)
+            .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
+            
         public static final TalonFXConfiguration CORAL_WRISTCONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
@@ -126,8 +137,11 @@ public class Constants {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12))
             .withFeedback(new FeedbackConfigs()
+                    //.withFeedbackRemoteSensorID(CORAL_WRIST_ID.getDeviceNumber())
+                    //.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                     .withSensorToMechanismRatio(CORAL_WRIST_GEAR_RATIO))
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs())
+                    
                     //.withContinuousWrap(true))
             .withMotorOutput(new MotorOutputConfigs()
                     .withInverted(InvertedValue.Clockwise_Positive)
@@ -143,20 +157,16 @@ public class Constants {
                     .withKA(CORAL_WRIST_KA)
                     .withKG(CORAL_WRIST_KG))
             .withMotionMagic(new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(45)
-                    .withMotionMagicAcceleration(90)
-                    .withMotionMagicJerk(900))
+                    .withMotionMagicCruiseVelocity(60)
+                    .withMotionMagicAcceleration(120)
+                    .withMotionMagicJerk(1200))
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_FORWARD_SOFT_LIMIT))
                     .withReverseSoftLimitEnable(true)
                     .withReverseSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_REVERSE_SOFT_LIMIT)));
 
-        public static final CANcoderConfiguration CORAL_WRIST_ENCODER_CONFIG = new CANcoderConfiguration()
-            .withMagnetSensor(new MagnetSensorConfigs()
-                .withMagnetOffset(CORAL_ENCODER_OFFSET)
-                .withAbsoluteSensorDiscontinuityPoint(0.5)
-                .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
+       
 
         
 
@@ -290,7 +300,7 @@ public class Constants {
     public static final class HangConstants {
         public static final SparkFlexConfig CATCH_HANG_CONFIG = new SparkFlexConfig();
         public static final double HANG_LENGTH = 34.176;
-        public static final double HANG_GEAR_RATIO = 5000.0/33.0;
+        public static final double HANG_GEAR_RATIO = 5000.0/15.0;
         public static final double CATCH_HANG_GEAR_RATIO = 1.0;
         
 
@@ -299,7 +309,7 @@ public class Constants {
         //public static final ArmFeedforward CATCH_HANG_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
 
         public static final PIDConfig HANG_FEEDBACK = new PIDConfig(28.492, 0, 0.14901);
-        public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0.0005, 0, 0.00001,0.0292);
+        public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0.0105, 0, 0.0001,0.0105);
 
         public static final double HANG_KS = 0.22601/12;
         public static final double HANG_KV = 17.718/12;
@@ -322,7 +332,7 @@ public class Constants {
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                     // Set PID values for elevatorPosition control
                     // TODO: Need To be Tuned.
-                    .apply(HANG_FEEDBACK.createSparkMaxConfig())
+                    .apply(CATCH_HANG_FEEDBACK.createSparkMaxConfig())
                     .iZone(0)
                     .outputRange(-1, 1); 
                     
@@ -334,9 +344,9 @@ public class Constants {
         public static final TalonFXConfiguration HANG_CONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(120.0)
+                    .withStatorCurrentLimit(140.0)
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(120.0)
+                    .withSupplyCurrentLimit(140.0)
                     .withSupplyCurrentLimitEnable(true))
                        
             .withVoltage(new VoltageConfigs()
@@ -345,9 +355,9 @@ public class Constants {
             .withFeedback(new FeedbackConfigs()
                     .withSensorToMechanismRatio(HANG_GEAR_RATIO))
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
-                    .withContinuousWrap(true))
+                    .withContinuousWrap(false))
             .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)
+                    .withInverted(InvertedValue.Clockwise_Positive)
                     .withNeutralMode(Brake))
 
             .withSlot0(new Slot0Configs()
@@ -359,6 +369,7 @@ public class Constants {
                     .withKV(HANG_KV)
                     .withKA(HANG_KA)
                     .withKG(HANG_KG))
+            
             .withMotionMagic(new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(1.0)
                     .withMotionMagicAcceleration(2.0)

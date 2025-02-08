@@ -24,11 +24,14 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
+import frc.robot.Constants.TargetState;
+import frc.robot.commands.SetElevatorCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.hang.HangSubsystem;
+import frc.robot.subsystem.StateManager;
 import frc.robot.subsystem.algae.GrabSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
 
@@ -74,6 +77,7 @@ public class RobotContainer {
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
     //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
+    StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
 
     
     
@@ -142,7 +146,7 @@ public class RobotContainer {
 
         // TODO: test by controller. (change with different subsystems)
        
-
+        /* 
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
         testController.povRight().onTrue(Commands.sequence(
@@ -151,33 +155,17 @@ public class RobotContainer {
                 //elevatorSubsystem.setL1()
         ));
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
+        */
 
 
 
-        testController.a().onTrue(Commands.parallel(
-                coralSubsystem.wristToCoral(),
-                elevatorSubsystem.setL1()
-        ));
-        testController.b().onTrue(Commands.parallel(
-                coralSubsystem.wristToCoral(),
-                elevatorSubsystem.setL2()
-        ));
-        testController.y().onTrue(Commands.parallel(
-                coralSubsystem.wristToCoral(),
-                elevatorSubsystem.setL3()
-        ));
-        testController.x().onTrue(Commands.parallel(
-            coralSubsystem.wristToCoral(),
-                elevatorSubsystem.setL4()
-        ));
-        testController.leftBumper().onTrue(Commands.parallel(
-            coralSubsystem.wristToNormal(),
-                elevatorSubsystem.setL1()
-        ));
-        testController.rightBumper().onTrue(Commands.parallel(
-            coralSubsystem.wristToStation(),
-                elevatorSubsystem.setStation()
-        ));
+        testController.a().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L1,stateManager.getRobotState()));
+        testController.b().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L2, stateManager.getRobotState()));
+        testController.y().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L3, stateManager.getRobotState()));
+        testController.x().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L4, stateManager.getRobotState()));
+        testController.leftBumper().onTrue(stateManager.ElevatorSequence(TargetState.PREP_STATION, stateManager.getRobotState()));
+        testController.rightBumper().onTrue(stateManager.ElevatorSequence(TargetState.NORMAL, stateManager.getRobotState()));
+
         
 
         joystick.povUp().onTrue(grabSubsystem.setGrabto10deg());
@@ -190,11 +178,6 @@ public class RobotContainer {
         testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
         testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
         testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
-        
-
-        testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(120))));
-        testController2.start().and(testController2.povDown()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
-        testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(-30))));
         testController2.povLeft().onTrue(hangSubsystem.catchHang());
         
 
@@ -211,8 +194,12 @@ public class RobotContainer {
     }
 
     public Command zeroCommand() {
-        return new ZeroElevatorCommand(elevatorSubsystem).withTimeout(3.0);
+        return new ZeroElevatorCommand(elevatorSubsystem);
        
+    }
+
+    public boolean isZeroed() {
+        return elevatorSubsystem.getElevatorLimit();
     }
     
 }
