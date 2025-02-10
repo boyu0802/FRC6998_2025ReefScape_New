@@ -16,23 +16,33 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
+import frc.robot.subsystem.vision.VisionState;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private VisionState state;   
+
+    private Field2d field = new Field2d();
+
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -124,9 +134,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
+        VisionState state,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, modules);
+        this.state = state;
+        SmartDashboard.putData("poseEst",field);
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -148,10 +161,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
+        VisionState state,
         double odometryUpdateFrequency,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
+        this.state = state;
+        SmartDashboard.putData("poseEst",field);
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -179,12 +195,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
+        VisionState state,
         double odometryUpdateFrequency,
-        Matrix<N3, N1> odometryStandardDeviation    ,
+        Matrix<N3, N1> odometryStandardDeviation,
         Matrix<N3, N1> visionStandardDeviation,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+        this.state = state;
+        SmartDashboard.putData("poseEst",field);
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -218,6 +237,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         } catch (Exception ex) {
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
+    }
+
+    public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+        addVisionMeasurement(
+            visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+            Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
+            visionFieldPoseEstimate.getVisionMeasurementStdDevs()
+        );
     }
 
     /**
@@ -271,8 +298,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        state.addDriveMeasurement(Timer.getTimestamp(), getPigeon2().getAngularVelocityZWorld().getValueAsDouble(), getKinematics().toChassisSpeeds(getState().ModuleStates), ChassisSpeeds.fromRobotRelativeSpeeds(getKinematics().toChassisSpeeds(getState().ModuleStates),getState().Pose.getRotation()));
+
+        field.setRobotPose(getState().Pose);
+        SmartDashboard.putNumber("pose est X: ", getState().Pose.getX());
+        SmartDashboard.putNumber("pose est Y:", getState().Pose.getY());
+
         
     }
+
+    
 
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();

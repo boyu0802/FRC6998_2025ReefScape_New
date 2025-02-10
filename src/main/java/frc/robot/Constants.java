@@ -51,7 +51,7 @@ public class Constants {
         L3(0.65, -45.0),
         L4(1.275, -45.0),
         NORMAL(0.05, 90.0),
-        STATION(0.2, 60.0);
+        STATION(0.15, 40.0);
 
         public double elevatorPosition;
         public double armPosition;
@@ -323,9 +323,9 @@ public class Constants {
         public static final double CATCH_HANG_INTAKE_VELOCITY = 10.0;
 
         public static final double HANG_FORWARD_LIMIT = 135.0;
-        public static final double HANG_REVERSE_LIMIT = -45.0;
+        public static final double HANG_REVERSE_LIMIT = 0.0;
 
-        public static final double HANG_ENCODER_OFFSET = -0.481934; 
+        public static final double HANG_ENCODER_OFFSET = -0.48193359375; 
 
         static {
             CATCH_HANG_CONFIG.encoder.positionConversionFactor(CATCH_HANG_GEAR_RATIO);
@@ -506,7 +506,7 @@ public class Constants {
             public static final double upperLLyaw = 0.0; //TODO: find values
             public static final Rotation2d upperLLToRobotTheta = new Rotation2d(); //TODO: find values
 
-            public static final Matrix<N3,N1> odometryStdDev = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.1)); //TODO: find values 
+            public static final Matrix<N3,N1> odometryStdDev = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(0.1)); //TODO: find values 
             public static final Matrix<N3,N1> visionStdDev = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(1.0)); //TODO: find values
 
             //Todo: get PID VALUES 

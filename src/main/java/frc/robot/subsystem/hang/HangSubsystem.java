@@ -125,16 +125,16 @@ public class HangSubsystem extends SubsystemBase {
 
     
     public Command setHangto0deg(){
-        return Commands.runOnce(()-> setHangPosition(0));}
+        return Commands.runOnce(()-> setHangPosition(10));}
     
 
     public Command setHangto90deg(){
-        return Commands.runOnce(()-> setHangPosition(120));
+        return Commands.runOnce(()-> setHangPosition(125));
     }
     public Command catchHang(){
         return Commands.sequence(
-                Commands.runOnce(()-> setCatchHangVelocity(5.0)),
-                Commands.waitSeconds(0.5),
+                Commands.runOnce(()-> setCatchHangVelocity(10.0)),
+                Commands.waitSeconds(1.0),
                 Commands.runOnce(()-> stopCatchIntake())
         );
     }
