@@ -142,7 +142,7 @@ public class Constants {
                     .withPeakReverseVoltage(-12))
             .withFeedback(new FeedbackConfigs()
                     //.withFeedbackRemoteSensorID(CORAL_WRIST_ID.getDeviceNumber())
-                    //.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                    .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                     .withSensorToMechanismRatio(CORAL_WRIST_GEAR_RATIO))
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs())
                     
@@ -506,7 +506,7 @@ public class Constants {
             public static final double upperLLyaw = 0.0; //TODO: find values
             public static final Rotation2d upperLLToRobotTheta = new Rotation2d(); //TODO: find values
 
-            public static final Matrix<N3,N1> odometryStdDev = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.1)); //TODO: find values 
+            public static final Matrix<N3,N1> odometryStdDev = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.5)); //TODO: find values 
             public static final Matrix<N3,N1> visionStdDev = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(1.0)); //TODO: find values
 
             //Todo: get PID VALUES 
@@ -561,8 +561,6 @@ public class Constants {
                     return value;
                 }
             }
-
-                    
         }
 
     }

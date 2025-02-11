@@ -25,7 +25,7 @@ public class DriveToPose extends Command {
 
 
     public DriveToPose(CommandSwerveDrivetrain drive, VisionState state, Supplier<Pose2d> targetPose) {
-         this.drive = drive;
+        this.drive = drive;
         this.targetPose = targetPose;
         this.state = state;
         rotController.enableContinuousInput(-Math.PI, Math.PI);

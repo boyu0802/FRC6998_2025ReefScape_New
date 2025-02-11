@@ -31,6 +31,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.hang.HangSubsystem;
+import frc.robot.subsystem.vision.VisionState;
 import frc.robot.subsystem.StateManager;
 import frc.robot.subsystem.algae.GrabSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
@@ -68,6 +69,7 @@ public class RobotContainer {
     private final CommandXboxController testController2 = new CommandXboxController(2);
     private final CommandXboxController testController3 = new CommandXboxController(3);
     
+    //VisionState visionState = new VisionState()
 
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -146,7 +148,7 @@ public class RobotContainer {
 
         // TODO: test by controller. (change with different subsystems)
        
-        /* 
+        
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
         testController.povRight().onTrue(Commands.sequence(
@@ -155,7 +157,7 @@ public class RobotContainer {
                 //elevatorSubsystem.setL1()
         ));
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
-        */
+        
 
 
 
