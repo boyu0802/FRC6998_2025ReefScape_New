@@ -26,12 +26,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.SetElevatorCommand;
+import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.hang.HangSubsystem;
+import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 import frc.robot.subsystem.vision.VisionState;
+import frc.robot.subsystem.vision.VisionSubsystem;
 import frc.robot.subsystem.StateManager;
 import frc.robot.subsystem.algae.GrabSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
@@ -39,6 +42,7 @@ import frc.robot.subsystem.coral.CoralSubsystem;
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -68,11 +72,20 @@ public class RobotContainer {
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
     private final CommandXboxController testController3 = new CommandXboxController(3);
-    
-    //VisionState visionState = new VisionState()
+    private final Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer = new Consumer<VisionFieldPoseEstimate>() {
+        @Override
+        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+            drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+            SmartDashboard.putNumber("vision X into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
+            SmartDashboard.putNumber("vision Y into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
+            
+        }
+    };
 
+    private final VisionState visionState = new VisionState(visionFieldPoseEstimateConsumer);
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionState);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(visionState);
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
@@ -81,7 +94,7 @@ public class RobotContainer {
     //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
     StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
 
-    
+
     
 
 
@@ -122,6 +135,7 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

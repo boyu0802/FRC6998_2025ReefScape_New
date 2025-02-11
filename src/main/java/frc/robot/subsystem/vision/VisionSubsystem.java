@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.limelight.LimelightHelpers;
 import frc.lib.limelight.LimelightHelpers.RawFiducial;
@@ -54,7 +55,7 @@ public class VisionSubsystem extends SubsystemBase{
                 }
                 lastTimeStampBack = updateTimeStamp;
                 break;
-            case "limelight-elevator":
+            case "limelight-elevato":
                 if(updateTimeStamp == lastTimeStampElevator){
                     alreadyProccessed = true;
                 }
@@ -68,14 +69,27 @@ public class VisionSubsystem extends SubsystemBase{
         
 
             boolean usedMegaTag = false;
-                if(megaTagEstimate.isPresent() &&  shouldUseMegatag(megaTagPose)){
+            boolean usedMegaTag2 = false;
+                if(megaTagEstimate.isPresent()){
+                    if(shouldUseMegatag(megaTagPose)){
                     usedMegaTag = true;
+                    usedMegaTag2 = false;
                     visionState.addVisionFieldPoseEstimate(megaTagEstimate.get());
+                    System.out.println(usedMegaTag);
+                    }
                 }
             
-                if(megaTag2Estimate.isPresent() &&  shouldUseMegatag2(megaTag2Pose) && !usedMegaTag){
-                    visionState.addVisionFieldPoseEstimate(megaTag2Estimate.get());
+                if(megaTag2Estimate.isPresent() && !usedMegaTag){
+                    if(shouldUseMegatag2(megaTag2Pose) ){
+                        usedMegaTag = false;
+                        usedMegaTag2 = true;
+                        visionState.addVisionFieldPoseEstimate(megaTag2Estimate.get());
+                    }
                 }
+            SmartDashboard.putBoolean("use megatag", usedMegaTag);
+            SmartDashboard.putBoolean("should useMegatag", shouldUseMegatag(megaTagPose));
+            SmartDashboard.putBoolean("used MT2", usedMegaTag2);
+
         }
     } 
 
@@ -123,6 +137,7 @@ public class VisionSubsystem extends SubsystemBase{
     
     //Todo: test all std values
     public Optional<VisionFieldPoseEstimate> processMegaTag2PoseEst(LimelightHelpers.PoseEstimate poseEstimate,String LimelightName){
+                
         double timeStamp = poseEstimate.timestampSeconds;
         var realFieldToRobot = visionState.getFieldToRobot(timeStamp);
         if(realFieldToRobot.isEmpty()) return Optional.empty();

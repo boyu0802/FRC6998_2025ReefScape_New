@@ -7,6 +7,7 @@ import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 
 public class VisionState {
@@ -50,6 +51,10 @@ public class VisionState {
     }
 
     public void addVisionFieldPoseEstimate(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+        SmartDashboard.putNumber("estimator x",visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
+        SmartDashboard.putNumber("estimator y",visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
+        SmartDashboard.putNumber("estimator time",visionFieldPoseEstimate.getTimestampSeconds());
+        SmartDashboard.putString("estimator stdDev",visionFieldPoseEstimate.getVisionMeasurementStdDevs().toString());
         visionFieldPoseEstimateConsumer.accept(visionFieldPoseEstimate);
     }
 
