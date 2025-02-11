@@ -26,11 +26,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.SetElevatorCommand;
+import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.hang.HangSubsystem;
+import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
+import frc.robot.subsystem.vision.VisionState;
+import frc.robot.subsystem.vision.VisionSubsystem;
 import frc.robot.subsystem.StateManager;
 import frc.robot.subsystem.algae.GrabSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
@@ -38,6 +42,7 @@ import frc.robot.subsystem.coral.CoralSubsystem;
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -67,10 +72,20 @@ public class RobotContainer {
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
     private final CommandXboxController testController3 = new CommandXboxController(3);
-    
+    private final Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer = new Consumer<VisionFieldPoseEstimate>() {
+        @Override
+        public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
+            drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+            SmartDashboard.putNumber("vision X into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
+            SmartDashboard.putNumber("vision Y into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
+            
+        }
+    };
 
+    private final VisionState visionState = new VisionState(visionFieldPoseEstimateConsumer);
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionState);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(visionState);
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
@@ -79,7 +94,7 @@ public class RobotContainer {
     //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
     StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
 
-    
+
     
 
 
@@ -121,6 +136,7 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
+
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -146,7 +162,7 @@ public class RobotContainer {
 
         // TODO: test by controller. (change with different subsystems)
        
-        /* 
+        
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
         testController.povRight().onTrue(Commands.sequence(
@@ -155,9 +171,35 @@ public class RobotContainer {
                 //elevatorSubsystem.setL1()
         ));
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
+        
+
+        /* 
+
+        testController.a().onTrue(Commands.parallel(
+                coralSubsystem.wristToCoral(),
+                new SetElevatorCommand(ScoreState.L1, elevatorSubsystem)
+        ));
+        testController.b().onTrue(Commands.parallel(
+                coralSubsystem.wristToCoral(),
+                new SetElevatorCommand(ScoreState.L2, elevatorSubsystem)
+        ));
+        testController.y().onTrue(Commands.parallel(
+                coralSubsystem.wristToCoral(),
+                new SetElevatorCommand(ScoreState.L3, elevatorSubsystem)
+        ));
+        testController.x().onTrue(Commands.parallel(
+            coralSubsystem.wristToCoral(),
+            new SetElevatorCommand(ScoreState.L4, elevatorSubsystem)
+        ));
+        testController.leftBumper().onTrue(Commands.parallel(
+            coralSubsystem.wristToNormal(),
+            new SetElevatorCommand(ScoreState.NORMAL, elevatorSubsystem)
+        ));
+        testController.rightBumper().onTrue(Commands.parallel(
+            coralSubsystem.wristToStation(),
+            new SetElevatorCommand(ScoreState.STATION, elevatorSubsystem)
+        ));
         */
-
-
 
         testController.a().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L1,stateManager.getRobotState()));
         testController.b().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L2, stateManager.getRobotState()));

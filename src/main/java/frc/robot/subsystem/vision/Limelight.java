@@ -15,4 +15,14 @@ public class Limelight {
     public double getTY(){
         return LimelightHelpers.getTY(limelightName);
     }
+
+    public double getID(){
+        return LimelightHelpers.getFiducialID(limelightName);
+    }
+
+    public boolean getTv(){
+        return LimelightHelpers.getTV(limelightName);
+    }
+
+    
 }

@@ -41,12 +41,16 @@ public class DriveToPose extends Command {
     @Override
     public void execute(){
         Pose2d currentPose = state.getLatestFieldToRobot();
-        Pose2d target = targetPose.get();
         double yPoseError = targetPose.get().getY() - currentPose.getY();
         double xPoseError = targetPose.get().getX() - currentPose.getX();
         double thetaPoseError = targetPose.get().getRotation().getRadians() - currentPose.getRotation().getRadians();
 
-        drive.setControl(driveRequest.withVelocityX(xTranslationController.calculate(xPoseError,0.0)).withVelocityY(yTranslationController.calculate(yPoseError, 0.0)).withRotationalRate(rotController.calculate(thetaPoseError, 0.0)));
+        drive.setControl(
+            driveRequest
+                .withVelocityX(xTranslationController.calculate(xPoseError,0.0))
+                .withVelocityY(yTranslationController.calculate(yPoseError, 0.0))
+                .withRotationalRate(rotController.calculate(thetaPoseError, 0.0))
+        );
 
     }
 
