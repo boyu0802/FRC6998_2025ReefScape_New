@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.limelight.LimelightHelpers;
@@ -34,12 +35,26 @@ public class VisionSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front"),"limelight-front" );
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-back"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"), "limelight-back");
+        //updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front"),"limelight-front" );
+        //updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-back"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"), "limelight-back");
+        
         updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-elevato"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-elevato"), "limelight-elevato");
+        LimelightHelpers.SetRobotOrientation("limelight-elevato",visionState.getPigeonYaw(),0,0,0,0,0);        
+
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front"), "limelight-front");
+        LimelightHelpers.SetRobotOrientation("limelight-front",visionState.getPigeonYaw(),0,0,0,0,0);        
+
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-back"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"), "limelight-back");
+        LimelightHelpers.SetRobotOrientation("limelight-back",visionState.getPigeonYaw(),0,0,0,0,0);        
+        
+        
+        //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
+        //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
     }
 
     public void updateVision(LimelightHelpers.PoseEstimate megaTagPose, LimelightHelpers.PoseEstimate megaTag2Pose, String LimelightName){
+        //Double timeisNull = megaTagPose.timestampSeconds;
+        if(megaTagPose == null || megaTag2Pose == null) {return ;}
         var updateTimeStamp = megaTagPose.timestampSeconds;
         boolean alreadyProccessed = false;
         switch(LimelightName){
@@ -96,7 +111,7 @@ public class VisionSubsystem extends SubsystemBase{
     
     public boolean shouldUseMegatag(LimelightHelpers.PoseEstimate megaTagPose){
         double timeStamp = megaTagPose.timestampSeconds;
-        var angularYawVelo = visionState.getAngularYawVelocity(timeStamp - 0.1, timeStamp);
+        var angularYawVelo = visionState.getGreatestAngularYawVelocity(timeStamp - 0.1, timeStamp);
         if(angularYawVelo.isPresent() && Math.abs(angularYawVelo.get())>Units.degreesToRadians(200)){
             return false;
         }
@@ -119,8 +134,9 @@ public class VisionSubsystem extends SubsystemBase{
     }
 
     public boolean shouldUseMegatag2(LimelightHelpers.PoseEstimate megaTagPose){
+        
         double timeStamp = megaTagPose.timestampSeconds;
-        var angularYawVelo = visionState.getAngularYawVelocity(timeStamp - 0.1, timeStamp);
+        var angularYawVelo = visionState.getGreatestAngularYawVelocity(timeStamp - 0.1, timeStamp);
         if(angularYawVelo.isPresent() && Math.abs(angularYawVelo.get())>Units.degreesToRadians(200)){
                 return false;
         }
@@ -137,7 +153,6 @@ public class VisionSubsystem extends SubsystemBase{
     
     //Todo: test all std values
     public Optional<VisionFieldPoseEstimate> processMegaTag2PoseEst(LimelightHelpers.PoseEstimate poseEstimate,String LimelightName){
-                
         double timeStamp = poseEstimate.timestampSeconds;
         var realFieldToRobot = visionState.getFieldToRobot(timeStamp);
         if(realFieldToRobot.isEmpty()) return Optional.empty();

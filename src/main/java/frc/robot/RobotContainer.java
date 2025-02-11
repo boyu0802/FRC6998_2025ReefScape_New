@@ -207,7 +207,8 @@ public class RobotContainer {
         testController.x().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L4, stateManager.getRobotState()));
         testController.leftBumper().onTrue(stateManager.ElevatorSequence(TargetState.PREP_STATION, stateManager.getRobotState()));
         testController.rightBumper().onTrue(stateManager.ElevatorSequence(TargetState.NORMAL, stateManager.getRobotState()));
-
+        testController.start().onTrue(stateManager.ElevatorSequence(TargetState.ALGAE_L2, stateManager.getRobotState()));
+        testController.back().onTrue(stateManager.ElevatorSequence(TargetState.ALGAE_L3, stateManager.getRobotState()));
         
 
         joystick.povUp().onTrue(grabSubsystem.setGrabto10deg());
