@@ -50,6 +50,8 @@ public class Constants {
         L2(0.25, -45.0),
         L3(0.65, -45.0),
         L4(1.275, -45.0),
+        ALGAE_L2(0.45, -45.0), //todo: TEST
+        ALGAE_L3(0.9, -45.0),
         NORMAL(0.05, 90.0),
         STATION(0.15, 40.0);
 
@@ -92,6 +94,8 @@ public class Constants {
         NORMAL,
         PREP_STATION,
         PREP_PROCESSOR,
+        ALGAE_L2,
+        ALGAE_L3,
         HANG,
         RESET
     }
