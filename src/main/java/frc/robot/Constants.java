@@ -126,6 +126,9 @@ public class Constants {
         public static final double CORAL_WRIST_REVERSE_SOFT_LIMIT = -60.0;
 
         public static final double CORAL_ENCODER_OFFSET = 0.124755859375;
+        public static final double CORAL_WRIST_MAX_VELOCITY = 120.0;
+        public static final double CORAL_WRIST_MAX_ACCEL = 240.0;
+        public static final double CORAL_WRIST_MAX_JERK = 2400.0;
 
 
         public static final SparkMaxConfig CORAL_INTAKECONFIG = new SparkMaxConfig();
@@ -146,7 +149,7 @@ public class Constants {
                     .withPeakReverseVoltage(-12))
             .withFeedback(new FeedbackConfigs()
                     //.withFeedbackRemoteSensorID(CORAL_WRIST_ID.getDeviceNumber())
-                    .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                    //.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                     .withSensorToMechanismRatio(CORAL_WRIST_GEAR_RATIO))
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs())
                     
@@ -165,9 +168,9 @@ public class Constants {
                     .withKA(CORAL_WRIST_KA)
                     .withKG(CORAL_WRIST_KG))
             .withMotionMagic(new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(60)
-                    .withMotionMagicAcceleration(120)
-                    .withMotionMagicJerk(1200))
+                    .withMotionMagicCruiseVelocity(CORAL_WRIST_MAX_VELOCITY)
+                    .withMotionMagicAcceleration(CORAL_WRIST_MAX_ACCEL)
+                    .withMotionMagicJerk(CORAL_WRIST_MAX_JERK))
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_FORWARD_SOFT_LIMIT))
@@ -214,8 +217,8 @@ public class Constants {
         public static final double ELEVATOR_KG = 0.24228/12;
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
-        public static final double ELEVAROR_MAX_VELOCITY = 1.5;
-        public static final double ELEVAROR_MAX_ACCEL = 3.0;
+        public static final double ELEVAROR_MAX_VELOCITY = 2.5;
+        public static final double ELEVAROR_MAX_ACCEL = 5.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
         public static final double ZEROED_VOLTAGE = (-1.0);
