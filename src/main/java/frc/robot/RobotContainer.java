@@ -20,16 +20,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.ScoreState;
+
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.ReefStatePosition;
-import frc.robot.commands.SetElevatorCommand;
+
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
@@ -45,12 +44,9 @@ import frc.robot.subsystem.coral.CoralSubsystem;
 
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 
 public class RobotContainer {
@@ -166,8 +162,8 @@ public class RobotContainer {
             currentCoralCommand = coralIntakeCommand.chooseCommand();
             currentCoralCommand.schedule();
         }));
-        m_operatorController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
-        m_operatorController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
+        //m_operatorController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
+        //m_operatorController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         m_operatorController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         
 
@@ -205,14 +201,7 @@ public class RobotContainer {
             currentReefState = stateManager.SetReefState(TargetState.PREP_ALGAE_L3);
             currentReefState.schedule();
         }));
-        
-        
-        
-        
-
-        
-        
-
+    
         m_driveController.povUp().onTrue(grabSubsystem.setGrabto10deg());
         m_driveController.povDown().onTrue(grabSubsystem.setGrabto75deg());
         m_driveController.povLeft().onTrue(grabSubsystem.collectWithoutVision());

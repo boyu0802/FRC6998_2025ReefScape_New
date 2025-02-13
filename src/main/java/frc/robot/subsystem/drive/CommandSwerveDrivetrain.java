@@ -40,7 +40,7 @@ import frc.robot.subsystem.vision.VisionState;
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private VisionState state;   
-
+    
     private Field2d field = new Field2d();
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
@@ -120,7 +120,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -225,7 +225,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(10, 0, 0),
+                    new PIDConstants(3.7225, 0, 0.13656),
                     // PID constants for rotation
                     new PIDConstants(7, 0, 0)
                 ),
