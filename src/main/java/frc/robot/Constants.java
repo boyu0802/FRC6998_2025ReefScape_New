@@ -78,8 +78,10 @@ public class Constants {
         PREP_NET,
         SCORE_NET,
         HANG,
-        L2_ALGAE,
-        L3_ALGAE,
+        PREP_L2_ALGAE,
+        INTAKE_L2_ALGAE,
+        PREP_L3_ALGAE,
+        INTAKE_L3_ALGAE,
         PREP_PROCESSOR,
         SCORE_PROCESSOR,
         RESET
@@ -515,7 +517,7 @@ public class Constants {
 
             //Todo: get PID VALUES 
             public enum limelightStrafePID{
-                KP(0.06),
+                KP(0.6),
                 KI(0.0),
                 KD(0.0);
 
@@ -533,7 +535,7 @@ public class Constants {
 
             
             public enum limelightRotationPID{
-                KP(0.075),
+                KP(0.5),
                 KI(0.0),
                 KD(0.0);
 
@@ -551,7 +553,7 @@ public class Constants {
 
             
             public enum limelightTranslatePID{
-                KP(0.003),
+                KP(0.3),
                 KI(0.0),
                 KD(0.0);
 

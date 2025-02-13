@@ -1,6 +1,4 @@
 package frc.robot.commands.drive;
-//TODO: test between this and drive to pose which more accurate
-
 import java.util.Map;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -11,6 +9,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.vision.Limelight;
+
+// NOT USED
 
 public class DriveToReef extends Command{
     public static final ProfiledPIDController translateXController = new ProfiledPIDController(0, 0, 0, null);
@@ -47,7 +47,7 @@ public class DriveToReef extends Command{
 
     @Override
     public void execute(){
-        driveAngle = Math.abs(angle - 360);
+        driveAngle = Math.abs(angle - 180);
         if(!limelight.getTv()) endEarly = true;
 
         double xVelocity = translateXController.calculate( limelight.getTY() ,goalTy);
