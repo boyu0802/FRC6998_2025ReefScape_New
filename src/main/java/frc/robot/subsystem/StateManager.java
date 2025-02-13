@@ -7,8 +7,7 @@ import java.lang.annotation.Target;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.SetCoralWristCommand;
 import frc.robot.commands.SetElevatorCommand;
@@ -71,39 +70,27 @@ public class StateManager {
     public Command ElevatorSequence(TargetState targetState,RobotState robotState) {
         
         
+        
         switch (targetState) {
             
             case PREP_L1:
-                System.out.println("PREP_L1 button pressed! Current state: " + getRobotState());
-                if (robotState == RobotState.PREP_L1) { 
-                    // 第二次按下時，執行 SCORE_L1
-                    setRobotState(RobotState.SCORE_L1);
-                    //elevatorSubsystem.setCurrentState(RobotState.SCORE_L1);
+                if(this.currentRobotState == RobotState.PREP_L2) {
                     return Commands.sequence(
-                        //Commands.print(robotState.toString()),
                         Commands.print("score L1"),
-                        coralSubsystem.outputCoralWithoutVision(),
-                        Commands.runOnce(()->{
-                            setRobotState(RobotState.SCORE_L1);
-                            System.out.println("Robot State updated to: " + getRobotState());
-                        }),
+                        Commands.runOnce(()->coralSubsystem.outputCoralWithoutVision()),
+                        Commands.waitSeconds(0.2),
+                        //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.SCORE_L2)),
                         Commands.print("Scored L1")
                     );
-                } else {
-                    // 第一次按下時，進入 PREP_L1
-                    setRobotState(RobotState.PREP_L1);
-                    //elevatorSubsystem.setCurrentState(RobotState.PREP_L1);
+                }
+                else {
                     return Commands.sequence(
                         Commands.parallel(
                             new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
                             new SetElevatorCommand(ScoreState.L1, elevatorSubsystem)
                         ),
-                        Commands.runOnce(()->{
-                            setRobotState(RobotState.PREP_L1);
-                            System.out.println("Robot State updated to: " + getRobotState());
-                        }),
-                        Commands.print(getRobotState().toString())
-                        //Commands.print(elevatorSubsystem.getRobotState().toString())
+                        //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L2)),
+                        Commands.print("PREP L1")
                     );
                 }
                 
@@ -214,6 +201,8 @@ public class StateManager {
                     Commands.runOnce(()-> setRobotState(RobotState.NORMAL)),
                     Commands.print("NORMAL")
                 );
+
+            
                 
             default:
                 return Commands.print("Invalid Target State");

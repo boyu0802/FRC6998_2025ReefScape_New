@@ -21,10 +21,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
+import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.SetElevatorCommand;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
@@ -93,6 +95,9 @@ public class RobotContainer {
     private final HangSubsystem hangSubsystem = new HangSubsystem();
     //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
     StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
+    private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
+
+    CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
 
 
     
@@ -164,43 +169,16 @@ public class RobotContainer {
         // TODO: test by controller. (change with different subsystems)
        
         
-        testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
+        testController.povUp().onTrue(new InstantCommand(()->{
+            currentCoralCommand = coralIntakeCommand.chooseCommand();
+            currentCoralCommand.schedule();
+        }));
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
-        testController.povRight().onTrue(Commands.sequence(
-                coralSubsystem.outputCoralWithoutVision()
-                //Commands.waitSeconds(0.2),
-                //elevatorSubsystem.setL1()
-        ));
+        testController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         
 
-        /* 
 
-        testController.a().onTrue(Commands.parallel(
-                coralSubsystem.wristToCoral(),
-                new SetElevatorCommand(ScoreState.L1, elevatorSubsystem)
-        ));
-        testController.b().onTrue(Commands.parallel(
-                coralSubsystem.wristToCoral(),
-                new SetElevatorCommand(ScoreState.L2, elevatorSubsystem)
-        ));
-        testController.y().onTrue(Commands.parallel(
-                coralSubsystem.wristToCoral(),
-                new SetElevatorCommand(ScoreState.L3, elevatorSubsystem)
-        ));
-        testController.x().onTrue(Commands.parallel(
-            coralSubsystem.wristToCoral(),
-            new SetElevatorCommand(ScoreState.L4, elevatorSubsystem)
-        ));
-        testController.leftBumper().onTrue(Commands.parallel(
-            coralSubsystem.wristToNormal(),
-            new SetElevatorCommand(ScoreState.NORMAL, elevatorSubsystem)
-        ));
-        testController.rightBumper().onTrue(Commands.parallel(
-            coralSubsystem.wristToStation(),
-            new SetElevatorCommand(ScoreState.STATION, elevatorSubsystem)
-        ));
-        */
 
         testController.a().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L1,stateManager.getRobotState()));
         testController.b().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L2, stateManager.getRobotState()));

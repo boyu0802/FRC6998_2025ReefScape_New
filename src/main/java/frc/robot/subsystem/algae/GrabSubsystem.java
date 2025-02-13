@@ -25,6 +25,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.CoralConstants.*;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_INTAKE_CONFIG;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_INTAKE_VELOCITY;
+import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_REVERSE_VELOCITY;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_CONFIG;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_FEED_FORWARD;
 import static frc.robot.RobotMap.GRAB_INTAKE_ID;
@@ -119,11 +120,17 @@ public class GrabSubsystem extends SubsystemBase {
     }
 
     public Command setGrabto10deg(){
-        return Commands.runOnce(()-> setGrabWristPosition(-5.0));}
+        return Commands.parallel(
+            runOnce(()-> setGrabWristPosition(0.0)),
+            collectWithoutVision()
+            );}
     
 
     public Command setGrabto75deg(){
-        return Commands.runOnce(()-> setGrabWristPosition(75.0));
+        return Commands.sequence(
+            runOnce(()-> setGrabWristPosition(67.0)),
+            runOnce(()-> setGrabIntakeVelocity(GRAB_INTAKE_VELOCITY))
+            );
     }
 
     public Command collectWithoutVision() {
@@ -139,7 +146,7 @@ public class GrabSubsystem extends SubsystemBase {
     public Command reverseWithoutVision() {
         return Commands.sequence(
                 Commands.print("running algae intake"),
-                Commands.runOnce(()->setGrabIntakeVelocity(-GRAB_INTAKE_VELOCITY)),
+                Commands.runOnce(()->setGrabIntakeVelocity(GRAB_REVERSE_VELOCITY)),
                 //Commands.waitUntil(this::getCoralLimit),
                 Commands.waitSeconds(2.0),
                 Commands.runOnce(()->setGrabIntakeVelocity(0)),

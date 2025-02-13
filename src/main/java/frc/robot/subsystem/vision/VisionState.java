@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 
+
 public class VisionState {
     private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(1.0);
     private final TimeInterpolatableBuffer<Double> AngularYawVelocity = TimeInterpolatableBuffer.createDoubleBuffer(1.0);
@@ -17,11 +18,13 @@ public class VisionState {
     private double pigeonYaw= 0;
     private ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
     private ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
+    private double gyroYaw = 0.0;
 
     public VisionState(Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer) {
         this.visionFieldPoseEstimateConsumer = visionFieldPoseEstimateConsumer;
         poseBuffer.addSample(0.0, new Pose2d());
         AngularYawVelocity.addSample(0.0, 0.0);
+
     }
 
     public void addOdometryMeasurement(double timestamp, Pose2d pose) {

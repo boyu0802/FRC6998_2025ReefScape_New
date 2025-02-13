@@ -181,6 +181,10 @@ public class CoralSubsystem extends SubsystemBase {
         return abs(edu.wpi.first.math.util.Units.rotationsToDegrees(m_coralWrist.getPosition().getValueAsDouble()) - targetPosition) < 2.5;
     }
 
+    public boolean getIntakeOpened(){
+        return m_coralIntake.getEncoder().getVelocity() > 0.5 ||  m_coralIntake.getEncoder().getVelocity() < -0.5;
+    }
+
 
     @Override
     public void periodic() {
@@ -220,16 +224,16 @@ public class CoralSubsystem extends SubsystemBase {
     public SequentialCommandGroup collectCoralWithoutVision() {
         return new SequentialCommandGroup(
             new InstantCommand(()-> setCoralIntakeVelocity(10)),
-            new WaitUntilCommand(()-> getCoralLimit()),
+            new WaitUntilCommand(()->getCoralLimit()),
             new InstantCommand(() -> stopCoralIntake())
         );
     }
     public Command outputCoralWithoutVision() {
         return Commands.sequence(
                 Commands.print("running coral output"),
-                Commands.runOnce(()->setCoralIntakeVelocity(-7.5),this),
+                Commands.runOnce(()->setCoralIntakeVelocity(-7.5)),
                 Commands.waitSeconds(0.5),
-                Commands.runOnce(()->stopCoralIntake(),this),
+                Commands.runOnce(()->stopCoralIntake()),
                 Commands.print("coral outputted")
         );
     }

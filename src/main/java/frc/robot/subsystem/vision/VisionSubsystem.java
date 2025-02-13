@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.limelight.LimelightHelpers;
 import frc.lib.limelight.LimelightHelpers.RawFiducial;
 import frc.robot.Constants.HangConstants.VisionConstants;
-import frc.robot.Robot;
+
 
 public class VisionSubsystem extends SubsystemBase{
     private final VisionState visionState;
@@ -50,6 +50,8 @@ public class VisionSubsystem extends SubsystemBase{
         
         //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
         //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
+    
+        
     }
 
     public void updateVision(LimelightHelpers.PoseEstimate megaTagPose, LimelightHelpers.PoseEstimate megaTag2Pose, String LimelightName){
