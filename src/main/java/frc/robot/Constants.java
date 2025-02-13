@@ -219,11 +219,11 @@ public class Constants {
         public static final double ELEVATOR_KG = 0.24228/12;
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
-        public static final double ELEVAROR_MAX_VELOCITY = 2.5;
-        public static final double ELEVAROR_MAX_ACCEL = 5.0;
+        public static final double ELEVAROR_MAX_VELOCITY = 3.0;
+        public static final double ELEVAROR_MAX_ACCEL = 6.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
-        public static final double ZEROED_VOLTAGE = (-1.0);
+        public static final double ZEROED_VOLTAGE = (-1.5);
         public static final double ZEROED_VELOCITY = -0.02;
 
 

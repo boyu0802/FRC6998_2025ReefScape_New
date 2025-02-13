@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -53,9 +54,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
     /* Setting up bindings for necessary control of the swerve drive platform */
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -69,8 +67,8 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.06).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
             .withDriveRequestType(DriveRequestType.Velocity);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController testController = new CommandXboxController(1);
+    private final CommandXboxController m_driveController = new CommandXboxController(0);
+    private final CommandXboxController m_operatorController = new CommandXboxController(1);
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
     private final CommandXboxController testController3 = new CommandXboxController(3);
@@ -94,12 +92,13 @@ public class RobotContainer {
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
     //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
-    StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
+    StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem,m_driveController);
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
 
     CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
-    ReefStatePosition reefStatePosition = new ReefStatePosition(coralSubsystem, elevatorSubsystem, testController);
-    private SequentialCommandGroup currentReefState = new SequentialCommandGroup();
+    ReefStatePosition reefStatePosition = new ReefStatePosition(coralSubsystem, elevatorSubsystem, m_operatorController);
+    private Command currentReefState = new SequentialCommandGroup();
+    
 
     
 
@@ -125,31 +124,31 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
           drivetrain.applyRequest(() ->
             drive
-            .withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+            .withVelocityX(-m_driveController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-m_driveController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-m_driveController.getRightX() * MaxAngularRate)
             ) // Drive counterclockwise with negative X (left)
     
         );
 
         
 
-        joystick.leftTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, true,joystick));
-        joystick.rightTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, false,joystick));
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        m_driveController.leftTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
+        m_driveController.rightTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
+        m_driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        m_driveController.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-m_driveController.getLeftY(), -m_driveController.getLeftX()))
         ));
-        joystick.x().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        m_driveController.x().whileTrue(drivetrain.applyRequest(() -> brake));
+        m_driveController.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        m_driveController.back().and(m_driveController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        m_driveController.back().and(m_driveController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        m_driveController.start().and(m_driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        m_driveController.start().and(m_driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         
@@ -163,71 +162,61 @@ public class RobotContainer {
         //elevatorLigament2d.setLength(elevatorSubsystem.getElevatorPosition());
         //SmartDashboard.putData("Elevator",elevatorMechanism2d);
         
-
-        
-        
-
-        // TODO: test by controller. (change with different subsystems)
-       
-        
-        testController.povUp().onTrue(new InstantCommand(()->{
+        m_operatorController.povUp().onTrue(new InstantCommand(()->{
             currentCoralCommand = coralIntakeCommand.chooseCommand();
             currentCoralCommand.schedule();
         }));
-        testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
-        testController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
-        testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
+        m_operatorController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
+        m_operatorController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
+        m_operatorController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         
 
-        /* 
+        // Reef Positioning.
+        m_operatorController.a().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_L1);
+            currentReefState.schedule();
+            
+        }));
+        m_operatorController.b().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_L2);
+            currentReefState.schedule();
+        }));
+        m_operatorController.y().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_L3);
+            currentReefState.schedule();
+        }));
+        m_operatorController.x().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
+            currentReefState.schedule();
+        }));
+        m_operatorController.leftBumper().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_STATION);
+            currentReefState.schedule();
+        }));
+        m_operatorController.rightBumper().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.NORMAL);
+            currentReefState.schedule();
+        }));
+        m_operatorController.start().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_ALGAE_L2);
+            currentReefState.schedule();
+        }));
+        m_operatorController.back().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.PREP_ALGAE_L3);
+            currentReefState.schedule();
+        }));
+        
+        
+        
+        
 
-        testController.a().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L1,stateManager.getRobotState()));
-        testController.b().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L2, stateManager.getRobotState()));
-        testController.y().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L3, stateManager.getRobotState()));
-        testController.x().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L4, stateManager.getRobotState()));
-        testController.leftBumper().onTrue(stateManager.ElevatorSequence(TargetState.PREP_STATION, stateManager.getRobotState()));
-        testController.rightBumper().onTrue(stateManager.ElevatorSequence(TargetState.NORMAL, stateManager.getRobotState()));
-        testController.start().onTrue(stateManager.ElevatorSequence(TargetState.PREP_ALGAE_L2, stateManager.getRobotState()));
-        testController.back().onTrue(stateManager.ElevatorSequence(TargetState.PREP_ALGAE_L3, stateManager.getRobotState()));
-        */
+        
+        
 
-        testController.a().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L1);
-            currentReefState.schedule();
-        }));
-        testController.b().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L2);
-            currentReefState.schedule();
-        }));
-        testController.y().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L3);
-            currentReefState.schedule();
-        }));
-        testController.x().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L4);
-            currentReefState.schedule();
-        }));
-        testController.leftBumper().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_STATION);
-            currentReefState.schedule();
-        }));
-        testController.rightBumper().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.NORMAL);
-            currentReefState.schedule();
-        }));
-        testController.start().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_ALGAE_L2);
-            currentReefState.schedule();
-        }));
-        testController.back().onTrue(new InstantCommand(()->{
-            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_ALGAE_L3);
-            currentReefState.schedule();
-        }));
-
-        joystick.povUp().onTrue(grabSubsystem.setGrabto10deg());
-        joystick.povDown().onTrue(grabSubsystem.setGrabto75deg());
-        joystick.povLeft().onTrue(grabSubsystem.collectWithoutVision());
-        joystick.povRight().onTrue(grabSubsystem.reverseWithoutVision());
+        m_driveController.povUp().onTrue(grabSubsystem.setGrabto10deg());
+        m_driveController.povDown().onTrue(grabSubsystem.setGrabto75deg());
+        m_driveController.povLeft().onTrue(grabSubsystem.collectWithoutVision());
+        m_driveController.povRight().onTrue(grabSubsystem.reverseWithoutVision());
 
         
         

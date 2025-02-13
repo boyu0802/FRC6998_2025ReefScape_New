@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.RobotState;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
+import frc.robot.commands.drive.SetRumbleCommand;
 
 public class ReefStatePosition {
     private final CoralSubsystem coralSubsystem;
@@ -43,8 +44,41 @@ public class ReefStatePosition {
 
     public SequentialCommandGroup setTargetState(TargetState currentTargetState) {
         SequentialCommandGroup newCommand;
+        if(currentTargetState == TargetState.PREP_L1) {
+            if(currentRobotState == RobotState.PREP_L1) {
+                newCommand = new SequentialCommandGroup(
+                        new InstantCommand(()->setRobotState(RobotState.SCORE_L1)),
+                        new InstantCommand(coralSubsystem::outputCoralWithoutVision),
+                        new WaitCommand(0.2),
+                        new PrintCommand("Scored L1"),
+                        new SetRumbleCommand(xboxController)
+                );
+                
+            }
+            else {
+                newCommand = new SequentialCommandGroup(
+                        new InstantCommand(()->setRobotState(RobotState.PREP_L1)),
+                        new ParallelCommandGroup(
+                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
+                            new SetElevatorCommand(ScoreState.L1, elevatorSubsystem) 
+                        )
+                );
+            }
+            
+            
+        }
+        else {
+            newCommand = new SequentialCommandGroup(
+                        new InstantCommand(()->setRobotState(RobotState.PREP_L2)),
+                        new ParallelCommandGroup(
+                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
+                            new SetElevatorCommand(ScoreState.L2, elevatorSubsystem) 
+                        )
+                );
+        }
+        /* 
         switch(currentTargetState) {
-            case PREP_L1:
+            case PREP_L1 :
                 if(currentRobotState == RobotState.PREP_L1) {
                     newCommand = new SequentialCommandGroup(
                         new InstantCommand(()->setRobotState(RobotState.SCORE_L1)),
@@ -152,13 +186,15 @@ public class ReefStatePosition {
                         new SetElevatorCommand(ScoreState.ALGAE_L3, elevatorSubsystem) 
                     )
                 );
-                
+            
+            
 
             default:
                 newCommand = new SequentialCommandGroup(
                     new PrintCommand("Invalid Target State")
                 );
         }
+        */
 
         return newCommand;
 

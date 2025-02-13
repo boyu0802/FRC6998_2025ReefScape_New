@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,6 +31,8 @@ import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.vision.Limelight;
 import frc.robot.subsystem.vision.VisionState;
 
+
+
 public class DriveToPose extends Command {
   
         private boolean isFinished = false;
@@ -41,7 +44,7 @@ public class DriveToPose extends Command {
         private double targetId;
 
         // should be tuned 
-        
+
         private final ProfiledPIDController xTranslationController = new ProfiledPIDController(0.65, 0.00000002, 0.0000001, new TrapezoidProfile.Constraints(MaxSpeed, 3));
         private final ProfiledPIDController yTranslationController = new ProfiledPIDController(0.42, 0.00000002, 0.00000012, new TrapezoidProfile.Constraints(MaxSpeed, 3));
         private final ProfiledPIDController rotController = new ProfiledPIDController(0.5, 0.000001, 0.0, new TrapezoidProfile.Constraints(MaxAngularRate, 1.5));
@@ -95,9 +98,9 @@ public class DriveToPose extends Command {
     }
     @Override
     public void execute(){
-        if(targetId == -1 ){
+        if(targetId == -1){
             isFinished = true;
-            
+            return;
         }
         Pose2d currentPose = state.getLatestFieldToRobot();
         double yPoseError = driveToPose.getY() - currentPose.getY();
