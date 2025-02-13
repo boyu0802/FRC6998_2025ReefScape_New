@@ -178,6 +178,7 @@ public class StateManager {
                     );
                 }
             case ALGAE_L2:
+                
                 return Commands.sequence(
                     Commands.parallel(
                         new SetCoralWristCommand(ScoreState.ALGAE_L2, coralSubsystem),
