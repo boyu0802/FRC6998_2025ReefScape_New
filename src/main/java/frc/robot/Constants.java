@@ -409,7 +409,8 @@ public class Constants {
             public static final double GRAB_KG = 2.1732/12;
 
 
-            public static final double GRAB_INTAKE_VELOCITY = 250.0;
+            public static final double GRAB_INTAKE_VELOCITY = -250.0;
+            public static final double GRAB_REVERSE_VELOCITY = 50.0;
 
             
 
@@ -460,8 +461,8 @@ public class Constants {
                         .iZone(0)
                         .outputRange(-1, 1)
                         .maxMotion
-                        .maxVelocity(720)
-                        .maxAcceleration(2400)
+                        .maxVelocity(960)
+                        .maxAcceleration(4800)
                         .allowedClosedLoopError(Units.degreesToRotations(5.0));
                 
 

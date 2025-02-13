@@ -299,7 +299,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        state.addDriveMeasurement(Timer.getTimestamp(), getPigeon2().getAngularVelocityZWorld().getValueAsDouble(), getKinematics().toChassisSpeeds(getState().ModuleStates), ChassisSpeeds.fromRobotRelativeSpeeds(getKinematics().toChassisSpeeds(getState().ModuleStates),getState().Pose.getRotation()));
+        state.addDriveMeasurement(Timer.getTimestamp(), 
+        getPigeon2().getAngularVelocityZWorld().getValueAsDouble(), 
+        getKinematics().toChassisSpeeds(getState().ModuleStates), 
+        ChassisSpeeds.fromRobotRelativeSpeeds(getKinematics().toChassisSpeeds(getState().ModuleStates),
+        getState().Pose.getRotation()));
 
         field.setRobotPose(getState().Pose);
         SmartDashboard.putNumber("pose est X: ", getState().Pose.getX());

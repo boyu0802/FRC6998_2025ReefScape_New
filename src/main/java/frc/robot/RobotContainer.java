@@ -165,11 +165,7 @@ public class RobotContainer {
         
         testController.povUp().onTrue(coralSubsystem.collectCoralWithoutVision());
         testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
-        testController.povRight().onTrue(Commands.sequence(
-                coralSubsystem.outputCoralWithoutVision()
-                //Commands.waitSeconds(0.2),
-                //elevatorSubsystem.setL1()
-        ));
+        testController.povRight().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         
 
