@@ -15,6 +15,7 @@ public class VisionState {
     private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(1.0);
     private final TimeInterpolatableBuffer<Double> AngularYawVelocity = TimeInterpolatableBuffer.createDoubleBuffer(1.0);
     private final Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer;
+    private double pigeonYaw= 0;
     private ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
     private ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
     private double gyroYaw = 0.0;
@@ -31,17 +32,30 @@ public class VisionState {
         
     }
 
-    public void addDriveMeasurement(double timestamp, double AngularYawVelocity, ChassisSpeeds robotRelativeSpeeds, ChassisSpeeds fieldRelativeSpeeds) {
+    
+
+    public double getPigeonYaw(){
+        return pigeonYaw;
+    }
+
+    public void addDriveMeasurement(double timestamp, double AngularYawVelocity, ChassisSpeeds robotRelativeSpeeds, ChassisSpeeds fieldRelativeSpeeds, double pigeonYaw) {
         this.AngularYawVelocity.addSample(timestamp, AngularYawVelocity);
         this.robotRelativeSpeeds = robotRelativeSpeeds;
         this.fieldRelativeSpeeds = fieldRelativeSpeeds;
+        this.pigeonYaw = pigeonYaw;
     }
 
     public Optional<Pose2d> getFieldToRobot(double timestamp) {
+
         return poseBuffer.getSample(timestamp);
     }
 
-    public Optional<Double> getAngularYawVelocity(double minTime, double maxTime) {
+    public Optional<Double> getAngularYawVelocity(double timestamp) {
+        return AngularYawVelocity.getSample(timestamp);
+    }
+
+
+    public Optional<Double> getGreatestAngularYawVelocity(double minTime, double maxTime) {
        var submap = AngularYawVelocity.getInternalBuffer().subMap(minTime, maxTime).values();
         var max = submap.stream().max(Double::compare);
         var min = submap.stream().min(Double::compare);
