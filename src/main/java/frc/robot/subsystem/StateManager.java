@@ -177,14 +177,14 @@ public class StateManager {
                         Commands.print("PREP STATION")
                     );
                 }
-            case ALGAE_L2:
+            case PREP_ALGAE_L2:
                 return Commands.sequence(
                     Commands.parallel(
                         new SetCoralWristCommand(ScoreState.ALGAE_L2, coralSubsystem),
                         new SetElevatorCommand(ScoreState.ALGAE_L2, elevatorSubsystem)
                     )
                 );
-            case ALGAE_L3:
+            case PREP_ALGAE_L3:
                 return Commands.sequence(
                     Commands.parallel(
                         new SetCoralWristCommand(ScoreState.ALGAE_L3, coralSubsystem),

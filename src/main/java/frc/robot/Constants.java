@@ -78,8 +78,10 @@ public class Constants {
         PREP_NET,
         SCORE_NET,
         HANG,
-        L2_ALGAE,
-        L3_ALGAE,
+        PREP_L2_ALGAE,
+        PREP_L3_ALGAE,
+        EJECT_L2_ALGAE,
+        EJECT_L3_ALGAE,
         PREP_PROCESSOR,
         SCORE_PROCESSOR,
         RESET
@@ -94,8 +96,8 @@ public class Constants {
         NORMAL,
         PREP_STATION,
         PREP_PROCESSOR,
-        ALGAE_L2,
-        ALGAE_L3,
+        PREP_ALGAE_L2,
+        PREP_ALGAE_L3,
         HANG,
         RESET
     }

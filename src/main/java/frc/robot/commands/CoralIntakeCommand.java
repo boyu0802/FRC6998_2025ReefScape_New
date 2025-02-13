@@ -23,6 +23,10 @@ public class CoralIntakeCommand {
         isWorked = worked;
     }
 
+    /*
+     * fixed the logic error in the chooseCommand method
+     * isWorked = intake is working. If it is working, stop the intake
+     */
     public SequentialCommandGroup chooseCommand(){
         SequentialCommandGroup newCommand;
         if(isWorked) {
@@ -39,12 +43,8 @@ public class CoralIntakeCommand {
                 new InstantCommand(() -> coralSubsystem.stopCoralIntake()),
                 new InstantCommand(()->setWorked(false))
             );
-            //isWorked = false;
+            
         }
         return newCommand;
     }
-
-
-    
-    
 }

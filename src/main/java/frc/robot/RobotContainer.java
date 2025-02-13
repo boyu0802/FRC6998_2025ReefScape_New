@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.ReefStatePosition;
 import frc.robot.commands.SetElevatorCommand;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
@@ -69,8 +70,7 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.Velocity);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController testController = new 
-    CommandXboxController(1);
+    private final CommandXboxController testController = new CommandXboxController(1);
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
     private final CommandXboxController testController3 = new CommandXboxController(3);
@@ -98,7 +98,8 @@ public class RobotContainer {
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
 
     CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
-
+    ReefStatePosition reefStatePosition = new ReefStatePosition(coralSubsystem, elevatorSubsystem, testController);
+    private SequentialCommandGroup currentReefState = new SequentialCommandGroup();
 
     
 
@@ -177,7 +178,7 @@ public class RobotContainer {
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         
 
-
+        /* 
 
         testController.a().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L1,stateManager.getRobotState()));
         testController.b().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L2, stateManager.getRobotState()));
@@ -185,9 +186,42 @@ public class RobotContainer {
         testController.x().onTrue(stateManager.ElevatorSequence(TargetState.PREP_L4, stateManager.getRobotState()));
         testController.leftBumper().onTrue(stateManager.ElevatorSequence(TargetState.PREP_STATION, stateManager.getRobotState()));
         testController.rightBumper().onTrue(stateManager.ElevatorSequence(TargetState.NORMAL, stateManager.getRobotState()));
-        testController.start().onTrue(stateManager.ElevatorSequence(TargetState.ALGAE_L2, stateManager.getRobotState()));
-        testController.back().onTrue(stateManager.ElevatorSequence(TargetState.ALGAE_L3, stateManager.getRobotState()));
-        
+        testController.start().onTrue(stateManager.ElevatorSequence(TargetState.PREP_ALGAE_L2, stateManager.getRobotState()));
+        testController.back().onTrue(stateManager.ElevatorSequence(TargetState.PREP_ALGAE_L3, stateManager.getRobotState()));
+        */
+
+        testController.a().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L1);
+            currentReefState.schedule();
+        }));
+        testController.b().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L2);
+            currentReefState.schedule();
+        }));
+        testController.y().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L3);
+            currentReefState.schedule();
+        }));
+        testController.x().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_L4);
+            currentReefState.schedule();
+        }));
+        testController.leftBumper().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_STATION);
+            currentReefState.schedule();
+        }));
+        testController.rightBumper().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.NORMAL);
+            currentReefState.schedule();
+        }));
+        testController.start().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_ALGAE_L2);
+            currentReefState.schedule();
+        }));
+        testController.back().onTrue(new InstantCommand(()->{
+            currentReefState = reefStatePosition.setTargetState(TargetState.PREP_ALGAE_L3);
+            currentReefState.schedule();
+        }));
 
         joystick.povUp().onTrue(grabSubsystem.setGrabto10deg());
         joystick.povDown().onTrue(grabSubsystem.setGrabto75deg());
