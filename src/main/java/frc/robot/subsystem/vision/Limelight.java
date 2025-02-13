@@ -16,8 +16,13 @@ public class Limelight {
         return LimelightHelpers.getTY(limelightName);
     }
 
-    public double getID(){
-        return LimelightHelpers.getFiducialID(limelightName);
+    public int getID(){
+        if(getTv()){
+            return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName).rawFiducials[0].id;
+        }
+    
+        return -1;
+
     }
 
     public boolean getTv(){

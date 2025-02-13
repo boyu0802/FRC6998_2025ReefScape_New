@@ -132,15 +132,16 @@ public class RobotContainer {
     
         );
 
-        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-
         
+
+        joystick.leftTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, true));
+        joystick.rightTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, false));
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+        joystick.x().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
 
         // Run SysId routines when holding back/start and X/Y.
