@@ -172,7 +172,7 @@ public class RobotContainer {
             currentCoralCommand = coralIntakeCommand.chooseCommand();
             currentCoralCommand.schedule();
         }));
-        testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVisipoknmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm mmmmmmmmmmmmmmmmm on());
+        testController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
         testController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         testController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         
