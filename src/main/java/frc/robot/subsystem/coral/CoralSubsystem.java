@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
@@ -30,9 +31,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.util.Units.*;
 import static frc.robot.Constants.ScoreState;
 
 import static edu.wpi.first.units.Units.*;
@@ -40,7 +39,7 @@ import static frc.robot.Constants.CoralConstants.*;
 import static frc.robot.RobotMap.CORAL_INTAKE_ID;
 import static frc.robot.RobotMap.CORAL_WRIST_ID;
 import static frc.robot.RobotMap.CORAL_WRIST_ENCODER_ID;
-import static frc.robot.RobotMap.CORAL_INTAKE_LIMITSWITCH_ID;
+
 import static java.lang.Math.abs;
 
 //@Logged(name = "CoralSubsystem")
@@ -85,6 +84,9 @@ public class CoralSubsystem extends SubsystemBase {
                 
         m_coralWristEncoder.getConfigurator().apply(CORAL_WRIST_ENCODER_CONFIG);
         m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+
+        CORAL_WRISTCONFIG.Feedback.FeedbackRemoteSensorID = m_coralWristEncoder.getDeviceID();
+        CORAL_WRISTCONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         
         //m_coralWristEncoder.setPosition(0);
         m_coralIntake.getEncoder().setPosition(0);

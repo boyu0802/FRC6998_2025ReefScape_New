@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.ReefStatePosition;
+
 
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
@@ -92,7 +92,6 @@ public class RobotContainer {
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
 
     CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
-    ReefStatePosition reefStatePosition = new ReefStatePosition(coralSubsystem, elevatorSubsystem, m_operatorController);
     private Command currentReefState = new SequentialCommandGroup();
     
 
@@ -111,6 +110,7 @@ public class RobotContainer {
         DataLogManager.start();
 
     }
+    
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,

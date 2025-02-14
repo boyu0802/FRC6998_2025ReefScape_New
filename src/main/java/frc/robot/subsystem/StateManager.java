@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import frc.robot.Constants.RobotState;
 import frc.robot.Constants.ScoreState;
 
+import com.ctre.phoenix6.signals.RobotEnableValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,6 +71,17 @@ public class StateManager {
         return currentTargetState;
     }
 
+    private Command toNormalCommand(){
+        return Commands.sequence(
+            Commands.runOnce(()->setRobotState(RobotState.NORMAL)),
+            new SetCoralWristCommand(ScoreState.NORMAL, coralSubsystem),
+            Commands.waitSeconds(0.2),
+            new SetElevatorCommand(ScoreState.NORMAL, elevatorSubsystem),
+            Commands.print("toNormalPosition")
+
+        );
+    }
+
 
     // TODO : Make More Clearly & add rumble.
     public Command SetReefState(TargetState targetState) {
@@ -84,9 +96,10 @@ public class StateManager {
                         Commands.runOnce(()->setRobotState(RobotState.SCORE_L1)),
                         Commands.print("score L1"),
                         coralSubsystem.outputCoralWithoutVision(),
+                        Commands.print("Scored L1"),
                         Commands.waitSeconds(0.2),
+                        toNormalCommand()
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.SCORE_L2)),
-                        Commands.print("Scored L1")
                         //setRumbleCommand
                     );
                 }
@@ -109,9 +122,9 @@ public class StateManager {
                         Commands.print("score L2"),
                         coralSubsystem.outputCoralWithoutVision(),
                         Commands.waitSeconds(0.2),
-                        //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.SCORE_L2)),
-                        Commands.print("Scored L2")
-                        //setRumbleCommand
+                        Commands.print("Scored L2"),
+                        Commands.waitSeconds(0.2),
+                        toNormalCommand()
                     );
                 }
                 else {
@@ -133,9 +146,9 @@ public class StateManager {
                         Commands.print("score L3"),
                         coralSubsystem.outputCoralWithoutVision(),
                         Commands.waitSeconds(0.2),
-                        //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.SCORE_L3)),
-                        Commands.print("Scored L3")
-                        //setRumbleCommand
+                        Commands.print("Scored L3"),
+                        Commands.waitSeconds(0.2),
+                        toNormalCommand()
                     );
                 }
                 else {
@@ -156,9 +169,9 @@ public class StateManager {
                         Commands.print("score L4"),
                         coralSubsystem.outputCoralWithoutVision(),
                         Commands.waitSeconds(0.2),
-                        //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.SCORE_L4)),
-                        Commands.print("Scored L4")
-                        //setRumbleCommand
+                        Commands.print("Scored L4"),
+                        Commands.waitSeconds(0.2),
+                        toNormalCommand()
                     );
                 }
                 else {

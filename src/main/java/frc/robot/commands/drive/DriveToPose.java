@@ -14,17 +14,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.limelight.LimelightHelpers;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
@@ -45,9 +39,9 @@ public class DriveToPose extends Command {
 
         // should be tuned 
 
-        private final ProfiledPIDController xTranslationController = new ProfiledPIDController(0.65, 0.00000002, 0.0000001, new TrapezoidProfile.Constraints(MaxSpeed, 3));
-        private final ProfiledPIDController yTranslationController = new ProfiledPIDController(0.42, 0.00000002, 0.00000012, new TrapezoidProfile.Constraints(MaxSpeed, 3));
-        private final ProfiledPIDController rotController = new ProfiledPIDController(0.5, 0.000001, 0.0, new TrapezoidProfile.Constraints(MaxAngularRate, 1.5));
+        private final ProfiledPIDController xTranslationController = new ProfiledPIDController(0.65, 0.00000002, 0.0000001, new TrapezoidProfile.Constraints(MaxSpeed/2, 3));
+        private final ProfiledPIDController yTranslationController = new ProfiledPIDController(0.42, 0.00000002, 0.00000012, new TrapezoidProfile.Constraints(MaxSpeed/2, 3));
+        private final ProfiledPIDController rotController = new ProfiledPIDController(0.01, 0.0000001, 0.0004, new TrapezoidProfile.Constraints(270.0, 540.0));
         
         private final SwerveRequest.RobotCentric driveRequest = new SwerveRequest.RobotCentric();
         private Pose2d targetPose;
@@ -92,7 +86,8 @@ public class DriveToPose extends Command {
         public void initialize(){
         isFinished = false;
         xTranslationController.setTolerance(0.01);
-        yTranslationController.setTolerance(0.05);
+        yTranslationController.setTolerance(0.05
+        );
         rotController.setTolerance(0.02);
 
     }
@@ -103,10 +98,11 @@ public class DriveToPose extends Command {
             return;
         }
         Pose2d currentPose = state.getLatestFieldToRobot();
+        double gyroYaw = state.getPigeonYaw();
         double yPoseError = driveToPose.getY() - currentPose.getY();
         double xPoseError = driveToPose.getX() - currentPose.getX();
         // should be changed by gyro ?
-        double thetaPoseError = driveToPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
+        double thetaPoseError = driveToPose.getRotation().getDegrees() - drive.getPigeon2().getYaw().getValueAsDouble();
         
         drive.setControl(
             driveRequest

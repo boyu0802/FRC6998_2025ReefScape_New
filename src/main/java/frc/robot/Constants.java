@@ -154,7 +154,8 @@ public class Constants {
             .withFeedback(new FeedbackConfigs()
                     //.withFeedbackRemoteSensorID(CORAL_WRIST_ID.getDeviceNumber())
                     //.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-                    .withSensorToMechanismRatio(CORAL_WRIST_GEAR_RATIO))
+                    .withSensorToMechanismRatio(1.0)
+                    .withRotorToSensorRatio(CORAL_WRIST_GEAR_RATIO))
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs())
                     
                     //.withContinuousWrap(true))
