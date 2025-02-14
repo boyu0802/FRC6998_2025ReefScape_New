@@ -2,7 +2,7 @@ package frc.robot.subsystem.hang;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
-
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -44,7 +44,7 @@ public class HangSubsystem extends SubsystemBase {
     private final VelocityVoltage m_velocityVoltage = new VelocityVoltage(0).withSlot(0).withEnableFOC(true);
 
     private final PositionTorqueCurrentFOC m_TorqueCurrentFOC = new PositionTorqueCurrentFOC(0).withSlot(0);
-
+    private final VelocityTorqueCurrentFOC m_VelocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0).withSlot(1);
 
     public HangSubsystem() {
         setName("HangSubsystem");
@@ -56,8 +56,7 @@ public class HangSubsystem extends SubsystemBase {
         m_hangMotor.getConfigurator().apply(HANG_CONFIG);
         m_hangMotorEncoder.getConfigurator().apply(HANG_ENCODER_CONFIG);
 
-        HANG_CONFIG.Feedback.FeedbackRemoteSensorID = m_hangMotorEncoder.getDeviceID();
-        HANG_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        
 
         m_hangMotor.getConfigurator().apply(HANG_CONFIG);
 
@@ -123,8 +122,12 @@ public class HangSubsystem extends SubsystemBase {
         m_catchHang.getClosedLoopController().setReference(velocity,SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
     public void setHangVelocity(double velocity){
-        m_hangMotor.setControl(m_TorqueCurrentFOC.withVelocity(velocity));
+        m_hangMotor.setControl(m_VelocityTorqueCurrentFOC.withVelocity(velocity));
     }
+
+    
+
+    
     
 
     

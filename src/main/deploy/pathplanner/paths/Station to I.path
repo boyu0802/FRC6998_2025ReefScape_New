@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8740276316933482,
-        "y": 6.270785686644283
+        "x": 2.5994068408578697,
+        "y": 4.164667592200798
       },
       "isLocked": false,
       "linkedName": "Collect Point"
     },
     {
       "anchor": {
-        "x": 3.185069591204156,
-        "y": 4.180101999486208
+        "x": 3.190772772492141,
+        "y": 4.188730591355303
       },
       "prevControl": {
-        "x": 2.995246754233072,
-        "y": 4.448756768450029
+        "x": 2.759078573002034,
+        "y": 4.394614880800203
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
   "eventMarkers": [
     {
       "name": "L2",
-      "waypointRelativePos": 0.6187845303867296,
+      "waypointRelativePos": 0.5856353591160233,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -60,7 +60,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -0.3350592186089849
+    "rotation": 0.09131975412379627
   },
   "reversed": false,
   "folder": "Blue",

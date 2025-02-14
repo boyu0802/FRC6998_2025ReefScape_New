@@ -11,7 +11,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.EventMarker;
 
-import edu.wpi.first.epilogue.Epilogue;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
@@ -30,10 +30,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.Constants.TargetState;
-import frc.robot.commands.CoralIntakeCommand;
-
-
 import frc.robot.commands.drive.DriveToPose;
+import frc.robot.commands.setcommand.CoralIntakeCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
@@ -91,7 +89,7 @@ public class RobotContainer {
 
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
-    //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
+    
     StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
 
@@ -158,9 +156,9 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
 
-        testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
-        testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
-        testController2.start().onTrue(hangSubsystem.catchHang());
+        //testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
+        //testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
+        //testController2.start().onTrue(hangSubsystem.catchHang());
         
 
         //elevatorMechanism2d.getRoot("Position",0,elevatorSubsystem.getElevatorPosition()).append(elevatorLigament2d);
@@ -221,11 +219,17 @@ public class RobotContainer {
         
         
         testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
-        
+        testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(10))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
+        testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0)))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
+        testController2.start().and(testController2.povDown()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(-10)));
+        testController2.povLeft().onTrue(hangSubsystem.catchHang());
+
         
 
-        testController3.povUp().onTrue(elevatorSubsystem.increaseElevatorPositionCmd());
-        testController3.povDown().onTrue(elevatorSubsystem.decreaseElevatorPositionCmd());
+        testController3.back().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kForward));
+        testController3.back().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kReverse));
+        testController3.start().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kForward));
+        testController3.start().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kReverse));
 
         
         SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());

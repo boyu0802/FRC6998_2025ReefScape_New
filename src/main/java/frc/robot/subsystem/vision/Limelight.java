@@ -29,5 +29,13 @@ public class Limelight {
         return LimelightHelpers.getTV(limelightName);
     }
 
+    public void setLEDMode(boolean enabled) {
+        if (enabled) {
+            LimelightHelpers.setLEDMode_ForceOn(limelightName);
+        } else {
+            LimelightHelpers.setLEDMode_ForceOff(limelightName);
+        }
+    }
+
     
 }
