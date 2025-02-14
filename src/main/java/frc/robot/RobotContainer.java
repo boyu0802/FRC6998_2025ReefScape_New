@@ -235,6 +235,7 @@ public class RobotContainer {
     }
 
     private void registerCommand(){
+        
         NamedCommands.registerCommand("Collect",new ParallelCommandGroup(
             new InstantCommand(() ->{
                 currentReefState = stateManager.SetReefState(TargetState.PREP_STATION);
@@ -252,11 +253,12 @@ public class RobotContainer {
             currentReefState.schedule();
         }));
         
-
+         
         new EventTrigger("L2").onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L2);
             currentReefState.schedule();
         }));
+        
         
    
     }

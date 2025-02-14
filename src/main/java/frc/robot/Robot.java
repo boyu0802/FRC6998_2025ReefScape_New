@@ -55,10 +55,7 @@ public class Robot extends TimedRobot {
       Commands.deferredProxy( ()-> m_autonomousCommand).schedule();
     }
     else if(m_autonomousCommand != null) {
-      Commands.sequence(
-        m_robotContainer.zeroCommand(),
-        Commands.deferredProxy( ()-> m_autonomousCommand)
-      );
+      m_robotContainer.zeroCommand().andThen(Commands.deferredProxy(()-> m_autonomousCommand));
     }
     else {
       m_robotContainer.zeroCommand().schedule();

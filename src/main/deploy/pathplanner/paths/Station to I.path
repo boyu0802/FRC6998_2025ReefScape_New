@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1441398432271717,
-        "y": 7.029031849707826
+        "x": 1.1766477272752558,
+        "y": 7.041406249994399
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1433071918245092,
-        "y": 6.26566847803138
+        "x": 1.8740276316933482,
+        "y": 6.270785686644283
       },
       "isLocked": false,
       "linkedName": "Collect Point"
     },
     {
       "anchor": {
-        "x": 3.1569633620112603,
-        "y": 4.176164813029486
+        "x": 3.173739107531261,
+        "y": 4.084719809864549
       },
       "prevControl": {
-        "x": 2.797391819834044,
-        "y": 4.516096805317369
+        "x": 2.899883897724793,
+        "y": 4.330638493112749
       },
       "nextControl": null,
       "isLocked": false,
@@ -44,7 +44,7 @@
   ],
   "eventMarkers": [
     {
-      "name": "L4",
+      "name": "L2",
       "waypointRelativePos": 0.6187845303867296,
       "endWaypointRelativePos": null,
       "command": null
