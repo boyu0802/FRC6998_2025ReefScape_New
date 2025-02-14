@@ -83,10 +83,13 @@ public class CoralSubsystem extends SubsystemBase {
                 SparkBase.PersistMode.kPersistParameters);
                 
         m_coralWristEncoder.getConfigurator().apply(CORAL_WRIST_ENCODER_CONFIG);
-        m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+        
 
         CORAL_WRISTCONFIG.Feedback.FeedbackRemoteSensorID = m_coralWristEncoder.getDeviceID();
         CORAL_WRISTCONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+
+        m_coralWrist.getConfigurator().apply(CORAL_WRISTCONFIG);
+        
         
         //m_coralWristEncoder.setPosition(0);
         m_coralIntake.getEncoder().setPosition(0);

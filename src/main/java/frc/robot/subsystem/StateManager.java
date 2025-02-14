@@ -107,7 +107,7 @@ public class StateManager {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.PREP_L1)),
                         Commands.parallel(
-                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
+                            new SetCoralWristCommand(ScoreState.L1, coralSubsystem),
                             new SetElevatorCommand(ScoreState.L1, elevatorSubsystem)
                         ),
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L2)),

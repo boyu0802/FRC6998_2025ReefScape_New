@@ -48,7 +48,7 @@ public class Constants {
     }
 
     public static enum ScoreState {
-        L1(0.05, 60.0),
+        L1(0.05, 0.0),
         L2(0.25, -45.0),
         L3(0.65, -45.0),
         L4(1.275, -45.0),
