@@ -27,8 +27,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -225,14 +227,17 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
 
-    //TODO: Wait for code.
+    // use in auto path only.
     public SequentialCommandGroup collectCoralWithoutVision() {
         return new SequentialCommandGroup(
             new InstantCommand(()-> setCoralIntakeVelocity(10)),
-            new WaitUntilCommand(()->getCoralLimit()),
+            new ParallelDeadlineGroup(
+                new WaitCommand(2.0),
+                new WaitUntilCommand(()->getCoralLimit())),
             new InstantCommand(() -> stopCoralIntake())
         );
     }
+    
     public Command outputCoralWithoutVision() {
         return Commands.sequence(
                 Commands.print("running coral output"),
@@ -243,6 +248,7 @@ public class CoralSubsystem extends SubsystemBase {
         );
     }
 
+    // use in auto path only.
     public Command collectAlgaeWithoutVision() {
         return Commands.sequence(
                 Commands.print("running algae intake"),
