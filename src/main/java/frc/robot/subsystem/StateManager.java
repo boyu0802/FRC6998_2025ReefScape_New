@@ -25,22 +25,22 @@ public class StateManager {
     protected CoralSubsystem coralSubsystem;
     protected GrabSubsystem grabSubsystem;
     protected ElevatorSubsystem elevatorSubsystem;
-    protected CommandXboxController xboxController;
-    private SetRumbleCommand setRumbleCommand;
+    
+    
 
-    private StateManager(CoralSubsystem coralSubsystem, GrabSubsystem grabSubsystem, ElevatorSubsystem elevatorSubsystem,CommandXboxController xboxController) {
+    private StateManager(CoralSubsystem coralSubsystem, GrabSubsystem grabSubsystem, ElevatorSubsystem elevatorSubsystem) {
         this.coralSubsystem = coralSubsystem;
         this.grabSubsystem = grabSubsystem;
         this.elevatorSubsystem = elevatorSubsystem;
-        this.xboxController = xboxController;
-        setRumbleCommand = new SetRumbleCommand(xboxController);
+    
+        
         
     }
 
     @SuppressWarnings("check)")
-    public static StateManager getInstance(CoralSubsystem coralSubsystem, GrabSubsystem grabSubsystem, ElevatorSubsystem elevatorSubsystem,CommandXboxController xboxController) {
+    public static StateManager getInstance(CoralSubsystem coralSubsystem, GrabSubsystem grabSubsystem, ElevatorSubsystem elevatorSubsystem) {
         if (instance == null) {
-            instance = new StateManager(coralSubsystem, grabSubsystem, elevatorSubsystem,xboxController);
+            instance = new StateManager(coralSubsystem, grabSubsystem, elevatorSubsystem);
         }
         return instance;
     }
@@ -157,8 +157,8 @@ public class StateManager {
                         coralSubsystem.outputCoralWithoutVision(),
                         Commands.waitSeconds(0.2),
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.SCORE_L4)),
-                        Commands.print("Scored L4"),
-                        setRumbleCommand
+                        Commands.print("Scored L4")
+                        //setRumbleCommand
                     );
                 }
                 else {

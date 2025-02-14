@@ -81,13 +81,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private MechanismRoot2d root = elevatorMechanism2d.getRoot("root", 2.5, 0.5);
     private MechanismLigament2d elevatorLigament2d = root.append(
         new MechanismLigament2d("elevatorControl",1.5, 0,7,new Color8Bit(Color.kOrange)));
-         
-
-
+        
     
-
-
-
     public ElevatorSubsystem() {
         m_elevatorLeft.getConfigurator().apply(ELEVATOR_CONFIG_L);
         m_elevatorRight.getConfigurator().apply(ELEVATOR_CONFIG_R);

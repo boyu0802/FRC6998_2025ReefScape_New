@@ -50,6 +50,7 @@ public class Telemetry {
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
 
+    //private final StructPublisher<Pose2d> poseEstimator = inst.getStructTopic("poseEstimator", null)
 
     
     private final DoublePublisher coralIntakeVelocity = inst.getDoubleTopic("CoralVelocity").publish();

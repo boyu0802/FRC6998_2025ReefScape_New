@@ -2,12 +2,12 @@ package frc.robot.subsystem.hang;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkFlex;
 
@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ScoreState;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.HangConstants.CATCH_HANG_CONFIG;
@@ -56,6 +55,11 @@ public class HangSubsystem extends SubsystemBase {
 
         m_hangMotor.getConfigurator().apply(HANG_CONFIG);
         m_hangMotorEncoder.getConfigurator().apply(HANG_ENCODER_CONFIG);
+
+        HANG_CONFIG.Feedback.FeedbackRemoteSensorID = m_hangMotorEncoder.getDeviceID();
+        HANG_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+
+        m_hangMotor.getConfigurator().apply(HANG_CONFIG);
 
         m_hangMotor.setPosition(gethangAbsoultePosition());
         m_catchHang.getEncoder().setPosition(0);
@@ -125,11 +129,11 @@ public class HangSubsystem extends SubsystemBase {
 
     
     public Command setHangto0deg(){
-        return Commands.runOnce(()-> setHangPosition(10));}
+        return Commands.runOnce(()-> setHangPosition(2.0));}
     
 
     public Command setHangto90deg(){
-        return Commands.runOnce(()-> setHangPosition(125));
+        return Commands.runOnce(()-> setHangPosition(80));
     }
     public Command catchHang(){
         return Commands.sequence(

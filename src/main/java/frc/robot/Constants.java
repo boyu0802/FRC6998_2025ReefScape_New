@@ -3,6 +3,7 @@ package frc.robot;
 import static com.ctre.phoenix6.signals.NeutralModeValue.Brake;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.RobotMap.CORAL_WRIST_ID;
+import static frc.robot.RobotMap.HANG_ENCODER_ID;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
@@ -313,7 +315,7 @@ public class Constants {
     public static final class HangConstants {
         public static final SparkFlexConfig CATCH_HANG_CONFIG = new SparkFlexConfig();
         public static final double HANG_LENGTH = 34.176;
-        public static final double HANG_GEAR_RATIO = 5000.0/15.0;
+        public static final double HANG_GEAR_RATIO = 400.0;
         public static final double CATCH_HANG_GEAR_RATIO = 1.0;
         
 
@@ -332,9 +334,9 @@ public class Constants {
         public static final double CATCH_HANG_INTAKE_VELOCITY = 10.0;
 
         public static final double HANG_FORWARD_LIMIT = 135.0;
-        public static final double HANG_REVERSE_LIMIT = 0.0;
+        public static final double HANG_REVERSE_LIMIT = -1.0;
 
-        public static final double HANG_ENCODER_OFFSET = -0.48193359375; 
+        public static final double HANG_ENCODER_OFFSET = -0.166015625; 
 
         static {
             CATCH_HANG_CONFIG.encoder.positionConversionFactor(CATCH_HANG_GEAR_RATIO);
@@ -353,6 +355,11 @@ public class Constants {
                     
                     
         }
+        public static final CANcoderConfiguration HANG_ENCODER_CONFIG = new CANcoderConfiguration()
+            .withMagnetSensor(new MagnetSensorConfigs()
+                    .withMagnetOffset(HANG_ENCODER_OFFSET)
+                    .withAbsoluteSensorDiscontinuityPoint(0.5)
+                    .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
         public static final TalonFXConfiguration HANG_CONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
@@ -366,11 +373,13 @@ public class Constants {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12))
             .withFeedback(new FeedbackConfigs()
-                    .withSensorToMechanismRatio(HANG_GEAR_RATIO))
+                    .withSensorToMechanismRatio(1.0)
+                    .withRotorToSensorRatio(HANG_GEAR_RATIO))
+                    
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
                     .withContinuousWrap(false))
             .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(InvertedValue.Clockwise_Positive)
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
                     .withNeutralMode(Brake))
 
             .withSlot0(new Slot0Configs()
@@ -382,6 +391,11 @@ public class Constants {
                     .withKV(HANG_KV)
                     .withKA(HANG_KA)
                     .withKG(HANG_KG))
+            .withSlot1(new Slot1Configs()
+                    .withKP(60)
+                    .withKI(0)
+                    .withGravityType(GravityTypeValue.Arm_Cosine)
+                    .withKS(120))
             
             .withMotionMagic(new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(1.0)
@@ -397,11 +411,7 @@ public class Constants {
                     .withReverseSoftLimitEnable(true)
                     .withReverseSoftLimitThreshold(Units.degreesToRotations(HANG_REVERSE_LIMIT)));
 
-        public static final CANcoderConfiguration HANG_ENCODER_CONFIG = new CANcoderConfiguration()
-            .withMagnetSensor(new MagnetSensorConfigs()
-                    .withMagnetOffset(HANG_ENCODER_OFFSET)
-                    .withAbsoluteSensorDiscontinuityPoint(0.5)
-                    .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+        
         
 
         public static final class GrabConstants {
@@ -419,7 +429,7 @@ public class Constants {
 
 
             public static final double GRAB_INTAKE_VELOCITY = -250.0;
-            public static final double GRAB_REVERSE_VELOCITY = 50.0;
+            public static final double GRAB_REVERSE_VELOCITY = 200.0;
 
             
 

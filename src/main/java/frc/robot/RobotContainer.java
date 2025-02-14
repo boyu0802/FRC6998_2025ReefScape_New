@@ -88,7 +88,7 @@ public class RobotContainer {
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
     //private SetElevatorCommand setElevatorCommand = new SetElevatorCommand(ScoreState.L1,elevatorSubsystem);
-    StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem,m_driveController);
+    StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
 
     CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
@@ -129,8 +129,8 @@ public class RobotContainer {
 
         
 
-        m_driveController.leftTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
-        m_driveController.rightTrigger(0.95).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
+        m_driveController.leftTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
+        m_driveController.rightTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
         m_driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         m_driveController.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-m_driveController.getLeftY(), -m_driveController.getLeftX()))
@@ -151,6 +151,10 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
+
+        testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
+        testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
+        testController2.start().onTrue(hangSubsystem.catchHang());
         
 
         //elevatorMechanism2d.getRoot("Position",0,elevatorSubsystem.getElevatorPosition()).append(elevatorLigament2d);
@@ -209,10 +213,9 @@ public class RobotContainer {
 
         
         
-        testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
-        testController2.rightBumper().onTrue(hangSubsystem.setHangto90deg());
+        
         testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
-        testController2.povLeft().onTrue(hangSubsystem.catchHang());
+        
         
 
         testController3.povUp().onTrue(elevatorSubsystem.increaseElevatorPositionCmd());

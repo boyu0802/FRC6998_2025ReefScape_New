@@ -73,6 +73,7 @@ public class VisionState {
         SmartDashboard.putNumber("estimator time",visionFieldPoseEstimate.getTimestampSeconds());
         SmartDashboard.putString("estimator stdDev",visionFieldPoseEstimate.getVisionMeasurementStdDevs().toString());
         visionFieldPoseEstimateConsumer.accept(visionFieldPoseEstimate);
+        
     }
 
     public Pose2d getLatestFieldToRobot(){
