@@ -5,6 +5,10 @@
 package frc.robot;
 
 
+import javax.xml.crypto.Data;
+
+import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -14,8 +18,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 ;
 
-
+//@Logged
 public class Robot extends TimedRobot {
+
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -24,7 +29,8 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    DataLogManager.start();
+    DataLogManager.start(); // Optional to mirror the NetworkTables-logged data to a file on disk
+    //Epilogue.bind(this);
     DriverStation.silenceJoystickConnectionWarning(true);
 
   }
@@ -52,14 +58,13 @@ public class Robot extends TimedRobot {
     autoZeroed = m_robotContainer.isZeroed();
 
     if (autoZeroed && m_autonomousCommand != null) {
-      Commands.deferredProxy( ()-> m_autonomousCommand).schedule();
+      Commands.deferredProxy(() -> m_autonomousCommand).schedule();
+    } else if (m_autonomousCommand != null) {
+      m_robotContainer.zeroCommand.andThen(Commands.deferredProxy(() -> m_autonomousCommand)).schedule();
+    } else {
+      m_robotContainer.zeroCommand.schedule();
     }
-    else if(m_autonomousCommand != null) {
-      m_robotContainer.zeroCommand().andThen(Commands.deferredProxy(()-> m_autonomousCommand));
-    }
-    else {
-      m_robotContainer.zeroCommand().schedule();
-    }
+
     haveAutoRun = true;
   }
 
@@ -76,7 +81,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     if(!haveAutoRun) {
-      m_robotContainer.zeroCommand().schedule();
+      m_robotContainer.zeroCommand.schedule();
     }
     
   }

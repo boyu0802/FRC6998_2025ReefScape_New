@@ -11,6 +11,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.EventMarker;
 
+import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
@@ -106,6 +107,7 @@ public class RobotContainer {
     
     private final SendableChooser<Command> autoChooser;
     public RobotContainer() {
+        
         registerCommand();
         autoChooser = AutoBuilder.buildAutoChooser("Example");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -263,10 +265,8 @@ public class RobotContainer {
    
     }
 
-    public Command zeroCommand() {
-        return new ZeroElevatorCommand(elevatorSubsystem);
+    public Command zeroCommand = new ZeroElevatorCommand(elevatorSubsystem);
        
-    }
 
     public boolean isZeroed() {
         return elevatorSubsystem.getElevatorLimit();

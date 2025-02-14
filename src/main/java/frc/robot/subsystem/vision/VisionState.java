@@ -1,5 +1,6 @@
 package frc.robot.subsystem.vision;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -79,6 +80,7 @@ public class VisionState {
     public Pose2d getLatestFieldToRobot(){
         return poseBuffer.getInternalBuffer().lastEntry().getValue();
     }
+    
 
     public ChassisSpeeds getFieldRelativeSpeeds(){
         return fieldRelativeSpeeds;
@@ -87,6 +89,7 @@ public class VisionState {
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return robotRelativeSpeeds;
     }
+
 
     public boolean isRedAlliance(){
         return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().equals(Optional.of(Alliance.Red));

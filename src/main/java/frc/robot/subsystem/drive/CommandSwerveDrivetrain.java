@@ -214,9 +214,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         try {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
-                () -> getState().Pose,   // Supplier of current robot pose
+                () -> state.getLatestFieldToRobot(),   // Supplier of current robot pose
                 this::resetPose,         // Consumer for seeding pose against auto
-                () -> getState().Speeds, // Supplier of current robot speeds
+                () -> state.getRobotRelativeSpeeds(), // Supplier of current robot speeds
                 // Consumer of ChassisSpeeds and feedforwards to drive the robot
                 (speeds, feedforwards) -> setControl(
                     m_pathApplyRobotSpeeds.withSpeeds(speeds)
@@ -227,7 +227,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     // PID constants for translation
                     new PIDConstants(8.5, 0, 0),
                     // PID constants for rotation
-                    new PIDConstants(2.129, 0, 0)
+                    new PIDConstants(2.131, 0, 0)
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
