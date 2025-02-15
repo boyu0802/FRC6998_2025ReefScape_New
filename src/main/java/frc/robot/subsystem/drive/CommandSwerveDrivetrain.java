@@ -308,8 +308,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             getState().Pose.getRotation().getDegrees());
         state.addOdometryMeasurement(Timer.getTimestamp(),getState().Pose);
         field.setRobotPose(getState().Pose);
-        SmartDashboard.putNumber("pose est X: ", getState().Pose.getX());
-        SmartDashboard.putNumber("pose est Y:", getState().Pose.getY());
+        SmartDashboard.putString("pose est.",getState().Pose.toString());
 
         
 

@@ -16,10 +16,10 @@ public class VisionState {
     private final TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(1.0);
     private final TimeInterpolatableBuffer<Double> AngularYawVelocity = TimeInterpolatableBuffer.createDoubleBuffer(1.0);
     private final Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer;
-    private double pigeonYaw= 0;
+    private double pigeonYaw= 0.0;
     private ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
     private ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
-    private double gyroYaw = 0.0;
+
 
     public VisionState(Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer) {
         this.visionFieldPoseEstimateConsumer = visionFieldPoseEstimateConsumer;

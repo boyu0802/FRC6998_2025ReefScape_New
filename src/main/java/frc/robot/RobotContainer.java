@@ -26,12 +26,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.setcommand.CoralIntakeCommand;
+import frc.robot.commands.setcommand.SetCoralWristCommand;
+import frc.robot.commands.setcommand.SetElevatorCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
@@ -112,6 +116,7 @@ public class RobotContainer {
         //selectAuto();
         configureBindings();
         DataLogManager.start();
+        
 
     }
     
@@ -133,8 +138,8 @@ public class RobotContainer {
 
         
 
-        m_driveController.leftTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
-        m_driveController.rightTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
+        //m_driveController.leftTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
+        //m_driveController.rightTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
         m_driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         m_driveController.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-m_driveController.getLeftY(), -m_driveController.getLeftX()))
@@ -173,6 +178,7 @@ public class RobotContainer {
         //m_operatorController.povDown().onTrue(coralSubsystem.collectAlgaeWithoutVision());
         //m_operatorController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         m_operatorController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
+        m_operatorController.povDown().onTrue(grabSubsystem.reverseWithoutVision());
         
 
         // Reef Positioning.
@@ -209,16 +215,10 @@ public class RobotContainer {
             currentReefState = stateManager.SetReefState(TargetState.PREP_ALGAE_L3);
             currentReefState.schedule();
         }));
-    
-        m_driveController.povUp().onTrue(grabSubsystem.setGrabto10deg());
-        m_driveController.povDown().onTrue(grabSubsystem.setGrabto75deg());
-        m_driveController.povLeft().onTrue(grabSubsystem.collectWithoutVision());
-        m_driveController.povRight().onTrue(grabSubsystem.reverseWithoutVision());
+        m_operatorController.leftTrigger(0.5).onTrue(grabSubsystem.setGrabto10deg());
+        m_operatorController.rightTrigger(0.5).onTrue(grabSubsystem.setGrabto75deg());
 
-        
-        
-        
-        testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
+        //testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
         testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(10))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
         testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0)))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
         testController2.start().and(testController2.povDown()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(-10)));
@@ -250,24 +250,31 @@ public class RobotContainer {
             coralSubsystem.collectCoralWithoutVision()
         ));
         
-        NamedCommands.registerCommand("Shoot_L4",new InstantCommand(()->{
-            currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
-            currentReefState.schedule();
-        }));
+        NamedCommands.registerCommand("Shoot_L4",new SequentialCommandGroup(
+            new SetCoralWristCommand(ScoreState.L4,coralSubsystem),
+            new WaitCommand(0.6),
+            new WaitUntilCommand(()-> coralSubsystem.getCoralWristAtSetpoint()),
+            coralSubsystem.outputCoralWithoutVision(),
+            new PrintCommand("scored L4")
+        ));
         NamedCommands.registerCommand("Shoot_L2",new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L2);
             currentReefState.schedule();
         }));
         
          
+
         new EventTrigger("L2").onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L2);
             currentReefState.schedule();
         }));
-        
-        
-   
-    }
+
+        new EventTrigger("L4").onTrue(new SetElevatorCommand(ScoreState.L4, elevatorSubsystem));
+        NamedCommands.registerCommand("Normal" ,new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.NORMAL);
+            currentReefState.schedule();    
+        }));
+    }   
 
     public Command zeroCommand = new ZeroElevatorCommand(elevatorSubsystem);
        

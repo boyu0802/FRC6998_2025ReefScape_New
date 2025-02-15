@@ -200,7 +200,7 @@ public class TunerConstants {
     public static CommandSwerveDrivetrain createDrivetrain(VisionState state) {
         return new CommandSwerveDrivetrain(
             DrivetrainConstants, state,
-            250,
+            125,
             VisionConstants.odometryStdDev,
             VisionConstants.visionStdDev,
             FrontLeft, FrontRight, BackLeft, BackRight
