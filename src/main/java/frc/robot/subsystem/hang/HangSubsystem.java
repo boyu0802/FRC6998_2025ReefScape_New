@@ -58,7 +58,7 @@ public class HangSubsystem extends SubsystemBase {
 
         
 
-        m_hangMotor.getConfigurator().apply(HANG_CONFIG);
+        //m_hangMotor.getConfigurator().apply(HANG_CONFIG);
 
         m_hangMotor.setPosition(gethangAbsoultePosition());
         m_catchHang.getEncoder().setPosition(0);

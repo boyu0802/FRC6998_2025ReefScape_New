@@ -2,8 +2,7 @@ package frc.robot;
 
 import static com.ctre.phoenix6.signals.NeutralModeValue.Brake;
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.RobotMap.CORAL_WRIST_ID;
-import static frc.robot.RobotMap.HANG_ENCODER_ID;
+
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -51,12 +50,12 @@ public class Constants {
         L1(0.05, 0.0),
         L2(0.25, -45.0),
         L3(0.65, -45.0),
-        L4(1.35, -45.0),
+        L4(1.285, -45.0),
         ALGAE_L2(0.45, -45.0), //todo: TEST
-        ALGAE_L3(0.9, -45.0),
+        ALGAE_L3(0.76, 0.0),
         NORMAL(0.05, 90.0),
         STATION(0.125, 45.0),
-        NET(1.35,60.0);
+        NET(1.285,60.0);
 
         public double elevatorPosition;
         public double armPosition;
@@ -216,7 +215,7 @@ public class Constants {
         // TODO : Need to be Tuned.
         public static final ElevatorFeedforward ELEVATOR_FEED_FORWARD = new ElevatorFeedforward(0.4, 0, 0.4,0);
 
-        public static final double ELEVATOR_MAX_LENGTH = 1.42;
+        public static final double ELEVATOR_MAX_LENGTH = 1.3;
         public static final double ELEVATOR_MIN_LENGTH = 0.0;
 
         public static final double ELEVATOR_KS = 0.26859/12;
@@ -319,7 +318,7 @@ public class Constants {
     public static final class HangConstants {
         public static final SparkFlexConfig CATCH_HANG_CONFIG = new SparkFlexConfig();
         public static final double HANG_LENGTH = 34.176;
-        public static final double HANG_GEAR_RATIO = 25.0;
+        public static final double HANG_GEAR_RATIO = 75.0;
         public static final double CATCH_HANG_GEAR_RATIO = 1.0;
         
 
@@ -337,8 +336,8 @@ public class Constants {
 
         public static final double CATCH_HANG_INTAKE_VELOCITY = 10.0;
 
-        public static final double HANG_FORWARD_LIMIT = 100.0;
-        public static final double HANG_REVERSE_LIMIT = -1.0;
+        public static final double HANG_FORWARD_LIMIT = 5;
+        public static final double HANG_REVERSE_LIMIT = -0.84;
 
         public static final double HANG_ENCODER_OFFSET = -0.15234375; 
 
@@ -377,8 +376,8 @@ public class Constants {
                     .withPeakForwardVoltage(12)
                     .withPeakReverseVoltage(-12))
             .withFeedback(new FeedbackConfigs()
-                    .withSensorToMechanismRatio(1.0)
-                    .withRotorToSensorRatio(HANG_GEAR_RATIO))
+                    .withSensorToMechanismRatio(HANG_GEAR_RATIO)
+                    .withRotorToSensorRatio(1.0))
                     
                     .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
                     .withContinuousWrap(false))
@@ -410,10 +409,10 @@ public class Constants {
                     .withPeakReverseTorqueCurrent(-800)
             )
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                    .withForwardSoftLimitEnable(false)
-                    .withForwardSoftLimitThreshold(Units.degreesToRotations(HANG_FORWARD_LIMIT))
-                    .withReverseSoftLimitEnable(false)
-                    .withReverseSoftLimitThreshold(Units.degreesToRotations(HANG_REVERSE_LIMIT)));
+                    .withForwardSoftLimitEnable(true)
+                    .withForwardSoftLimitThreshold(HANG_FORWARD_LIMIT)
+                    .withReverseSoftLimitEnable(true)
+                    .withReverseSoftLimitThreshold(HANG_REVERSE_LIMIT));
 
         
         

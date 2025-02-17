@@ -158,7 +158,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        //drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
 
         //testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
@@ -182,7 +182,7 @@ public class RobotContainer {
         m_operatorController.povRight().onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.NET);
             currentReefState.schedule();
-        }));
+        }));    
 
         // Reef Positioning.
         m_operatorController.a().onTrue(new InstantCommand(()->{
