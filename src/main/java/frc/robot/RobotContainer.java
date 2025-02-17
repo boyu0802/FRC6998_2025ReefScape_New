@@ -179,7 +179,10 @@ public class RobotContainer {
         //m_operatorController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         m_operatorController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         m_operatorController.povDown().onTrue(grabSubsystem.reverseWithoutVision());
-        
+        m_operatorController.povRight().onTrue(new InstantCommand(()->{
+            currentReefState = stateManager.SetReefState(TargetState.NET);
+            currentReefState.schedule();
+        }));
 
         // Reef Positioning.
         m_operatorController.a().onTrue(new InstantCommand(()->{
@@ -218,6 +221,7 @@ public class RobotContainer {
         m_operatorController.leftTrigger(0.5).onTrue(grabSubsystem.setGrabto10deg());
         m_operatorController.rightTrigger(0.5).onTrue(grabSubsystem.setGrabto75deg());
 
+    
         //testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
         testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(10))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
         testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0)))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
