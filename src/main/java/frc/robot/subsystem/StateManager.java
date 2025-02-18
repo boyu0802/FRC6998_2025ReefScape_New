@@ -279,9 +279,6 @@ public class StateManager {
                     );
                 }
 
-            
-                
-
             default:
                 return Commands.print("Invalid Target State");
               

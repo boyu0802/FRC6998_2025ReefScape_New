@@ -52,7 +52,7 @@ public class Constants {
         L3(0.65, -45.0),
         L4(1.285, -45.0),
         ALGAE_L2(0.23, -25.0), //todo: TEST
-        ALGAE_L3(0.63, -25.0),
+        ALGAE_L3(0.66, -20.0),
         NORMAL(0.05, 90.0),
         STATION(0.125, 45.0),
         NET(1.285,60.0);
