@@ -258,15 +258,29 @@ public class StateManager {
                     Commands.runOnce(()-> setRobotState(RobotState.NORMAL)),
                     Commands.print("NORMAL")
                 );
-            case NET:
-                return Commands.sequence(
-                    Commands.parallel(
-                        new SetCoralWristCommand(ScoreState.NET, coralSubsystem),
-                        new SetElevatorCommand(ScoreState.NET, elevatorSubsystem)
-                    ),
-                    Commands.runOnce(()-> setRobotState(RobotState.NET)),
-                    Commands.print("NET")
-                );
+            case PREP_NET:
+                if(this.currentRobotState == RobotState.PREP_NET) {
+                    return Commands.sequence(
+                        Commands.runOnce(()->setRobotState(RobotState.SCORE_NET)),
+                        Commands.print("score Algae"),
+                        coralSubsystem.outputAlgaeWithoutVision(),
+                        Commands.print("Scored Algae"),
+                        Commands.waitSeconds(0.2),
+                    toNormalCommand()
+                    );
+                }
+                else {
+                    return Commands.sequence(
+                        Commands.runOnce(()->setRobotState(RobotState.PREP_NET)),
+                        Commands.parallel(
+                            new SetCoralWristCommand(ScoreState.NET, coralSubsystem),
+                            new SetElevatorCommand(ScoreState.NET, elevatorSubsystem)
+                        )
+                    );
+                }
+
+            
+                
 
             default:
                 return Commands.print("Invalid Target State");

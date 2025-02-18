@@ -51,8 +51,8 @@ public class Constants {
         L2(0.25, -45.0),
         L3(0.65, -45.0),
         L4(1.285, -45.0),
-        ALGAE_L2(0.45, -45.0), //todo: TEST
-        ALGAE_L3(0.76, 0.0),
+        ALGAE_L2(0.23, -25.0), //todo: TEST
+        ALGAE_L3(0.63, -25.0),
         NORMAL(0.05, 90.0),
         STATION(0.125, 45.0),
         NET(1.285,60.0);
@@ -87,7 +87,7 @@ public class Constants {
         PREP_PROCESSOR,
         SCORE_PROCESSOR,
         RESET,
-        NET
+
 
     }
 
@@ -103,7 +103,8 @@ public class Constants {
         PREP_ALGAE_L3,
         HANG,
         RESET,
-        NET
+        PREP_NET,
+
     }
 
     public static final class SwerveConstants {

@@ -179,8 +179,9 @@ public class RobotContainer {
         //m_operatorController.povRight().onTrue(coralSubsystem.outputCoralWithoutVision());
         m_operatorController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
         m_operatorController.povDown().onTrue(grabSubsystem.reverseWithoutVision());
+        
         m_operatorController.povRight().onTrue(new InstantCommand(()->{
-            currentReefState = stateManager.SetReefState(TargetState.NET);
+            currentReefState = stateManager.SetReefState(TargetState.PREP_NET);
             currentReefState.schedule();
         }));    
 
