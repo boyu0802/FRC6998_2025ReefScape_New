@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
@@ -65,6 +66,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
+    
+
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.06).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 6% deadband
             .withDriveRequestType(DriveRequestType.Velocity);
@@ -100,8 +103,17 @@ public class RobotContainer {
     CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
     private Command currentReefState = new SequentialCommandGroup();
     
-
-    
+    /*
+     * added Trigger to confirm the reef state
+     */
+    private final Trigger coralLevel1 = m_operatorController.a();
+    private final Trigger coralLevel2 = m_operatorController.b();
+    private final Trigger coralLevel3 = m_operatorController.y();
+    private final Trigger coralLevel4 = m_operatorController.x();
+    private final Trigger station = m_operatorController.leftBumper();
+    private final Trigger normal = m_operatorController.rightBumper();
+    private final Trigger ejectAlgaeL3 = m_operatorController.back();
+    private final Trigger ejectAlgaeL2 = m_operatorController.start();
 
 
     //Optional to mirror the NetworkTables-logged data to a file on disk
@@ -187,39 +199,40 @@ public class RobotContainer {
         }));    
 
         // Reef Positioning.
-        m_operatorController.a().onTrue(new InstantCommand(()->{
+        coralLevel1.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L1);
             currentReefState.schedule();
-            
         }));
-        m_operatorController.b().onTrue(new InstantCommand(()->{
+        coralLevel2.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L2);
             currentReefState.schedule();
         }));
-        m_operatorController.y().onTrue(new InstantCommand(()->{
+        coralLevel3.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L3);
             currentReefState.schedule();
         }));
-        m_operatorController.x().onTrue(new InstantCommand(()->{
+        coralLevel4.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
             currentReefState.schedule();
         }));
-        m_operatorController.leftBumper().onTrue(new InstantCommand(()->{
+
+        station.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_STATION);
             currentReefState.schedule();
         }));
-        m_operatorController.rightBumper().onTrue(new InstantCommand(()->{
+        normal.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.NORMAL);
             currentReefState.schedule();
         }));
-        m_operatorController.start().onTrue(new InstantCommand(()->{
+        ejectAlgaeL2.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_ALGAE_L2);
             currentReefState.schedule();
         }));
-        m_operatorController.back().onTrue(new InstantCommand(()->{
+        ejectAlgaeL3.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_ALGAE_L3);
             currentReefState.schedule();
         }));
+
         m_operatorController.leftTrigger(0.5).onTrue(grabSubsystem.setGrabto10deg());
         m_operatorController.rightTrigger(0.5).onTrue(grabSubsystem.setGrabto75deg());
 

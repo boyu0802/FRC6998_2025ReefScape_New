@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystem.coral.CoralSubsystem;
-import frc.robot.subsystem.elevator.ElevatorSubsystem;
+
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -95,10 +95,7 @@ public class Telemetry {
     private final double[] m_moduleTargetsArray = new double[8];
 
 
-    private final Mechanism2d elevatorMechanism2d = new Mechanism2d(1, 1);
-
-    private final MechanismLigament2d elevatorLigament2d = root.append(
-        new MechanismLigament2d("elevatorControl",0.575, 90,2,new Color8Bit(Color.kAqua)));
+    
 
     
 
