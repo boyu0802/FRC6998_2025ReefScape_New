@@ -34,6 +34,8 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 import frc.robot.subsystem.vision.VisionState;
 
+import static frc.robot.Constants.AutoConstants.TRANSLATION_PID;
+import static frc.robot.Constants.AutoConstants.ROTATION_PID;
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
@@ -225,9 +227,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(8.5, 0, 0),
+                    TRANSLATION_PID,
                     // PID constants for rotation
-                    new PIDConstants(2.131, 0, 0)
+                    ROTATION_PID
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case

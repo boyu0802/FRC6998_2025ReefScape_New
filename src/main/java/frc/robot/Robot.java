@@ -7,7 +7,7 @@ package frc.robot;
 
 import javax.xml.crypto.Data;
 
-
+import edu.wpi.first.epilogue.*;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,8 +30,10 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     DataLogManager.start(); // Optional to mirror the NetworkTables-logged data to a file on disk
-    //Epilogue.bind(this);
+    
+    
     DriverStation.silenceJoystickConnectionWarning(true);
+  
 
   }
   

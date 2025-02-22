@@ -21,6 +21,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -30,6 +31,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -110,6 +112,11 @@ public class Constants {
     public static final class SwerveConstants {
         public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // m/s
         public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    }
+
+    public static final class AutoConstants {
+        public static final PIDConstants TRANSLATION_PID = new PIDConstants(8.5, 0, 0);
+        public static final PIDConstants ROTATION_PID = new PIDConstants(2.131, 0, 0);
     }
 
     public static final class CoralConstants {
@@ -341,6 +348,7 @@ public class Constants {
         public static final double HANG_REVERSE_LIMIT = -0.84;
 
         public static final double HANG_ENCODER_OFFSET = -0.15234375; 
+        
 
         static {
             CATCH_HANG_CONFIG.encoder.positionConversionFactor(CATCH_HANG_GEAR_RATIO);

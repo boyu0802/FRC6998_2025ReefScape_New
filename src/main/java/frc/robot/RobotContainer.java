@@ -114,6 +114,7 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser("Example");
         SmartDashboard.putData("Auto Mode", autoChooser);
         //selectAuto();
+    
         configureBindings();
         DataLogManager.start();
         
