@@ -1,17 +1,23 @@
 package frc.lib.control;
 
+import lombok.Builder;
+import lombok.Data;
+
+
+@Data
+@Builder
 public class FeedForward {
-    public double kS;
-    public double kV;
-    public double kA;
+    private double kS;
+    private double kV;
+    private double kA;
+    private double kG;
 
-    public FeedForward(double kS, double kV, double kA) {
-        this.kS = kS;
-        this.kV = kV;
-        this.kA = kA;
-    }
+    private GravityType gravityType;
 
-    public double calculate(double velocity, double acceleration) {
-        return kS + kV * velocity + kA * acceleration;
+    public enum GravityType {
+        kArm,
+        kElevator,
     }
+    
 }
+

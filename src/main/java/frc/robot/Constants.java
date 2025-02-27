@@ -40,6 +40,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import frc.lib.control.FeedForward;
 import frc.lib.control.PIDConfig;
 import frc.lib.util.PolynomialRegression;
 import frc.robot.generated.TunerConstants;
@@ -170,10 +171,10 @@ public class Constants {
         public static final double CORAL_WRIST_KA = 0.061275/12;
         public static final double CORAL_WRIST_KG = 0.016319/12;
 
-        public static final double CORAL_INTAKE_KS = 0.01;
-        public static final double CORAL_INTAKE_KV = 0.04;
-        public static final double CORAL_INTAKE_KA = 0.0005;
 
+        public static final FeedForward CORAL_INTAKE_FF = FeedForward.builder()
+            .kS(0.01).kV(0.04).kA(0.0005).build();
+        
         public static final double CORAL_INTAKE_VELOCITY = 30.0;
         
         public static final double CORAL_WRIST_FORWARD_SOFT_LIMIT = 95.0;
@@ -182,7 +183,7 @@ public class Constants {
         public static final double CORAL_ENCODER_OFFSET = 0.312256;
         public static final double CORAL_WRIST_MAX_VELOCITY = 30.0;
         public static final double CORAL_WRIST_MAX_ACCEL = 60.0;
-        public static final double CORAL_WRIST_MAX_JERK = 600.0;
+        //public static final double CORAL_WRIST_MAX_JERK = 600.0;
 
 
         
@@ -219,9 +220,9 @@ public class Constants {
                     .withKP(CORAL_INTAKE_FEEDBACK.P)
                     .withKI(CORAL_INTAKE_FEEDBACK.I)
                     .withKD(CORAL_INTAKE_FEEDBACK.D)
-                    .withKS(CORAL_INTAKE_KS)
-                    .withKV(CORAL_INTAKE_KV)
-                    .withKA(CORAL_INTAKE_KA));
+                    .withKS(CORAL_INTAKE_FF.getKS())
+                    .withKV(CORAL_INTAKE_FF.getKV())
+                    .withKA(CORAL_INTAKE_FF.getKA()));
             
         
         public static final TalonFXConfiguration CORAL_WRISTCONFIG = new TalonFXConfiguration()
@@ -256,7 +257,8 @@ public class Constants {
             .withMotionMagic(new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(CORAL_WRIST_MAX_VELOCITY)
                     .withMotionMagicAcceleration(CORAL_WRIST_MAX_ACCEL)
-                    .withMotionMagicJerk(CORAL_WRIST_MAX_JERK))
+                    //.withMotionMagicJerk(CORAL_WRIST_MAX_JERK)
+                    )
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
                     .withForwardSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_FORWARD_SOFT_LIMIT))

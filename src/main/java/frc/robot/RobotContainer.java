@@ -244,8 +244,8 @@ public class RobotContainer {
         //testController2.povLeft().onTrue(hangSubsystem.catchHang());
 
 
-        testController2.povUp().onTrue(coralSubsystem.collectAlgaeWithoutVision());
-        testController2.povDown().onTrue(coralSubsystem.outputAlgaeWithoutVision());
+        testController2.povUp().onTrue(coralSubsystem.wristToNormal());
+        testController2.povDown().onTrue(coralSubsystem.wristToCoral());
 
         
 
