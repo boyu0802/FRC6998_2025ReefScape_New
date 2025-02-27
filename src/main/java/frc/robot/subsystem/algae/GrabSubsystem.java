@@ -3,6 +3,7 @@ package frc.robot.subsystem.algae;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel;
 
 import edu.wpi.first.math.util.Units;
@@ -34,6 +35,8 @@ import static frc.robot.RobotMap.GRAB_WRIST_ID;
 public class GrabSubsystem extends SubsystemBase {
     private final SparkFlex m_grabIntake = new SparkFlex(GRAB_INTAKE_ID.getDeviceNumber(), SparkLowLevel.MotorType.kBrushless);
     private final SparkFlex m_grabWrist = new SparkFlex(GRAB_WRIST_ID.getDeviceNumber(), SparkLowLevel.MotorType.kBrushless);
+
+    //private final SparkLimitSwitch m_grabLimit = m_grabWrist.getReverseLimitSwitch();
 
     private final MutVoltage wrist_sysIdVoltage = Volts.mutable(0);
     private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);

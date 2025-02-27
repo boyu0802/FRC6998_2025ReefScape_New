@@ -241,7 +241,11 @@ public class RobotContainer {
         testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(10))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
         testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0)))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
         testController2.start().and(testController2.povDown()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(-10)));
-        testController2.povLeft().onTrue(hangSubsystem.catchHang());
+        //testController2.povLeft().onTrue(hangSubsystem.catchHang());
+
+
+        testController2.povUp().onTrue(coralSubsystem.collectAlgaeWithoutVision());
+        testController2.povDown().onTrue(coralSubsystem.outputAlgaeWithoutVision());
 
         
 
@@ -249,6 +253,8 @@ public class RobotContainer {
         testController3.back().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kReverse));
         testController3.start().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kForward));
         testController3.start().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kReverse));
+
+        
 
         
         SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());

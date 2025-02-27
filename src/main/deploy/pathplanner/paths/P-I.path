@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.2,
-        "y": 4.961
+        "x": 7.149630681818182,
+        "y": 5.565610795454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.371846590909091,
-        "y": 5.336264204545455
+        "x": 5.78777964215025,
+        "y": 5.420280299492827
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Preload Point Mid"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 5.068
       },
       "prevControl": {
-        "x": 6.1624431818181815,
-        "y": 5.5257244318181815
+        "x": 6.383551822455646,
+        "y": 5.34779852003887
       },
       "nextControl": null,
       "isLocked": false,

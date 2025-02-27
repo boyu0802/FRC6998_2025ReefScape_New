@@ -27,6 +27,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -34,11 +36,17 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.lib.control.PIDConfig;
+import frc.lib.util.PolynomialRegression;
 import frc.robot.generated.TunerConstants;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
 
@@ -119,14 +127,42 @@ public class Constants {
         public static final PIDConstants ROTATION_PID = new PIDConstants(2.131, 0, 0);
     }
 
+    public static final class PhotonAprilTagConstants {
+        public static final AprilTagFieldLayout TAG_FIELD_LAYOUT =
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+
+        public static final Transform3d[] REEF_CAMERA_OFFSET = new Transform3d[]{
+            new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0)),
+            new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0))
+        };
+
+        public static final PolynomialRegression xyStdDevModel =
+        new PolynomialRegression(
+            new double[] {
+                0.752358, 1.016358, 1.296358, 1.574358, 1.913358, 2.184358, 2.493358, 2.758358,
+                3.223358, 4.093358, 4.726358
+            },
+            new double[] {0.005, 0.0135, 0.016, 0.038, 0.0515, 0.0925, 0.12, 0.14, 0.17, 0.27, 0.38},
+            2);
+        public static final PolynomialRegression thetaStdDevModel =
+            new PolynomialRegression(
+                new double[] {
+                    0.752358, 1.016358, 1.296358, 1.574358, 1.913358, 2.184358, 2.493358, 2.758358,
+                    3.223358, 4.093358, 4.726358
+                },
+                new double[] {0.008, 0.027, 0.015, 0.044, 0.04, 0.078, 0.049, 0.027, 0.059, 0.029, 0.068},
+            1);
+        
+    }
+
     public static final class CoralConstants {
 
-        public static final double CORAL_INTAKE_GEAR_RATIO = 3.0;
+        public static final double CORAL_INTAKE_GEAR_RATIO = 4.0;
         public static final double CORAL_WRIST_LENGTH = 34.176;
         public static final double CORAL_WRIST_GEAR_RATIO = 225.0/4.0;
 
         // TODO : Need to be Tuned.
-        public static final PIDConfig CORAL_INTAKE_FEEDBACK = new PIDConfig(0.0005, 0, 0.00001,0.0292);
+        public static final PIDConfig CORAL_INTAKE_FEEDBACK = new PIDConfig(0.11, 0, 0.0001,0.0292);
         public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(24.244, 0, 0.13351);
 
         public static final double CORAL_WRIST_KS = 0.2793/12;
@@ -134,25 +170,60 @@ public class Constants {
         public static final double CORAL_WRIST_KA = 0.061275/12;
         public static final double CORAL_WRIST_KG = 0.016319/12;
 
+        public static final double CORAL_INTAKE_KS = 0.01;
+        public static final double CORAL_INTAKE_KV = 0.04;
+        public static final double CORAL_INTAKE_KA = 0.0005;
+
         public static final double CORAL_INTAKE_VELOCITY = 30.0;
         
         public static final double CORAL_WRIST_FORWARD_SOFT_LIMIT = 95.0;
         public static final double CORAL_WRIST_REVERSE_SOFT_LIMIT = -60.0;
 
-        public static final double CORAL_ENCODER_OFFSET = 0.124755859375;
-        public static final double CORAL_WRIST_MAX_VELOCITY = 120.0;
-        public static final double CORAL_WRIST_MAX_ACCEL = 240.0;
-        public static final double CORAL_WRIST_MAX_JERK = 2400.0;
+        public static final double CORAL_ENCODER_OFFSET = 0.312256;
+        public static final double CORAL_WRIST_MAX_VELOCITY = 30.0;
+        public static final double CORAL_WRIST_MAX_ACCEL = 60.0;
+        public static final double CORAL_WRIST_MAX_JERK = 600.0;
 
 
-        public static final SparkMaxConfig CORAL_INTAKECONFIG = new SparkMaxConfig();
+        
 
         public static final CANcoderConfiguration CORAL_WRIST_ENCODER_CONFIG = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
             .withMagnetOffset(CORAL_ENCODER_OFFSET)
             .withAbsoluteSensorDiscontinuityPoint(0.5)
             .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
+        
             
+        public static final TalonFXConfiguration CORAL_INTAKE_CONFIG = new TalonFXConfiguration() 
+            .withCurrentLimits(
+                new CurrentLimitsConfigs()
+                    .withStatorCurrentLimitEnable(true)
+                    .withStatorCurrentLimit(100))
+            .withVoltage(new VoltageConfigs()
+                    .withPeakForwardVoltage(12)
+                    .withPeakReverseVoltage(-12))
+            .withFeedback(new FeedbackConfigs()
+                    //.withFeedbackRemoteSensorID(CORAL_WRIST_ID.getDeviceNumber())
+                    //.withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                    .withSensorToMechanismRatio(CORAL_INTAKE_GEAR_RATIO)
+                    .withRotorToSensorRatio(1.0))
+                    .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                    .withContinuousWrap(true))
+                    
+                    //.withContinuousWrap(true))
+            .withMotorOutput(new MotorOutputConfigs()
+                    .withInverted(InvertedValue.CounterClockwise_Positive)
+                    .withNeutralMode(Brake))
+
+            .withSlot0(new Slot0Configs()
+                    .withKP(CORAL_INTAKE_FEEDBACK.P)
+                    .withKI(CORAL_INTAKE_FEEDBACK.I)
+                    .withKD(CORAL_INTAKE_FEEDBACK.D)
+                    .withKS(CORAL_INTAKE_KS)
+                    .withKV(CORAL_INTAKE_KV)
+                    .withKA(CORAL_INTAKE_KA));
+            
+        
         public static final TalonFXConfiguration CORAL_WRISTCONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
@@ -192,24 +263,10 @@ public class Constants {
                     .withReverseSoftLimitEnable(true)
                     .withReverseSoftLimitThreshold(Units.degreesToRotations(CORAL_WRIST_REVERSE_SOFT_LIMIT)));
 
-       
+    
+
 
         
-
-
-        static {
-            CORAL_INTAKECONFIG.encoder.positionConversionFactor(1.0/CORAL_INTAKE_GEAR_RATIO);
-            CORAL_INTAKECONFIG.encoder.velocityConversionFactor(1.0/CORAL_INTAKE_GEAR_RATIO/60.0);
-
-            CORAL_INTAKECONFIG.idleMode(IdleMode.kCoast);
-            CORAL_INTAKECONFIG.closedLoop
-                    .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                    // Set PID values for elevatorPosition control
-                    // TODO: Need To be Tuned.
-                    .apply(CORAL_INTAKE_FEEDBACK.createSparkMaxConfig())
-                    .iZone(0)
-                    .outputRange(-1, 1);
-        }
     }
 
 
@@ -502,6 +559,7 @@ public class Constants {
 
 
         }
+        
 
         public static final class VisionConstants {
             // TODO : Need to be Tuned.
@@ -594,6 +652,8 @@ public class Constants {
                 }
             }
         }
+
+        
 
     }
 

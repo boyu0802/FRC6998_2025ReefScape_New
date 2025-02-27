@@ -3,7 +3,7 @@ package frc.robot;
 import frc.lib.util.CANDeviceId;
 
 public class RobotMap {
-    public static final CANDeviceId CORAL_INTAKE_ID = new CANDeviceId(1);
+    public static final CANDeviceId CORAL_INTAKE_ID = new CANDeviceId(13);
     public static final CANDeviceId CORAL_WRIST_ID = new CANDeviceId(11);
     public static final CANDeviceId CORAL_WRIST_ENCODER_ID = new CANDeviceId(5); // CanCoder
 
@@ -15,7 +15,7 @@ public class RobotMap {
     public static final int ALGAE_INTAKE_LIMITSWITCH_ID = 1;
 
     public static final CANDeviceId ELEVATOR_ID_LEFT = new CANDeviceId(9);
-    public static final CANDeviceId ELEVATOR_ID_RIGHT = new CANDeviceId(13,"rio");
+    public static final CANDeviceId ELEVATOR_ID_RIGHT = new CANDeviceId(15,"rio");
     public static final int ELEVATOR_LIMITSWITCH_ID = 2;
 
     public static final CANDeviceId HANG_ID = new CANDeviceId(12);
