@@ -294,7 +294,7 @@ public class Constants {
         public static final double ELEVATOR_GEAR_RATIO = 9.0/ELEVATOR_LENGTH;
 
         // TODO : Need to be Tuned.
-        public static final ElevatorFeedforward ELEVATOR_FEED_FORWARD = new ElevatorFeedforward(0.4, 0, 0.4,0);
+        
 
         public static final double ELEVATOR_MAX_LENGTH = 1.3;
         public static final double ELEVATOR_MIN_LENGTH = 0.0;
@@ -303,6 +303,9 @@ public class Constants {
         public static final double ELEVATOR_KV = 10.923/12;
         public static final double ELEVATOR_KA = 1.7629/12;
         public static final double ELEVATOR_KG = 0.24228/12;
+
+        public static final FeedForward ELEVATOR_FEEDFORWARD = FeedForward.builder()
+            .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.24228/12.0).gravityType(GravityType.kElevator).build();
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
         public static final double ELEVAROR_MAX_VELOCITY = 3.0;
@@ -337,10 +340,10 @@ public class Constants {
                     .withKI(ELEVATOR_FEEDBACK.I)
                     .withKD(ELEVATOR_FEEDBACK.D)
                     .withGravityType(GravityTypeValue.Elevator_Static)
-                    .withKG(ELEVATOR_KG)
-                    .withKS(ELEVATOR_KS)
-                    .withKV(ELEVATOR_KV)
-                    .withKA(ELEVATOR_KA))
+                    .withKG(ELEVATOR_FEEDFORWARD.getKG())
+                    .withKS(ELEVATOR_FEEDFORWARD.getKS())
+                    .withKV(ELEVATOR_FEEDFORWARD.getKV())
+                    .withKA(ELEVATOR_FEEDFORWARD.getKA()))
 
                 .withMotionMagic(new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(ELEVAROR_MAX_VELOCITY)

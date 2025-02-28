@@ -7,49 +7,49 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MP - I"
+            "pathName": "RP - F"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "I - LS"
+            "pathName": "F - RS"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "LS - J"
+            "pathName": "RS - E"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "J - LS"
+            "pathName": "E - RS"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "LS -K"
+            "pathName": "RS - D"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "K - LS"
+            "pathName": "D - RS"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "LS - L"
+            "pathName": "RS - C "
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Mid Left",
+  "folder": "Mid Right",
   "choreoAuto": false
 }

@@ -4,11 +4,14 @@
   "holonomicMode": true,
   "pathFolders": [
     "Net",
+    "Point to Right Station",
     "Point to Left Station",
     "Preload Mid",
     "Test"
   ],
   "autoFolders": [
+    "Mid Left",
+    "Mid Right",
     "Test"
   ],
   "defaultMaxVel": 6.0,
