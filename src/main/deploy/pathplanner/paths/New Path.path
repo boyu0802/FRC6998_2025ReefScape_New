@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.763148291302184,
-        "y": 1.0704974740508575
+        "y": 1.0704974740508573
       },
       "nextControl": null,
       "isLocked": false,
@@ -52,7 +52,7 @@
     "rotation": 119.31588597295921
   },
   "reversed": false,
-  "folder": "Blue",
+  "folder": "Point to Left Station",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

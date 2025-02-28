@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1766477272752558,
-        "y": 7.041406249994399
+        "x": 7.149630681818182,
+        "y": 5.565610795454545
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5226390776589405,
-        "y": 6.362178686906099
+        "x": 6.186759868421052,
+        "y": 6.045559210526315
       },
       "isLocked": false,
-      "linkedName": "Collect Point"
+      "linkedName": "Preload Point Mid"
     },
     {
       "anchor": {
-        "x": 3.989253024408401,
-        "y": 5.2265361563256185
+        "x": 3.970697800069467,
+        "y": 5.236228577807747
       },
       "prevControl": {
-        "x": 2.9188286197666518,
-        "y": 5.94254173177152
+        "x": 4.8589638157894735,
+        "y": 6.21875
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "K"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.93141717813761
+    "rotation": -59.70355182376155
   },
   "reversed": false,
-  "folder": "Point to Left Station",
+  "folder": "Preload Mid",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.57303097851928
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

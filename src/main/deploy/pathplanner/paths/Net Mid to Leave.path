@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1766477272752558,
-        "y": 7.041406249994399
+        "x": 8.218077727343028,
+        "y": 5.18889711204253
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5226390776589405,
-        "y": 6.362178686906099
+        "x": 7.038277676472978,
+        "y": 4.838224117870346
       },
       "isLocked": false,
-      "linkedName": "Collect Point"
+      "linkedName": "Net Mid"
     },
     {
       "anchor": {
-        "x": 3.989253024408401,
-        "y": 5.2265361563256185
+        "x": 5.798040183760251,
+        "y": 4.020570870912744
       },
       "prevControl": {
-        "x": 2.9188286197666518,
-        "y": 5.94254173177152
+        "x": 6.611426044454914,
+        "y": 4.492187523346251
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Algae G-H"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.93141717813761
+    "rotation": 179.80901477564046
   },
   "reversed": false,
-  "folder": "Point to Left Station",
+  "folder": "Net",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.57303097851928
+    "rotation": -0.1364447735108654
   },
   "useDefaultConstraints": true
 }

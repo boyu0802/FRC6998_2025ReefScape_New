@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MP - J"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J - LS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Collect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LS -K"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "K - LS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Collect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LS - L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_L4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

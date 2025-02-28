@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Preload_Mid to J"
+            "pathName": "MP - I"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "J to Station"
+            "name": "L4"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Station to L"
+            "waitTime": 0.5
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "L to Station"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Station to L"
+            "name": "Shoot_L4"
           }
         }
       ]

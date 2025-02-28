@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.78777964215025,
-        "y": 5.420280299492827
+        "x": 5.936595394736842,
+        "y": 5.997450657894737
       },
       "isLocked": false,
       "linkedName": "Preload Point Mid"
     },
     {
       "anchor": {
-        "x": 5.297,
-        "y": 5.068
+        "x": 4.9986112128398075,
+        "y": 5.246947119677852
       },
       "prevControl": {
-        "x": 6.383551822455646,
-        "y": 5.34779852003887
+        "x": 5.465131578947368,
+        "y": 5.564473684210526
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "J"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -118.58686583946725
+    "rotation": -119.74488129694225
   },
   "reversed": false,
-  "folder": "Blue",
+  "folder": "Preload Mid",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

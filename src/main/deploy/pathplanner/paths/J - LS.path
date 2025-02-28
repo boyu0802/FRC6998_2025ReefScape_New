@@ -3,47 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.296,
-        "y": 5.0880269943868495
+        "x": 4.9986112128398075,
+        "y": 5.246947119677852
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9088636363636358,
-        "y": 5.934559659090909
+        "x": 4.4067434210526315,
+        "y": 6.4496710526315795
       },
       "isLocked": false,
-      "linkedName": "BLUE_Reef_J"
+      "linkedName": "J"
     },
     {
       "anchor": {
-        "x": 1.1766477272752558,
-        "y": 7.041406249994399
+        "x": 1.653541507539224,
+        "y": 7.364620152890129
       },
       "prevControl": {
-        "x": 3.0637365199288764,
-        "y": 5.971426425900741
+        "x": 3.396463815789474,
+        "y": 6.786430921052631
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Collect Point"
+      "linkedName": "Station"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.26462765957447903,
-      "rotationDegrees": -119.1662196246427
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Collect",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 6.0,
     "maxAcceleration": 4.5,
@@ -53,11 +41,11 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 126.57303097851928
+    "velocity": 0,
+    "rotation": 126.08507304285207
   },
   "reversed": false,
-  "folder": "Blue",
+  "folder": "Point to Left Station",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -119.74488129694225

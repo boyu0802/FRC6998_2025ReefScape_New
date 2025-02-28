@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1766477272752558,
-        "y": 7.041406249994399
+        "x": 7.1296875,
+        "y": 7.479194078947367
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5226390776589405,
-        "y": 6.362178686906099
+        "x": 7.757436305084922,
+        "y": 7.4806629038765164
       },
       "isLocked": false,
-      "linkedName": "Collect Point"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.989253024408401,
-        "y": 5.2265361563256185
+        "x": 5.18610197368421,
+        "y": 7.479194078947367
       },
       "prevControl": {
-        "x": 2.9188286197666518,
-        "y": 5.94254173177152
+        "x": 4.891214259443598,
+        "y": 7.479267690384911
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.93141717813761
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Point to Left Station",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.57303097851928
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
