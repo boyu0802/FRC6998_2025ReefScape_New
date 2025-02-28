@@ -37,11 +37,13 @@ import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.setcommand.CoralIntakeCommand;
 import frc.robot.commands.setcommand.SetCoralWristCommand;
 import frc.robot.commands.setcommand.SetElevatorCommand;
+import frc.robot.commands.setcommand.SetHangVelocityCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.hang.HangSubsystem;
+import frc.robot.subsystem.vision.PhotonAprilTagVision;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 import frc.robot.subsystem.vision.VisionState;
 import frc.robot.subsystem.vision.VisionSubsystem;
@@ -88,7 +90,9 @@ public class RobotContainer {
     };
 
     private final VisionState visionState = new VisionState(visionFieldPoseEstimateConsumer);
-    private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionState);
+    //private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionState);
+
+    private final PhotonAprilTagVision photonAprilTagVision = new PhotonAprilTagVision(visionState);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(visionState);
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
@@ -171,7 +175,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        //drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
 
         //testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
@@ -237,22 +241,22 @@ public class RobotContainer {
         m_operatorController.rightTrigger(0.5).onTrue(grabSubsystem.setGrabto75deg());
 
     
-        //testController2.axisGreaterThan(1, 0.5).onTrue(coralSubsystem.wristToNormal());
-        testController2.start().and(testController2.povUp()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(10))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
-        testController2.start().and(testController2.povRight()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0)))).onFalse(new InstantCommand(()-> hangSubsystem.setHangVelocity(Units.degreesToRotations(0))));
-        testController2.start().and(testController2.povDown()).whileTrue(new InstantCommand(()-> hangSubsystem.setHangVelocity(-10)));
-        //testController2.povLeft().onTrue(hangSubsystem.catchHang());
+        
+        testController2.povUp().whileTrue(new SetHangVelocityCommand(hangSubsystem, 12.0));
+        testController2.povDown().whileTrue(new SetHangVelocityCommand(hangSubsystem, -12.0));
+        testController2.povRight().onTrue(hangSubsystem.catchHang());
+        testController2.a().onTrue(grabSubsystem.setGrabto10deg());
+        testController2.b().onTrue(grabSubsystem.setGrabto75deg());
+        testController2.x().onTrue(grabSubsystem.collectWithoutVision());
+        testController2.y().onTrue(grabSubsystem.reverseWithoutVision());   
 
-
-        testController2.povUp().onTrue(coralSubsystem.wristToNormal());
-        testController2.povDown().onTrue(coralSubsystem.wristToCoral());
 
         
 
         testController3.back().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kForward));
-        testController3.back().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kReverse));
-        testController3.start().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kForward));
-        testController3.start().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kReverse));
+        testController3.back().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kReverse));
+        testController3.start().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kForward));
+        testController3.start().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kReverse));
 
         
 

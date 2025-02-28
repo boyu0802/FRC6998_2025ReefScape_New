@@ -5,7 +5,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-
+import lombok.Getter;
+@Getter
 public class VisionFieldPoseEstimate {
 
     private final Pose2d visionRobotPoseMeters;
@@ -20,15 +21,5 @@ public class VisionFieldPoseEstimate {
         this.visionMeasurementStdDevs = visionMeasurementStdDevs;
     }
 
-    public Pose2d getVisionRobotPoseMeters() {
-        return visionRobotPoseMeters;
-    }
-
-    public double getTimestampSeconds() {
-        return timestampSeconds;
-    }
-
-    public Matrix<N3, N1> getVisionMeasurementStdDevs() {
-        return visionMeasurementStdDevs;
-    }
+    
 }

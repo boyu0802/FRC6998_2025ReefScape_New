@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,6 +26,8 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.HangConstants.CATCH_HANG_CONFIG;
 import static frc.robot.Constants.HangConstants.HANG_CONFIG;
 import static frc.robot.Constants.HangConstants.HANG_ENCODER_CONFIG;
+import static frc.robot.Constants.HangConstants.HANG_FORWARD_LIMIT;
+import static frc.robot.Constants.HangConstants.HANG_REVERSE_LIMIT;
 import static frc.robot.RobotMap.CATCH_HANG_ID;
 import static frc.robot.RobotMap.HANG_ENCODER_ID;
 import static frc.robot.RobotMap.HANG_ID;
@@ -33,6 +36,8 @@ public class HangSubsystem extends SubsystemBase {
     private final SparkFlex m_catchHang = new SparkFlex(CATCH_HANG_ID.getDeviceNumber(), SparkFlex.MotorType.kBrushless);
     private final TalonFX m_hangMotor = new TalonFX(HANG_ID.getDeviceNumber());
     private final CANcoder m_hangMotorEncoder = new CANcoder(HANG_ENCODER_ID.getDeviceNumber());
+
+    private final DigitalOutput m_hangLimit = new DigitalOutput(0);
 
     private final MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
     //TODO: SysId Testing.
@@ -55,6 +60,17 @@ public class HangSubsystem extends SubsystemBase {
 
         m_hangMotor.getConfigurator().apply(HANG_CONFIG);
         m_hangMotorEncoder.getConfigurator().apply(HANG_ENCODER_CONFIG);
+        
+
+
+        HANG_CONFIG.Feedback.FeedbackRemoteSensorID = m_hangMotorEncoder.getDeviceID();
+        HANG_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        HANG_CONFIG.HardwareLimitSwitch.ForwardLimitRemoteSensorID = m_hangLimit.getChannel();
+        HANG_CONFIG.HardwareLimitSwitch.ForwardLimitEnable = true;
+        m_hangMotor.getConfigurator().apply(HANG_CONFIG);
+        
+
+
 
         
 
@@ -122,13 +138,10 @@ public class HangSubsystem extends SubsystemBase {
         m_catchHang.getClosedLoopController().setReference(velocity,SparkFlex.ControlType.kVelocity, ClosedLoopSlot.kSlot0);
     }
     public void setHangVelocity(double velocity){
-        m_hangMotor.setControl(m_VelocityTorqueCurrentFOC.withVelocity(velocity));
+        
+        m_hangMotor.setControl(m_velocityVoltage.withVelocity(velocity));
+        
     }
-
-    
-
-    
-    
 
     
     public Command setHangto0deg(){
@@ -140,12 +153,13 @@ public class HangSubsystem extends SubsystemBase {
     }
     public Command catchHang(){
         return Commands.sequence(
-                Commands.runOnce(()-> setCatchHangVelocity(10.0)),
+                Commands.runOnce(()-> setCatchHangVelocity(20.0)),
                 Commands.waitSeconds(1.0),
-                Commands.runOnce(()-> stopCatchIntake())
+                Commands.runOnce(()-> setCatchHangVelocity(0.0))
         );
     }
 
+    
     
     @Override
     public void periodic(){

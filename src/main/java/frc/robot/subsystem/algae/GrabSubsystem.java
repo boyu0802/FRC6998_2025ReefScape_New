@@ -79,7 +79,7 @@ public class GrabSubsystem extends SubsystemBase {
                                         .voltage(wrist_sysIdVoltage.mut_replace(
                                                 m_grabWrist.getAppliedOutput()* m_grabWrist.getBusVoltage(), Volts))
                                         .angularPosition(wrist_sysIdAngle.mut_replace(
-                                                getGrabWristPosition(), Rotations))
+                                                getActualPosition(), Rotations))
                                         .angularVelocity(wrist_sysIdVelocity.mut_replace(
                                                getGrabWristVelocity(), RotationsPerSecond));
                             },
@@ -97,7 +97,7 @@ public class GrabSubsystem extends SubsystemBase {
     }
 
     public double setActualPosition(double position){
-        return Units.degreesToRotations(93.4-position);
+        return Units.degreesToRotations(64.08-position);
     }
 
     public double getGrabIntakeVelocity(){
@@ -119,20 +119,21 @@ public class GrabSubsystem extends SubsystemBase {
     }
 
     private double getActualPosition(){
-        return 93.4-getGrabWristPosition();
+        return 64.08-getGrabWristPosition();
     }
+    
 
     public Command setGrabto10deg(){
         return Commands.parallel(
-            runOnce(()-> setGrabWristPosition(10.0)),
-            collectWithoutVision()
+            runOnce(()-> setGrabWristPosition(-10.0))
+            //collectWithoutVision()
             );}
     
 
     public Command setGrabto75deg(){
         return Commands.sequence(
-            runOnce(()-> setGrabWristPosition(67.0)),
-            runOnce(()-> setGrabIntakeVelocity(-10.0))
+            runOnce(()-> setGrabWristPosition(55.0))
+            //runOnce(()-> setGrabIntakeVelocity(-20.0))
             );
     }
 
@@ -142,7 +143,7 @@ public class GrabSubsystem extends SubsystemBase {
                 Commands.runOnce(()->setGrabIntakeVelocity(GRAB_INTAKE_VELOCITY)),
                 //Commands.waitUntil(this::getCoralLimit),
                 Commands.waitSeconds(2.0),
-                Commands.runOnce(()->setGrabIntakeVelocity(0)),
+                Commands.runOnce(()->setGrabIntakeVelocity(-5)),
                 Commands.print("algae collected")
         );
     }
@@ -168,7 +169,7 @@ public class GrabSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Grab/ Intake Velocity", getGrabIntakeVelocity());
         SmartDashboard.putNumber("Grab/ Wrist Position", getGrabWristPosition());
         SmartDashboard.putNumber("Grab/ Wrist Velocity", getGrabWristVelocity());
-        SmartDashboard.putNumber("Grab/ actual Postion", 93.4-getGrabWristPosition());
+        SmartDashboard.putNumber("Grab/ actual Postion", getActualPosition());
         //SmartDashboard.getBoolean("Coral Intake Limit Switch",getCoralLimit());
     }
 

@@ -42,6 +42,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.lib.control.FeedForward;
 import frc.lib.control.PIDConfig;
+import frc.lib.control.FeedForward.GravityType;
 import frc.lib.util.PolynomialRegression;
 import frc.robot.generated.TunerConstants;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -129,10 +130,23 @@ public class Constants {
     }
 
     public static final class PhotonAprilTagConstants {
+
+        public static final double REEF_LEFT_PIPELINE = 0;
+        public static final double REEF_RIGHT_PIPELINE = 1;
+
+        public static double VISION_STD_DEV_X = 0.5;
+        public static double VISION_STD_DEV_Y = 0.5;
+        public static double VISION_STD_DEV_THETA = 99999999;
+
+        public static final Matrix<N3, N1> visionStdMatrix =
+                VecBuilder.fill(VISION_STD_DEV_X, VISION_STD_DEV_Y, VISION_STD_DEV_THETA);
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+
         public static final AprilTagFieldLayout TAG_FIELD_LAYOUT =
             AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final Transform3d[] REEF_CAMERA_OFFSET = new Transform3d[]{
+            // Reef Left : 0 , Reef Right : 1
             new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0)),
             new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0))
         };
@@ -385,7 +399,7 @@ public class Constants {
     public static final class HangConstants {
         public static final SparkFlexConfig CATCH_HANG_CONFIG = new SparkFlexConfig();
         public static final double HANG_LENGTH = 34.176;
-        public static final double HANG_GEAR_RATIO = 75.0;
+        public static final double HANG_GEAR_RATIO = 45.0;
         public static final double CATCH_HANG_GEAR_RATIO = 1.0;
         
 
@@ -393,7 +407,7 @@ public class Constants {
         //public static final SimpleMotorFeedforward HANG_FEED_FORWARD = new SimpleMotorFeedforward(0, 0, 0);
         //public static final ArmFeedforward CATCH_HANG_FEED_FORWARD = new ArmFeedforward(0, 0, 0,0);
 
-        public static final PIDConfig HANG_FEEDBACK = new PIDConfig(0, 0, 0);
+        public static final PIDConfig HANG_FEEDBACK = new PIDConfig(0.088066, 0, 0);
         public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0.0105, 0, 0.0001,0.0105);
 
         public static final double HANG_KS = 0;
@@ -401,12 +415,15 @@ public class Constants {
         public static final double HANG_KA = 0;
         public static final double HANG_KG = 0;
 
+        public static final FeedForward HANG_FEED_FORWARD = FeedForward.builder()
+            .kS(0.002259/12.0).kV(5.2514/12.0).kA(1.2691/12.0).kG(0.07716/12.0).gravityType(GravityType.kArm).build();
+
         public static final double CATCH_HANG_INTAKE_VELOCITY = 10.0;
 
-        public static final double HANG_FORWARD_LIMIT = 5;
-        public static final double HANG_REVERSE_LIMIT = -0.84;
+        public static final double HANG_FORWARD_LIMIT = 0.280518;
+        public static final double HANG_REVERSE_LIMIT = -0.013184;
 
-        public static final double HANG_ENCODER_OFFSET = -0.15234375; 
+        public static final double HANG_ENCODER_OFFSET = 0.357178; 
         
 
         static {
@@ -458,10 +475,10 @@ public class Constants {
                     .withKI(HANG_FEEDBACK.I)
                     .withKD(HANG_FEEDBACK.D)
                     .withGravityType(GravityTypeValue.Arm_Cosine)
-                    .withKS(HANG_KS)
-                    .withKV(HANG_KV)
-                    .withKA(HANG_KA)
-                    .withKG(HANG_KG))
+                    .withKS(HANG_FEED_FORWARD.getKS())
+                    .withKV(HANG_FEED_FORWARD.getKV())
+                    .withKA(HANG_FEED_FORWARD.getKA())
+                    .withKG(HANG_FEED_FORWARD.getKG()))
             .withSlot1(new Slot1Configs()
                     .withKP(0.5)
                     .withKI(0)
@@ -477,9 +494,9 @@ public class Constants {
                     .withPeakReverseTorqueCurrent(-800)
             )
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                    .withForwardSoftLimitEnable(true)
+                    .withForwardSoftLimitEnable(false)
                     .withForwardSoftLimitThreshold(HANG_FORWARD_LIMIT)
-                    .withReverseSoftLimitEnable(true)
+                    .withReverseSoftLimitEnable(false)
                     .withReverseSoftLimitThreshold(HANG_REVERSE_LIMIT));
 
         
@@ -490,13 +507,13 @@ public class Constants {
             public static final SparkFlexConfig GRAB_WRIST_CONFIG = new SparkFlexConfig();
             public static final SparkFlexConfig GRAB_INTAKE_CONFIG = new SparkFlexConfig();
 
-            public static final double GRAB_WRIST_GEAR_RATIO = 1.0 / 75.0;
+            public static final double GRAB_WRIST_GEAR_RATIO = 1.0 / 100.0;
             public static final double GRAB_INTAKE_GEAR_RATIO = 1.0 / 3.0;
 
-            public static final double GRAB_KS = 1.1968/12;
-            public static final double GRAB_KV = 8.7628/12;
-            public static final double GRAB_KA = 1.2756/12;
-            public static final double GRAB_KG = 2.1732/12;
+            public static final double GRAB_KS = 0.67881/12;
+            public static final double GRAB_KV = 6.6459/12;
+            public static final double GRAB_KA = 2.363/12;
+            public static final double GRAB_KG = 0.98041/12;
 
 
             public static final double GRAB_INTAKE_VELOCITY = -15.0;
@@ -509,9 +526,9 @@ public class Constants {
             public static final ArmFeedforward GRAB_WRIST_FEED_FORWARD = new ArmFeedforward(GRAB_KS, GRAB_KG, GRAB_KV,GRAB_KA);
 
             public static final PIDConfig GRAB_INTAKE_FEEDBACK = new PIDConfig(0.0005, 0, 0.00001,0.028);
-            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0.0323, 0, 0.00001567);
+            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0.049624, 0, 0.0011853);
 
-            public static final double GRAB_WRIST_OFFSET_TOZERO = 0.3433399*360.0;
+            public static final double GRAB_WRIST_OFFSET_TOZERO = 0.9697*360.0;
 
          
 
@@ -534,14 +551,14 @@ public class Constants {
                 //GRAB_WRIST_CONFIG.encoder.positionConversionFactor(360);
                 GRAB_WRIST_CONFIG.absoluteEncoder.positionConversionFactor(1.0);
                 GRAB_WRIST_CONFIG.absoluteEncoder.velocityConversionFactor(1.0/60.0);
-                GRAB_WRIST_CONFIG.absoluteEncoder.zeroOffset(0.3433399);
+                GRAB_WRIST_CONFIG.absoluteEncoder.zeroOffset(0.9697);
                 GRAB_WRIST_CONFIG.absoluteEncoder.inverted(true);
 
                 GRAB_WRIST_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12).inverted(false)
                 .softLimit
                     .forwardSoftLimit(Units.degreesToRotations(105f))
                     .forwardSoftLimitEnabled(true)
-                    .reverseSoftLimit(Units.degreesToRotations(15f))
+                    .reverseSoftLimit(Units.degreesToRotations(10f))
                     .reverseSoftLimitEnabled(true);
                 GRAB_WRIST_CONFIG.closedLoop
                         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
@@ -551,8 +568,8 @@ public class Constants {
                         .iZone(0)
                         .outputRange(-1, 1)
                         .maxMotion
-                        .maxVelocity(960)
-                        .maxAcceleration(4800)
+                        .maxVelocity(1920)
+                        .maxAcceleration(7680)
                         .allowedClosedLoopError(Units.degreesToRotations(5.0));
                 
 
