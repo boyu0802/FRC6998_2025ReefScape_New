@@ -14,15 +14,15 @@ public class RobotMap {
 
     
 
-    public static final CANDeviceId ELEVATOR_ID_LEFT = new CANDeviceId(9);
-    public static final CANDeviceId ELEVATOR_ID_RIGHT = new CANDeviceId(15,"rio");
-    public static final int ELEVATOR_LIMITSWITCH_ID = 6;
+    public static final CANDeviceId ELEVATOR_ID_LEFT = new CANDeviceId(15);
+    public static final CANDeviceId ELEVATOR_ID_RIGHT = new CANDeviceId(9,"rio");
+    public static final int ELEVATOR_LIMITSWITCH_ID = 0;
 
     public static final CANDeviceId HANG_ID = new CANDeviceId(12);
     public static final CANDeviceId CATCH_HANG_ID = new CANDeviceId(2);
     public static final CANDeviceId HANG_ENCODER_ID = new CANDeviceId(6);
 
-    public static final int HANG_LIMITSWITCH_ID = 0;
+    public static final int HANG_LIMITSWITCH_ID = 4;
 
 
 

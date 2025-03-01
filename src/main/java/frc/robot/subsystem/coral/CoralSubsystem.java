@@ -230,7 +230,7 @@ public class CoralSubsystem extends SubsystemBase {
     // use in auto path only.
     public SequentialCommandGroup collectCoralWithoutVision() {
         return new SequentialCommandGroup(
-            new InstantCommand(()-> setCoralIntakeVelocity(10)),
+            new InstantCommand(()-> setCoralIntakeVelocity(15)),
             new ParallelDeadlineGroup(
                 new WaitCommand(2.0),
                 new WaitUntilCommand(()->getCoralLimit())),
@@ -241,7 +241,7 @@ public class CoralSubsystem extends SubsystemBase {
     public Command outputCoralWithoutVision() {
         return Commands.sequence(
                 Commands.print("running coral output"),
-                Commands.runOnce(()->setCoralIntakeVelocity(-7.5)),
+                Commands.runOnce(()->setCoralIntakeVelocity(-30.0)),
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(()->stopCoralIntake()),
                 Commands.print("coral outputted")

@@ -178,26 +178,29 @@ public class Constants {
 
         // TODO : Need to be Tuned.
         public static final PIDConfig CORAL_INTAKE_FEEDBACK = new PIDConfig(0.11, 0, 0.0001,0.0292);
-        public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(24.244, 0, 0.13351);
+        public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(54.279, 0, 0.53262);
 
-        public static final double CORAL_WRIST_KS = 0.2793/12;
-        public static final double CORAL_WRIST_KV = 6.2584/12;
-        public static final double CORAL_WRIST_KA = 0.061275/12;
-        public static final double CORAL_WRIST_KG = 0.016319/12;
+        public static final double CORAL_WRIST_KS = 0.60946/12;
+        public static final double CORAL_WRIST_KV = 4.7417/12;
+        public static final double CORAL_WRIST_KA = 0.67673/12;
+        public static final double CORAL_WRIST_KG = 0.59022/12;
 
 
         public static final FeedForward CORAL_INTAKE_FF = FeedForward.builder()
             .kS(0.01).kV(0.04).kA(0.0005).build();
+
+        public static final FeedForward CORAL_WRIST_FF = FeedForward.builder()
+            .kS(0.60946/12.0).kV(4.7417/12.0).kA(0.67673/12.0).kG(0.59022/12.0).build();
         
         public static final double CORAL_INTAKE_VELOCITY = 30.0;
         
-        public static final double CORAL_WRIST_FORWARD_SOFT_LIMIT = 95.0;
-        public static final double CORAL_WRIST_REVERSE_SOFT_LIMIT = -60.0;
+        public static final double CORAL_WRIST_FORWARD_SOFT_LIMIT = 90.0;
+        public static final double CORAL_WRIST_REVERSE_SOFT_LIMIT = -54.0;
 
-        public static final double CORAL_ENCODER_OFFSET = 0.312256;
-        public static final double CORAL_WRIST_MAX_VELOCITY = 30.0;
-        public static final double CORAL_WRIST_MAX_ACCEL = 60.0;
-        //public static final double CORAL_WRIST_MAX_JERK = 600.0;
+        public static final double CORAL_ENCODER_OFFSET = -0.06103515625;
+        public static final double CORAL_WRIST_MAX_VELOCITY = 10.0;
+        public static final double CORAL_WRIST_MAX_ACCEL = 20.0;
+        public static final double CORAL_WRIST_MAX_JERK = 200.0;
 
 
         
@@ -264,14 +267,14 @@ public class Constants {
                     .withKI(CORAL_WRIST_FEEDBACK.I)
                     .withKD(CORAL_WRIST_FEEDBACK.D)
                     .withGravityType(GravityTypeValue.Arm_Cosine)
-                    .withKS(CORAL_WRIST_KS)
-                    .withKV(CORAL_WRIST_KV)
-                    .withKA(CORAL_WRIST_KA)
-                    .withKG(CORAL_WRIST_KG))
+                    .withKS(CORAL_WRIST_FF.getKS())
+                    .withKV(CORAL_WRIST_FF.getKV())
+                    .withKA(CORAL_WRIST_FF.getKA())
+                    .withKG(CORAL_WRIST_FF.getKG()))
             .withMotionMagic(new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(CORAL_WRIST_MAX_VELOCITY)
                     .withMotionMagicAcceleration(CORAL_WRIST_MAX_ACCEL)
-                    //.withMotionMagicJerk(CORAL_WRIST_MAX_JERK)
+                    .withMotionMagicJerk(CORAL_WRIST_MAX_JERK)
                     )
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
@@ -305,11 +308,11 @@ public class Constants {
         public static final double ELEVATOR_KG = 0.24228/12;
 
         public static final FeedForward ELEVATOR_FEEDFORWARD = FeedForward.builder()
-            .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.24228/12.0).gravityType(GravityType.kElevator).build();
+            .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.43059/12.0).gravityType(GravityType.kElevator).build();
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
-        public static final double ELEVAROR_MAX_VELOCITY = 3.0;
-        public static final double ELEVAROR_MAX_ACCEL = 6.0;
+        public static final double ELEVAROR_MAX_VELOCITY = 6.0;
+        public static final double ELEVAROR_MAX_ACCEL = 12.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
         public static final double ZEROED_VOLTAGE = (-1.5);
@@ -413,10 +416,7 @@ public class Constants {
         public static final PIDConfig HANG_FEEDBACK = new PIDConfig(0.088066, 0, 0);
         public static final PIDConfig CATCH_HANG_FEEDBACK = new PIDConfig(0.0105, 0, 0.0001,0.0105);
 
-        public static final double HANG_KS = 0;
-        public static final double HANG_KV = 0;
-        public static final double HANG_KA = 0;
-        public static final double HANG_KG = 0;
+    
 
         public static final FeedForward HANG_FEED_FORWARD = FeedForward.builder()
             .kS(0.002259/12.0).kV(5.2514/12.0).kA(1.2691/12.0).kG(0.07716/12.0).gravityType(GravityType.kArm).build();
@@ -426,7 +426,7 @@ public class Constants {
         public static final double HANG_FORWARD_LIMIT = 0.280518;
         public static final double HANG_REVERSE_LIMIT = -0.013184;
 
-        public static final double HANG_ENCODER_OFFSET = 0.357178; 
+        public static final double HANG_ENCODER_OFFSET = -0.245117; 
         
 
         static {
@@ -450,7 +450,7 @@ public class Constants {
             .withMagnetSensor(new MagnetSensorConfigs()
                     .withMagnetOffset(HANG_ENCODER_OFFSET)
                     .withAbsoluteSensorDiscontinuityPoint(0.5)
-                    .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
+                    .withSensorDirection(SensorDirectionValue.Clockwise_Positive));
 
         public static final TalonFXConfiguration HANG_CONFIG = new TalonFXConfiguration()
             .withCurrentLimits(
@@ -489,9 +489,9 @@ public class Constants {
                     .withKV(0.6))
             
             .withMotionMagic(new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(1.0)
-                    .withMotionMagicAcceleration(2.0)
-                    .withMotionMagicJerk(2))
+                    .withMotionMagicCruiseVelocity(15.0)
+                    .withMotionMagicAcceleration(30.0)
+            )
             .withTorqueCurrent(new TorqueCurrentConfigs()
                     .withPeakForwardTorqueCurrent(800)
                     .withPeakReverseTorqueCurrent(-800)
@@ -514,7 +514,7 @@ public class Constants {
             public static final double GRAB_INTAKE_GEAR_RATIO = 1.0 / 3.0;
 
             public static final double GRAB_KS = 0.67881/12;
-            public static final double GRAB_KV = 6.6459/12;
+            public static final double GRAB_KV = 11.6459/12;;
             public static final double GRAB_KA = 2.363/12;
             public static final double GRAB_KG = 0.98041/12;
 
@@ -529,9 +529,11 @@ public class Constants {
             public static final ArmFeedforward GRAB_WRIST_FEED_FORWARD = new ArmFeedforward(GRAB_KS, GRAB_KG, GRAB_KV,GRAB_KA);
 
             public static final PIDConfig GRAB_INTAKE_FEEDBACK = new PIDConfig(0.0005, 0, 0.00001,0.028);
-            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0.049624, 0, 0.0011853);
+            public static final PIDConfig GRAB_WRIST_FEEDBACK = new PIDConfig(0.019624, 0, 0.0011853);
 
-            public static final double GRAB_WRIST_OFFSET_TOZERO = 0.9697*360.0;
+            public static final double GRAB_WRIST_OFFSET_TOZERO = 0.180*360.0;
+
+            public static final double GRAB_WRIST_OFFSET = 0.146287;
 
          
 
@@ -554,7 +556,7 @@ public class Constants {
                 //GRAB_WRIST_CONFIG.encoder.positionConversionFactor(360);
                 GRAB_WRIST_CONFIG.absoluteEncoder.positionConversionFactor(1.0);
                 GRAB_WRIST_CONFIG.absoluteEncoder.velocityConversionFactor(1.0/60.0);
-                GRAB_WRIST_CONFIG.absoluteEncoder.zeroOffset(0.9697);
+                GRAB_WRIST_CONFIG.absoluteEncoder.zeroOffset(GRAB_WRIST_OFFSET);
                 GRAB_WRIST_CONFIG.absoluteEncoder.inverted(true);
 
                 GRAB_WRIST_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12).inverted(false)
@@ -572,7 +574,7 @@ public class Constants {
                         .outputRange(-1, 1)
                         .maxMotion
                         .maxVelocity(1920)
-                        .maxAcceleration(7680)
+                        .maxAcceleration(7620)
                         .allowedClosedLoopError(Units.degreesToRotations(5.0));
                 
 

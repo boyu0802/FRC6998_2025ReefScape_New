@@ -1,5 +1,6 @@
 package frc.robot.subsystem.hang;
 
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -31,15 +32,18 @@ import static frc.robot.Constants.HangConstants.HANG_REVERSE_LIMIT;
 import static frc.robot.RobotMap.CATCH_HANG_ID;
 import static frc.robot.RobotMap.HANG_ENCODER_ID;
 import static frc.robot.RobotMap.HANG_ID;
+import static frc.robot.RobotMap.HANG_LIMITSWITCH_ID;
 
 public class HangSubsystem extends SubsystemBase {
     private final SparkFlex m_catchHang = new SparkFlex(CATCH_HANG_ID.getDeviceNumber(), SparkFlex.MotorType.kBrushless);
     private final TalonFX m_hangMotor = new TalonFX(HANG_ID.getDeviceNumber());
     private final CANcoder m_hangMotorEncoder = new CANcoder(HANG_ENCODER_ID.getDeviceNumber());
 
-    private final DigitalOutput m_hangLimit = new DigitalOutput(0);
+    private final DigitalOutput m_hangLimit = new DigitalOutput(HANG_LIMITSWITCH_ID);
 
     private final MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
+
+    private final MotionMagicVelocityVoltage m_MagicVelocityVoltage = new MotionMagicVelocityVoltage(0).withSlot(0).withEnableFOC(true);
     //TODO: SysId Testing.
     private final VoltageOut m_voltageOut = new VoltageOut(0); // for SysId test.
     private final MutVoltage hang_sysIdVoltage = Volts.mutable(0);
@@ -139,7 +143,7 @@ public class HangSubsystem extends SubsystemBase {
     }
     public void setHangVelocity(double velocity){
         
-        m_hangMotor.setControl(m_velocityVoltage.withVelocity(velocity));
+        m_hangMotor.setControl(m_MagicVelocityVoltage.withVelocity(velocity).withAcceleration(0.0));
         
     }
 

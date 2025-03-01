@@ -147,7 +147,7 @@ public class StateManager {
                         coralSubsystem.outputCoralWithoutVision(),
                         Commands.waitSeconds(0.2),
                         Commands.print("Scored L3"),
-                        Commands.waitSeconds(0.2),
+                        //Commands.waitSeconds(0.2),
                         toNormalCommand()
                     );
                 }
@@ -170,7 +170,7 @@ public class StateManager {
                         coralSubsystem.outputCoralWithoutVision(),
                         Commands.waitSeconds(0.2),
                         Commands.print("Scored L4"),
-                        Commands.waitSeconds(0.2),
+                        //Commands.waitSeconds(0.2),
                         toNormalCommand()
                     );
                 }
@@ -194,7 +194,7 @@ public class StateManager {
                         Commands.runOnce(()->setRobotState(RobotState.SCORE_STATION)),
                         Commands.print("score STATION"),
                         coralSubsystem.collectCoralWithoutVision(),
-                        Commands.waitSeconds(0.2),
+                        //Commands.waitSeconds(0.2),
                         //Commands.runOnce(()->elevatorSubsystem.setRobotState(RobotState.SCORE_STATION)),
                         Commands.print("Scored STATION")
                     );
@@ -217,8 +217,9 @@ public class StateManager {
                         Commands.runOnce(()->setRobotState(RobotState.EJECT_L2_ALGAE)),
                         Commands.print("Eject L2 Algae"),
                         coralSubsystem.collectAlgaeWithoutVision(),
-                        Commands.waitSeconds(0.2),
-                        Commands.print("Ejected L2 Algae")
+                        //Commands.waitSeconds(0.2),
+                        Commands.print("Ejected L2 Algae"),
+                        toNormalCommand()
                     );
                 }
                 else {
@@ -236,8 +237,9 @@ public class StateManager {
                         Commands.runOnce(()->setRobotState(RobotState.EJECT_L3_ALGAE)),
                         Commands.print("Eject L3 Algae"),
                         coralSubsystem.collectAlgaeWithoutVision(),
-                        Commands.waitSeconds(0.2),
-                        Commands.print("Ejected L3 Algae")
+                        //Commands.waitSeconds(0.2),
+                        Commands.print("Ejected L3 Algae"),
+                        toNormalCommand()
                     );
                 }
                 else {
@@ -265,7 +267,7 @@ public class StateManager {
                         Commands.print("score Algae"),
                         coralSubsystem.outputAlgaeWithoutVision(),
                         Commands.print("Scored Algae"),
-                        Commands.waitSeconds(0.2),
+                        //Commands.waitSeconds(0.2),
                     toNormalCommand()
                     );
                 }

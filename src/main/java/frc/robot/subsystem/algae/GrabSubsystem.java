@@ -29,6 +29,8 @@ import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_INTAKE_VELOCI
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_REVERSE_VELOCITY;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_CONFIG;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_FEED_FORWARD;
+import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_OFFSET;
+import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_OFFSET_TOZERO;
 import static frc.robot.RobotMap.GRAB_INTAKE_ID;
 import static frc.robot.RobotMap.GRAB_WRIST_ID;
 
@@ -93,11 +95,11 @@ public class GrabSubsystem extends SubsystemBase {
     }
     public void setGrabWristPosition(double position){
         m_grabWrist.getClosedLoopController().
-                setReference(setActualPosition(position), SparkFlex.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0,GRAB_WRIST_FEED_FORWARD.calculate(position,0));
+                setReference(setActualPosition(position), SparkFlex.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0,GRAB_WRIST_FEED_FORWARD.calculate(getActualPosition(),0));
     }
 
     public double setActualPosition(double position){
-        return Units.degreesToRotations(64.08-position);
+        return Units.degreesToRotations(GRAB_WRIST_OFFSET_TOZERO-position);
     }
 
     public double getGrabIntakeVelocity(){
@@ -119,7 +121,7 @@ public class GrabSubsystem extends SubsystemBase {
     }
 
     private double getActualPosition(){
-        return 64.08-getGrabWristPosition();
+        return GRAB_WRIST_OFFSET_TOZERO-getGrabWristPosition()*360.0;
     }
     
 

@@ -51,7 +51,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
     private final MotionMagicVoltage m_motionMagicVoltage = new MotionMagicVoltage(0.01);
-    private final DigitalInput m_elevatorLimit = new DigitalInput(6);
+    private final DigitalInput m_elevatorLimit = new DigitalInput(ELEVATOR_LIMITSWITCH_ID);
 
     public RobotState currentRobotState = RobotState.RESET;
 
@@ -107,7 +107,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                     // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
                     new SysIdRoutine.Config(
                             Volts.of(1).per(Seconds),
-                            Volts.of(4),
+                            Volts.of(6),
                             Seconds.of(6),
                             null
 
@@ -180,6 +180,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public double elevatorPositiontoRotations(double position){
         return position/ELEVATOR_LENGTH;
     }
+
     public double getLeftElevatorPosition() {
         return m_elevatorLeft.getPosition().getValueAsDouble() ;
     }

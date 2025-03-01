@@ -7,6 +7,8 @@ package frc.robot;
 
 import javax.xml.crypto.Data;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.epilogue.*;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -35,6 +37,11 @@ public class Robot extends TimedRobot {
     DriverStation.silenceJoystickConnectionWarning(true);
   
 
+  }
+
+  @Override
+  public void robotInit() {
+    FollowPathCommand.warmupCommand().schedule();
   }
   
 
@@ -85,7 +92,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     if(!haveAutoRun) {
-      //m_robotContainer.zeroCommand.schedule();
+      m_robotContainer.zeroCommand.schedule();
     }
     
   }

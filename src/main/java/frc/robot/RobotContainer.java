@@ -242,25 +242,30 @@ public class RobotContainer {
 
     
         
-        testController2.povUp().whileTrue(new SetHangVelocityCommand(hangSubsystem, 12.0));
-        testController2.povDown().whileTrue(new SetHangVelocityCommand(hangSubsystem, -12.0));
+        testController2.povUp().whileTrue(new SetHangVelocityCommand(hangSubsystem, 10.0));
+        testController2.povDown().whileTrue(new SetHangVelocityCommand(hangSubsystem, -10.0));
         testController2.povRight().onTrue(hangSubsystem.catchHang());
         testController2.a().onTrue(grabSubsystem.setGrabto10deg());
+        
         testController2.b().onTrue(grabSubsystem.setGrabto75deg());
         testController2.x().onTrue(grabSubsystem.collectWithoutVision());
-        testController2.y().onTrue(grabSubsystem.reverseWithoutVision());   
+        testController2.y().onTrue(grabSubsystem.reverseWithoutVision()); 
+        
+        
+        
 
 
         
 
-        testController3.back().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kForward));
-        testController3.back().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristQuasistatic(Direction.kReverse));
-        testController3.start().and(testController3.y()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kForward));
-        testController3.start().and(testController3.x()).whileTrue(hangSubsystem.sysid_wristDynamic(Direction.kReverse));
+        testController3.back().and(testController3.y()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kForward));
+        testController3.back().and(testController3.x()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kReverse));
+        testController3.start().and(testController3.y()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kForward));
+        testController3.start().and(testController3.x()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kReverse));
 
         
 
         
+
         SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());
 
     }

@@ -36,7 +36,7 @@ public class CoralIntakeCommand {
         else {
             isWorked = true;
             newCommand =  new SequentialCommandGroup(
-                new InstantCommand(()-> coralSubsystem.setCoralIntakeVelocity(10)),
+                new InstantCommand(()-> coralSubsystem.setCoralIntakeVelocity(20.0)),
                 new WaitUntilCommand(()->coralSubsystem.getCoralLimit()|| !isWorked),
                 new InstantCommand(() -> coralSubsystem.stopCoralIntake()),
                 new InstantCommand(()->setWorked(false))
