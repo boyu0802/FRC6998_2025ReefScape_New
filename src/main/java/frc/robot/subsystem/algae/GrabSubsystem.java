@@ -127,15 +127,21 @@ public class GrabSubsystem extends SubsystemBase {
 
     public Command setGrabto10deg(){
         return Commands.parallel(
-            runOnce(()-> setGrabWristPosition(-10.0))
-            //collectWithoutVision()
+            runOnce(()-> setGrabWristPosition(-17.5)),
+            collectWithoutVision()
+            );}
+
+    public Command setGrabto27deg(){
+        return Commands.parallel(
+            runOnce(()-> setGrabWristPosition(27.5)),
+            collectWithoutVision()
             );}
     
 
     public Command setGrabto75deg(){
         return Commands.sequence(
-            runOnce(()-> setGrabWristPosition(55.0))
-            //runOnce(()-> setGrabIntakeVelocity(-20.0))
+            runOnce(()-> setGrabWristPosition(55.0)),
+            runOnce(()-> setGrabIntakeVelocity(-20.0))
             );
     }
 

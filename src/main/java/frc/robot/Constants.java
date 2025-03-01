@@ -62,12 +62,13 @@ public class Constants {
         L1(0.05, 0.0),
         L2(0.25, -45.0),
         L3(0.65, -45.0),
-        L4(1.285, -45.0),
+        L4(1.28, -45.0),
         ALGAE_L2(0.23, -25.0), //todo: TEST
         ALGAE_L3(0.66, -20.0),
         NORMAL(0.05, 90.0),
         STATION(0.125, 45.0),
-        NET(1.285,60.0);
+        NET(1.285,60.0),
+        ALGAE_NORMAL(0.15,90.0);
 
         public double elevatorPosition;
         public double armPosition;
@@ -299,20 +300,16 @@ public class Constants {
         // TODO : Need to be Tuned.
         
 
-        public static final double ELEVATOR_MAX_LENGTH = 1.3;
+        public static final double ELEVATOR_MAX_LENGTH = 1.32;
         public static final double ELEVATOR_MIN_LENGTH = 0.0;
 
-        public static final double ELEVATOR_KS = 0.26859/12;
-        public static final double ELEVATOR_KV = 10.923/12;
-        public static final double ELEVATOR_KA = 1.7629/12;
-        public static final double ELEVATOR_KG = 0.24228/12;
 
         public static final FeedForward ELEVATOR_FEEDFORWARD = FeedForward.builder()
             .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.43059/12.0).gravityType(GravityType.kElevator).build();
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
-        public static final double ELEVAROR_MAX_VELOCITY = 6.0;
-        public static final double ELEVAROR_MAX_ACCEL = 12.0;
+        public static final double ELEVAROR_MAX_VELOCITY = 9.0;
+        public static final double ELEVAROR_MAX_ACCEL = 18.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
         public static final double ZEROED_VOLTAGE = (-1.5);
@@ -381,10 +378,10 @@ public class Constants {
                         .withKI(ELEVATOR_FEEDBACK.I)
                         .withKD(ELEVATOR_FEEDBACK.D)
                         .withGravityType(GravityTypeValue.Elevator_Static)
-                        .withKG(ELEVATOR_KG)
-                        .withKS(ELEVATOR_KS)
-                        .withKV(ELEVATOR_KV)
-                        .withKA(ELEVATOR_KA))
+                        .withKG(ELEVATOR_FEEDFORWARD.getKG())
+                        .withKS(ELEVATOR_FEEDFORWARD.getKS())
+                        .withKV(ELEVATOR_FEEDFORWARD.getKV())
+                        .withKA(ELEVATOR_FEEDFORWARD.getKA()))
                     .withMotionMagic(new MotionMagicConfigs()
                         .withMotionMagicCruiseVelocity(ELEVAROR_MAX_VELOCITY)
                         .withMotionMagicAcceleration(ELEVAROR_MAX_ACCEL)
@@ -563,7 +560,7 @@ public class Constants {
                 .softLimit
                     .forwardSoftLimit(Units.degreesToRotations(105f))
                     .forwardSoftLimitEnabled(true)
-                    .reverseSoftLimit(Units.degreesToRotations(10f))
+                    .reverseSoftLimit(Units.degreesToRotations(0f))
                     .reverseSoftLimitEnabled(true);
                 GRAB_WRIST_CONFIG.closedLoop
                         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
@@ -680,6 +677,8 @@ public class Constants {
         
 
     }
+
+    public static final boolean disableHAL = false;
 
 
 

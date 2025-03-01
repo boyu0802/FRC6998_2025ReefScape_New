@@ -37,6 +37,7 @@ import frc.robot.commands.drive.DriveToPose;
 import frc.robot.commands.setcommand.CoralIntakeCommand;
 import frc.robot.commands.setcommand.SetCoralWristCommand;
 import frc.robot.commands.setcommand.SetElevatorCommand;
+import frc.robot.commands.setcommand.SetHangPositionCommand;
 import frc.robot.commands.setcommand.SetHangVelocityCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
@@ -245,10 +246,10 @@ public class RobotContainer {
         testController2.povUp().whileTrue(new SetHangVelocityCommand(hangSubsystem, 10.0));
         testController2.povDown().whileTrue(new SetHangVelocityCommand(hangSubsystem, -10.0));
         testController2.povRight().onTrue(hangSubsystem.catchHang());
-        testController2.a().onTrue(grabSubsystem.setGrabto10deg());
-        
+        testController2.povLeft().onTrue(new SetHangPositionCommand(hangSubsystem, 10.0,0.2445));
+        testController2.a().onTrue(grabSubsystem.setGrabto27deg());
         testController2.b().onTrue(grabSubsystem.setGrabto75deg());
-        testController2.x().onTrue(grabSubsystem.collectWithoutVision());
+        testController2.x().onTrue(grabSubsystem.setGrabto10deg());
         testController2.y().onTrue(grabSubsystem.reverseWithoutVision()); 
         
         

@@ -82,6 +82,17 @@ public class StateManager {
         );
     }
 
+    private Command toAlgaeNormalCommand(){
+        return Commands.sequence(
+            Commands.runOnce(()->setRobotState(RobotState.NORMAL)),
+            new SetCoralWristCommand(ScoreState.ALGAE_NORMAL, coralSubsystem),
+            Commands.waitSeconds(0.2),
+            new SetElevatorCommand(ScoreState.ALGAE_NORMAL, elevatorSubsystem),
+            Commands.print("toNormalPosition")
+
+        );
+    }
+
 
     // TODO : Make More Clearly & add rumble.
     public Command SetReefState(TargetState targetState) {
@@ -219,7 +230,7 @@ public class StateManager {
                         coralSubsystem.collectAlgaeWithoutVision(),
                         //Commands.waitSeconds(0.2),
                         Commands.print("Ejected L2 Algae"),
-                        toNormalCommand()
+                        toAlgaeNormalCommand()
                     );
                 }
                 else {
@@ -239,7 +250,7 @@ public class StateManager {
                         coralSubsystem.collectAlgaeWithoutVision(),
                         //Commands.waitSeconds(0.2),
                         Commands.print("Ejected L3 Algae"),
-                        toNormalCommand()
+                        toAlgaeNormalCommand()
                     );
                 }
                 else {
