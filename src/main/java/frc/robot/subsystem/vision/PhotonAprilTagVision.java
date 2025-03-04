@@ -51,6 +51,7 @@ public class PhotonAprilTagVision extends SubsystemBase {
     
 
     private final PhotonPoseEstimator[] reefPoseEstimator = {reefLefEstimator, reefRightEstimator};
+    private double averageDistance[] = {0.0, 0.0};
     //private final PhotonCamera photonCamera = new PhotonCamera("PhotonCamera");
     
 
@@ -74,7 +75,12 @@ public class PhotonAprilTagVision extends SubsystemBase {
     private double stdDevScalarShooting = 0.2; // throw coral.
     private double thetaStdDevCoefficientShooting = 0.075;
 
-    private final HashMap<PhotonCamera,Matrix<N3,N1>> cameraStdDevMap = new HashMap<>(); 
+    private final HashMap<PhotonCamera,Matrix<N3,N1>> cameraStdDevMap = new HashMap<>();
+    
+    private boolean newLeftEstimate = false;
+    private boolean newRightEstimate = false;
+    private VisionFieldPoseEstimate lastEstimateLeft;
+    private VisionFieldPoseEstimate lastEstimateRight;
 
     
     public PhotonAprilTagVision(VisionState visionState) {
@@ -101,7 +107,13 @@ public class PhotonAprilTagVision extends SubsystemBase {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var change : photonCamera.getAllUnreadResults()) {
             visionEst = photonEstimator.update(change);
-            updateEstimationStdDevs(photonCamera, photonEstimator, visionEst, change.getTargets());
+            double dist = calculateAverageTagDistance(photonEstimator, visionEst, change.getTargets());
+            if(photonCamera == reefLeftCamera){
+                averageDistance[0] = dist;
+            } else {
+                averageDistance[1] = dist;
+            }
+            updateEstimationStdDevs(photonCamera, photonEstimator, visionEst, dist);
 
         }
 
@@ -130,14 +142,14 @@ public class PhotonAprilTagVision extends SubsystemBase {
 
     // update std dev.
 
-
+    
     private void updateEstimationStdDevs(
-            PhotonCamera camera,PhotonPoseEstimator photonEstimator,Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
+            PhotonCamera camera,PhotonPoseEstimator photonEstimator,Optional<EstimatedRobotPose> estimatedPose,double avgDist) {
 
         var estStdDevs = kSingleTagStdDevs;
-        int numTags = 0;
+        int numTags = estimatedPose.isPresent() ? photonEstimator.getFieldTags().getTags().size() : 0;
         double totalDist = 0;
-        double avgDist = 0;
+        double avgDistance = avgDist;
         double xyStdDev = 0.0;
         double thetaStdDev = 0.0;
         
@@ -146,21 +158,6 @@ public class PhotonAprilTagVision extends SubsystemBase {
             estStdDevs = kSingleTagStdDevs;
 
         } else {
-            // Pose present. Start running Heuristic
-            
-
-            // Precalculation - see how many tags we found, and calculate an average-distance metric
-            for (var tgt : targets) {
-                var tagPose = photonEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
-                if (tagPose.isEmpty()) continue;
-                numTags++;
-                avgDist +=
-                        tagPose
-                                .get()
-                                .toPose2d()
-                                .getTranslation()
-                                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
-            }
 
             if (numTags == 0) {
                 // No tags visible. Default to single-tag std devs
@@ -179,10 +176,8 @@ public class PhotonAprilTagVision extends SubsystemBase {
                     estStdDevs = VecBuilder.fill(xyStdDev*stdDevScalarShooting, xyStdDev*stdDevScalarShooting, thetaStdDev*stdDevScalarShooting);
                 }
                 // Increase std devs based on (average) distance
-                if (numTags == 1 && avgDist > 4){
-                    estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-                }
-                    
+
+                // one tag only.    
                 else {
                     xyStdDev = xyStdDevModel.predict(avgDist);
                     thetaStdDev = thetaStdDevModel.predict(avgDist);
@@ -221,40 +216,76 @@ public class PhotonAprilTagVision extends SubsystemBase {
         return cameraStdDevMap.getOrDefault(camera, kSingleTagStdDevs);
     }
 
-    
-        
-    
-
-    
     @Override
     public void periodic() {
+        
+        
 
-        // This method will be called once per scheduler run
+        // process all cameras
+        for (int i = 0; i < reefCameras.length; i++) {
+            PhotonCamera camera = reefCameras[i];
+            PhotonPoseEstimator estimator = reefPoseEstimator[i];
 
-        // 選擇最新的 VisionPose
-        Optional<EstimatedRobotPose> bestVisionEst = Optional.empty();
-        double latestTimestamp = -1.0;
-
-        for (PhotonCamera camera : reefCameras) {
-            if(camera == null || reefPoseEstimator == null) {
-                continue;
-            }
-            for (var change : camera.getAllUnreadResults()) {
-                for (PhotonPoseEstimator estimator : reefPoseEstimator) {
-                    Optional<EstimatedRobotPose> currentEst = estimator.update(change);
-                    
-                    if (currentEst.isPresent() && currentEst.get().timestampSeconds > latestTimestamp) {
-                        bestVisionEst = currentEst;
-                        latestTimestamp = currentEst.get().timestampSeconds;
-                        getVisionFieldPoseEstimate(camera, estimator);
-                        visionState.addVisionFieldPoseEstimate(getVisionFieldPoseEstimate(camera, estimator).get());
-                    }
-
-                    updateEstimationStdDevs(camera, estimator, currentEst, change.getTargets());
+            // ensure that the camera has a result
+            PhotonPipelineResult result = camera.getLatestResult();
+            if (result.hasTargets()) {
+                var visionEst = getVisionFieldPoseEstimate(camera, estimator).get();
+                if (i == 0) {
+                    lastEstimateLeft = visionEst;
+                    newLeftEstimate = true;
+                } else {
+                    lastEstimateRight = visionEst;
+                    newRightEstimate = true;
                 }
+
+                //averageDistance[i] = calculateAverageTagDistance(estimator, visionEst, result.getTargets());
+                //updateEstimationStdDevs(camera, estimator, visionEst, averageDistance[i]);
             }
         }
+
+        determineBestPoseEstimate().ifPresent(visionState::addVisionFieldPoseEstimate);
     }
+
+    public Optional<VisionFieldPoseEstimate> determineBestPoseEstimate() {
+        if (newRightEstimate && !newLeftEstimate) {
+            newRightEstimate = false;
+            return Optional.of(lastEstimateRight);
+        }
+        if (!newRightEstimate && newLeftEstimate) {
+            newLeftEstimate = false;
+            return Optional.of(lastEstimateLeft);
+        }
+        if (newLeftEstimate && newRightEstimate) {
+            newLeftEstimate = false;
+            newRightEstimate = false;
+            return Optional.of(averageDistance[0] < averageDistance[1] ? lastEstimateLeft : lastEstimateRight);
+        }
+        return Optional.empty();
+    }
+
+    private double calculateAverageTagDistance(PhotonPoseEstimator estimator, Optional<EstimatedRobotPose> estimatedPose,List<PhotonTrackedTarget> targets) {
+        int numTags = 0;
+        double avgDist = 0;
+        
+        
+            // Precalculation - see how many tags we found, and calculate an average-distance metric
+            for (var tgt : targets) {
+                var tagPose = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
+                if (tagPose.isEmpty()) continue;
+                numTags++;
+                avgDist +=
+                        tagPose
+                                .get()
+                                .toPose2d()
+                                .getTranslation()
+                                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+            }
+
+            return numTags == 0 ? Double.MAX_VALUE : avgDist / numTags;
+}
+
+    
+
 
 
 }

@@ -25,5 +25,13 @@ public class RobotMap {
     public static final int HANG_LIMITSWITCH_ID = 4;
 
 
+    public static final int CANDLE_ID = 1;
+
+    public static final String LIMELIGHT_LEFT = "limelight-left";
+
+    public static final String LIMELIGHT_RIGHT = "limelight-right";
+    public static final String LIMELIGHT_ELEVATOR = "limelight-elevator";
+
+
 
 }

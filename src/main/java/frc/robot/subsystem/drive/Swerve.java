@@ -13,10 +13,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
@@ -32,7 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 import frc.robot.subsystem.vision.VisionState;
@@ -43,7 +45,7 @@ import static frc.robot.Constants.AutoConstants.ROTATION_PID;
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private VisionState state;   
     
     private Field2d field = new Field2d();
@@ -140,7 +142,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
      * @param modules               Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
+    public Swerve(
         SwerveDrivetrainConstants drivetrainConstants,
         VisionState state,
         SwerveModuleConstants<?, ?, ?>... modules
@@ -168,7 +170,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *                                CAN FD, and 100 Hz on CAN 2.0.
      * @param modules                 Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
+    public Swerve(
         SwerveDrivetrainConstants drivetrainConstants,
         VisionState state,
         double odometryUpdateFrequency,
@@ -202,7 +204,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *                                  and radians
      * @param modules                   Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
+    public Swerve(
         SwerveDrivetrainConstants drivetrainConstants,
         VisionState state,
         double odometryUpdateFrequency,
@@ -296,6 +298,50 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
+
+    public Command stop() {
+        SwerveRequest.RobotCentric swerveRequest = new SwerveRequest.RobotCentric();
+
+        return runOnce(
+            () -> this.setControl(
+                swerveRequest.withVelocityX(0.0).withVelocityY(0.0).withRotationalRate(0.0)
+            )
+        );
+    }
+
+    public Command goToPose(Pose2d pose) {
+        return defer(
+            () -> AutoBuilder.pathfindToPose(
+                pose,
+                new PathConstraints(
+                    3.5,
+                    4.0,
+                    Units.degreesToRadians(540),
+                    Units.degreesToRadians(720)
+                )
+            ).finallyDo((interrupted) -> stop())
+        );
+    }
+
+    public Command pathToReef(Field reef) {
+        return defer(() -> {
+            Pose2d target = null;
+
+            if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+                target = this.getState().Pose.nearest(
+                    (reef == Constants.Swerve.REEFS.LEFT) ? Constants.Swerve.RIGHT_REEF_WAYPOINTS : Constants.Swerve.LEFT_REEF_WAYPOINTS
+                );
+            } else {
+                target = this.getState().Pose.nearest(
+                    (reef == Constants.Swerve.REEFS.LEFT) ? Constants.Swerve.LEFT_REEF_WAYPOINTS : Constants.Swerve.RIGHT_REEF_WAYPOINTS
+                );
+            }
+
+            return goToPose(target).withTimeout(0.01).andThen(goToPose(target));
+        });
+    }
+
+    
 
     @Override
     public void periodic() {

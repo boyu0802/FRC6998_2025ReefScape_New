@@ -7,7 +7,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystem.drive.Swerve;
 import frc.robot.subsystem.vision.Limelight;
 
 // NOT USED
@@ -27,12 +27,12 @@ public class DriveToReef extends Command{
     private double goalTx;
     private double goalTy;
     private Limelight limelight;
-    private CommandSwerveDrivetrain drive;
+    private Swerve drive;
     private double driveAngle;
     private boolean endEarly;
     private double angle;
     
-    public DriveToReef(CommandSwerveDrivetrain drive, Limelight limelight, double goalTx, double goalTy){
+    public DriveToReef(Swerve drive, Limelight limelight, double goalTx, double goalTy){
         this.goalTx = goalTx;
         this.goalTy = goalTy;
         this.limelight = limelight;

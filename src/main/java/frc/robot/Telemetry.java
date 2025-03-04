@@ -33,8 +33,8 @@ public class Telemetry {
      */
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
-        SignalLogger.setPath("/home/lvuser/logs");
-        SignalLogger.start();
+        //SignalLogger.setPath("/home/lvuser/logs");
+        //SignalLogger.start();
     }
 
     /* What to publish over networktables for telemetry */

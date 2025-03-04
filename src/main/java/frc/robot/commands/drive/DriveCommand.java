@@ -4,12 +4,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystem.drive.Swerve;
 import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 
 public class DriveCommand extends Command {
-    private final CommandSwerveDrivetrain drivetrain;
+    private final Swerve drivetrain;
     private final double translationSupplier;
     private final double strafeSupplier;
     private final double rotationSupplier;
@@ -17,7 +17,7 @@ public class DriveCommand extends Command {
             .withDeadband(MaxSpeed * 0.06).withRotationalDeadband(MaxAngularRate * 0.06) // Add a 6% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
-    public DriveCommand(CommandSwerveDrivetrain drivetrain, double translationSupplier, double strafeSupplier, double rotationSupplier) {
+    public DriveCommand(Swerve drivetrain, double translationSupplier, double strafeSupplier, double rotationSupplier) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.drivetrain = drivetrain;
         this.translationSupplier = translationSupplier;

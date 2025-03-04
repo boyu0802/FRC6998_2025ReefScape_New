@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.limelight.LimelightHelpers;
-import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystem.drive.Swerve;
 import frc.robot.subsystem.vision.Limelight;
 import frc.robot.subsystem.vision.VisionState;
 
@@ -32,7 +32,7 @@ public class DriveToPose extends Command {
         private boolean isFinished = false;
         private final boolean isLeft;
         private boolean isOnTarget = false;   
-        private final CommandSwerveDrivetrain drive;
+        private final Swerve drive;
         private final VisionState state;
         private final CommandXboxController xboxController;
         private double targetId;
@@ -64,7 +64,7 @@ public class DriveToPose extends Command {
         //todo: find poses for all the targets //{ 3.2, 4.14}   , {3.2 , 3.84}
         private final double DIST_BETWEEN_TAG_AND_REEF = 0.15;
   
-        public DriveToPose(CommandSwerveDrivetrain drive, VisionState state, boolean isLeft, CommandXboxController xboxController){
+        public DriveToPose(Swerve drive, VisionState state, boolean isLeft, CommandXboxController xboxController){
             this.drive = drive;
             this.state = state;
             this.xboxController = xboxController;

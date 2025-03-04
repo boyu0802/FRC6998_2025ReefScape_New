@@ -1,5 +1,9 @@
 package frc.robot.subsystem.vision;
 
+import static frc.robot.RobotMap.LIMELIGHT_ELEVATOR;
+import static frc.robot.RobotMap.LIMELIGHT_LEFT;
+import static frc.robot.RobotMap.LIMELIGHT_RIGHT;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -38,14 +42,14 @@ public class VisionSubsystem extends SubsystemBase{
         //updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front"),"limelight-front" );
         //updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-back"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"), "limelight-back");
         
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-elevato"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-elevato"), "limelight-elevato");
-        LimelightHelpers.SetRobotOrientation("limelight-elevato",visionState.getPigeonYaw(),0,0,0,0,0);        
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_ELEVATOR), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_ELEVATOR), LIMELIGHT_ELEVATOR);
+        LimelightHelpers.SetRobotOrientation(LIMELIGHT_ELEVATOR,visionState.getPigeonYaw(),0,0,0,0,0);        
 
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front"), "limelight-front");
-        LimelightHelpers.SetRobotOrientation("limelight-front",visionState.getPigeonYaw(),0,0,0,0,0);        
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_LEFT), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_LEFT), LIMELIGHT_LEFT);
+        LimelightHelpers.SetRobotOrientation(LIMELIGHT_LEFT,visionState.getPigeonYaw(),0,0,0,0,0);        
 
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-back"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"), "limelight-back");
-        LimelightHelpers.SetRobotOrientation("limelight-back",visionState.getPigeonYaw(),0,0,0,0,0);        
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_RIGHT), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_RIGHT), LIMELIGHT_RIGHT);
+        LimelightHelpers.SetRobotOrientation(LIMELIGHT_RIGHT,visionState.getPigeonYaw(),0,0,0,0,0);        
         
         
         //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
@@ -60,19 +64,19 @@ public class VisionSubsystem extends SubsystemBase{
         var updateTimeStamp = megaTagPose.timestampSeconds;
         boolean alreadyProccessed = false;
         switch(LimelightName){
-            case "limelight-front":
+            case LIMELIGHT_LEFT:
                 if(updateTimeStamp == lastTimeStampFront){
                     alreadyProccessed = true;
                 }
                 lastTimeStampFront = updateTimeStamp;
                 break;
-            case "limelight-back":
+            case LIMELIGHT_RIGHT:
                 if(updateTimeStamp == lastTimeStampBack){
                     alreadyProccessed = true;
                 }
                 lastTimeStampBack = updateTimeStamp;
                 break;
-            case "limelight-elevato":
+            case LIMELIGHT_ELEVATOR:
                 if(updateTimeStamp == lastTimeStampElevator){
                     alreadyProccessed = true;
                 }

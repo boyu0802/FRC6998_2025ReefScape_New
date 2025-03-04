@@ -41,9 +41,13 @@ import frc.robot.commands.setcommand.SetHangPositionCommand;
 import frc.robot.commands.setcommand.SetHangVelocityCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystem.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystem.drive.Swerve;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 import frc.robot.subsystem.hang.HangSubsystem;
+import frc.robot.subsystem.led.CandleSubsystem;
+import frc.robot.subsystem.led.LedSubsystem;
+import frc.robot.subsystem.vision.AlgaeDetect;
+import frc.robot.subsystem.vision.Limelight;
 import frc.robot.subsystem.vision.PhotonAprilTagVision;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 import frc.robot.subsystem.vision.VisionState;
@@ -91,22 +95,28 @@ public class RobotContainer {
     };
 
     private final VisionState visionState = new VisionState(visionFieldPoseEstimateConsumer);
-    //private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionState);
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionState);
 
-    private final PhotonAprilTagVision photonAprilTagVision = new PhotonAprilTagVision(visionState);
+    //private final PhotonAprilTagVision photonAprilTagVision = new PhotonAprilTagVision(visionState);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(visionState);
+    //private final AlgaeDetect algaeDetect = new AlgaeDetect();
+
+    public final Swerve drivetrain = TunerConstants.createDrivetrain(visionState);
     private final CoralSubsystem coralSubsystem = new CoralSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
+
+    private final LedSubsystem ledSubsystem = new LedSubsystem();
     
     StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
 
     CoralIntakeCommand coralIntakeCommand = new CoralIntakeCommand(coralSubsystem);
     private Command currentReefState = new SequentialCommandGroup();
+    
+    //private final Limelight limelight = new Limelight("limelight-algae");
     
     /*
      * added Trigger to confirm the reef state
@@ -155,13 +165,12 @@ public class RobotContainer {
         );
 
         
-
         //m_driveController.leftTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
         //m_driveController.rightTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
         m_driveController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        m_driveController.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-m_driveController.getLeftY(), -m_driveController.getLeftX()))
-        ));
+        //m_driveController.b().whileTrue(drivetrain.applyRequest(() ->
+        //    point.withModuleDirection(new Rotation2d(!limelight.getTv() ? 0.0 : limelight.getTx()))
+        //));
         m_driveController.x().whileTrue(drivetrain.applyRequest(() -> brake));
         m_driveController.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
@@ -176,7 +185,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         
 
-        //drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(logger::telemeterize);
         //logger.elevatorTelemetry(elevatorSubsystem);
 
         //testController2.leftBumper().onTrue(hangSubsystem.setHangto0deg());
