@@ -1,8 +1,4 @@
-package frc;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package frc.robot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +6,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.Constants;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -237,5 +232,38 @@ public static final FieldType fieldType = FieldType.WELDED;
     WELDED("welded");
 
     @Getter private final String jsonFolder;
+  }
+
+
+
+  public static final class ReefConstants {
+    public static final List<Pose2d> LEFT_REEF_WAYPOINTS = new ArrayList<Pose2d>(
+      List.of(
+        new Pose2d(3.70, 3.16, Rotation2d.fromDegrees(60)), // 17 Left
+        new Pose2d(3.20, 4.15, Rotation2d.fromDegrees(0)), // 18 Left
+        new Pose2d(4.05, 5.1, Rotation2d.fromDegrees(300)), // 19 Left
+        new Pose2d(5.2619, 4.99953, Rotation2d.fromDegrees(240)), // 20 Left
+        new Pose2d(5.60, 3.85, Rotation2d.fromDegrees(180)), // 21 Left
+        new Pose2d(4.9494, 2.88847, Rotation2d.fromDegrees(120)) // 22 Left
+      )
+    );
+
+    public static final List<Pose2d> RIGHT_REEF_WAYPOINTS = new ArrayList<Pose2d>(
+      List.of(
+        new Pose2d(4.05, 2.95, Rotation2d.fromDegrees(60)), // 17 Right
+        new Pose2d(3.20, 3.85, Rotation2d.fromDegrees(0)), // 18 Right
+        new Pose2d(3.70, 4.89, Rotation2d.fromDegrees(300)), // 19 Right
+        new Pose2d(4.9419, 5.16453, Rotation2d.fromDegrees(240)), // 20 Right
+        new Pose2d(5.60, 4.20, Rotation2d.fromDegrees(180)), // 21 Right
+        new Pose2d(5.2619, 3.05047, Rotation2d.fromDegrees(120)) // 22 Right
+      )
+    );
+
+    public static final List<Pose2d> STATION_WAYPOINTS = new ArrayList<Pose2d>(
+            List.of(
+                new Pose2d(1.151, 1.03, Rotation2d.fromDegrees(55)), // 12 Station
+                new Pose2d(1.1383, 7.01, Rotation2d.fromDegrees(-55)) // 13 Station 1.0873
+            )
+        );
   }
 }

@@ -30,7 +30,7 @@ public class RobotMap {
     public static final String LIMELIGHT_LEFT = "limelight-left";
 
     public static final String LIMELIGHT_RIGHT = "limelight-right";
-    public static final String LIMELIGHT_ELEVATOR = "limelight-elevator";
+    public static final String LIMELIGHT_ELEVATOR = "limelight-elev";
 
 
 

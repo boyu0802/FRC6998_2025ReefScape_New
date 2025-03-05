@@ -39,16 +39,14 @@ public class VisionSubsystem extends SubsystemBase{
 
     @Override
     public void periodic(){
-        //updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-front"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front"),"limelight-front" );
-        //updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-back"), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"), "limelight-back");
         
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_ELEVATOR), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_ELEVATOR), LIMELIGHT_ELEVATOR);
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_ELEVATOR), LIMELIGHT_ELEVATOR);
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_ELEVATOR,visionState.getPigeonYaw(),0,0,0,0,0);        
 
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_LEFT), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_LEFT), LIMELIGHT_LEFT);
+        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_LEFT), LIMELIGHT_LEFT);
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_LEFT,visionState.getPigeonYaw(),0,0,0,0,0);        
 
-        updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_RIGHT), LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_RIGHT), LIMELIGHT_RIGHT);
+        updateVision( LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_RIGHT), LIMELIGHT_RIGHT);
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_RIGHT,visionState.getPigeonYaw(),0,0,0,0,0);        
         
         
@@ -58,10 +56,10 @@ public class VisionSubsystem extends SubsystemBase{
         
     }
 
-    public void updateVision(LimelightHelpers.PoseEstimate megaTagPose, LimelightHelpers.PoseEstimate megaTag2Pose, String LimelightName){
+    public void updateVision(LimelightHelpers.PoseEstimate megaTag2Pose, String LimelightName){
         //Double timeisNull = megaTagPose.timestampSeconds;
-        if(megaTagPose == null || megaTag2Pose == null) {return ;}
-        var updateTimeStamp = megaTagPose.timestampSeconds;
+        if(megaTag2Pose == null) {return ;}
+        var updateTimeStamp = megaTag2Pose.timestampSeconds;
         boolean alreadyProccessed = false;
         switch(LimelightName){
             case LIMELIGHT_LEFT:
@@ -85,63 +83,29 @@ public class VisionSubsystem extends SubsystemBase{
         }
 
         if(!alreadyProccessed){
-            Optional<VisionFieldPoseEstimate> megaTagEstimate = processMegaTagPoseEst(megaTagPose, LimelightName);
+            //Optional<VisionFieldPoseEstimate> megaTagEstimate = processMegaTagPoseEst(megaTagPose, LimelightName);
             Optional<VisionFieldPoseEstimate> megaTag2Estimate = processMegaTag2PoseEst(megaTag2Pose, LimelightName);
         
 
-            boolean usedMegaTag = false;
+            //boolean usedMegaTag = false;
             boolean usedMegaTag2 = false;
-                if(megaTagEstimate.isPresent()){
-                    if(shouldUseMegatag(megaTagPose)){
-                    usedMegaTag = true;
-                    usedMegaTag2 = false;
-                    visionState.addVisionFieldPoseEstimate(megaTagEstimate.get());
-                    System.out.println(usedMegaTag);
-                    }
-                }
-            
-                if(megaTag2Estimate.isPresent() && !usedMegaTag){
+                if(megaTag2Estimate.isPresent()){
                     if(shouldUseMegatag2(megaTag2Pose) ){
-                        usedMegaTag = false;
+                        //usedMegaTag = false;
                         usedMegaTag2 = true;
                         visionState.addVisionFieldPoseEstimate(megaTag2Estimate.get());
                     }
                 }
-            SmartDashboard.putBoolean("use megatag", usedMegaTag);
-            SmartDashboard.putBoolean("should useMegatag", shouldUseMegatag(megaTagPose));
+            //SmartDashboard.putBoolean("use megatag", usedMegaTag);
+            //SmartDashboard.putBoolean("should useMegatag", shouldUseMegatag(megaTagPose));
             SmartDashboard.putBoolean("used MT2", usedMegaTag2);
 
         }
-    } 
-
-    
-    public boolean shouldUseMegatag(LimelightHelpers.PoseEstimate megaTagPose){
-        double timeStamp = megaTagPose.timestampSeconds;
-        var angularYawVelo = visionState.getGreatestAngularYawVelocity(timeStamp - 0.1, timeStamp);
-        if(angularYawVelo.isPresent() && Math.abs(angularYawVelo.get())>Units.degreesToRadians(200)){
-            return false;
-        }
-        if(megaTagPose.avgTagArea < VisionConstants.MIN_AREA_FOR_MEGATAG){
-            return false;
-        }
-        if(megaTagPose.rawFiducials.length < 1){
-            return false;
-        }
-        if(megaTagPose.pose.getTranslation().getNorm() > 1.0){
-            return false;
-        }
-        for(RawFiducial fiducial : megaTagPose.rawFiducials){
-            if(fiducial.ambiguity < 0.8){
-                return false;
-            }
-        }
-
-        return true;
     }
 
-    public boolean shouldUseMegatag2(LimelightHelpers.PoseEstimate megaTagPose){
+    public boolean shouldUseMegatag2(LimelightHelpers.PoseEstimate megaTag2Pose){
         
-        double timeStamp = megaTagPose.timestampSeconds;
+        double timeStamp = megaTag2Pose.timestampSeconds;
         var angularYawVelo = visionState.getGreatestAngularYawVelocity(timeStamp - 0.1, timeStamp);
         if(angularYawVelo.isPresent() && Math.abs(angularYawVelo.get())>Units.degreesToRadians(200)){
                 return false;
@@ -185,31 +149,7 @@ public class VisionSubsystem extends SubsystemBase{
         return Optional.empty();
     }
 
-    public Optional<VisionFieldPoseEstimate> processMegaTagPoseEst(LimelightHelpers.PoseEstimate poseEstimate,String LimelightName){
-        double timeStamp = poseEstimate.timestampSeconds;
-        var realFieldToRobot = visionState.getFieldToRobot(timeStamp);
-        if(realFieldToRobot.isEmpty()) return Optional.empty();
-        var estFieldToRobot = getFieldToRobot(poseEstimate, LimelightName);
-        if(estFieldToRobot.isEmpty()) return Optional.empty();
-        double poseDifference = estFieldToRobot.get().getTranslation().getDistance(realFieldToRobot.get().getTranslation());
-        if(poseEstimate.rawFiducials.length  > 0){
-            double xyStd = 1.0;
-            double degStd = 12;
-            if(poseEstimate.rawFiducials.length >= 2){
-                xyStd = 0.5;
-                degStd = 6;
-            }else if(poseEstimate.avgTagArea > 0.8 && poseDifference < 0.5){
-                xyStd = 1;
-                degStd = 12;
-            }else if(poseEstimate.avgTagArea > 0.1 && poseDifference < 0.3){
-                xyStd = 2;
-                degStd = 30;
-            }
-            Matrix<N3,N1> visionMeasurementStdDevs = VecBuilder.fill(xyStd, xyStd, Units.degreesToRadians(degStd));
-            return Optional.of(new VisionFieldPoseEstimate(poseEstimate.pose, timeStamp, visionMeasurementStdDevs));
-        }
-        return Optional.empty();
-    } 
+    
     
     private boolean seesReefTag(RawFiducial[] fids){
         for(int tag: currentReefTags)        

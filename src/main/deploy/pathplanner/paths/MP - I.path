@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.149630681818182,
-        "y": 5.565610795454545
+        "x": 7.149630681819372,
+        "y": 6.044247159087008
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.78777964215025,
-        "y": 5.420280299492827
+        "x": 5.61400568181937,
+        "y": 6.133991477268827
       },
       "isLocked": false,
       "linkedName": "Preload Point Mid"
     },
     {
       "anchor": {
-        "x": 5.27500715554329,
+        "x": 5.275,
         "y": 5.084263066740553
       },
       "prevControl": {
-        "x": 6.361558977998936,
-        "y": 5.364061586779423
+        "x": 6.0726988636375525,
+        "y": 5.575582386359737
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 4.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -48,7 +62,7 @@
   "folder": "Preload Mid",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.20655440273179437
   },
   "useDefaultConstraints": true
 }

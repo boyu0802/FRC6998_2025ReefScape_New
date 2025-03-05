@@ -300,14 +300,14 @@ public class Constants {
         // TODO : Need to be Tuned.
         
 
-        public static final double ELEVATOR_MAX_LENGTH = 1.32;
+        public static final double ELEVATOR_MAX_LENGTH = 1.287;
         public static final double ELEVATOR_MIN_LENGTH = 0.0;
 
 
         public static final FeedForward ELEVATOR_FEEDFORWARD = FeedForward.builder()
             .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.43059/12.0).gravityType(GravityType.kElevator).build();
 
-        public static final double ELEVATOR_DEADZONE_DISTANCE = 0.02;
+        public static final double ELEVATOR_DEADZONE_DISTANCE = 0.015;
         public static final double ELEVAROR_MAX_VELOCITY = 9.0;
         public static final double ELEVAROR_MAX_ACCEL = 18.0;
 
@@ -680,6 +680,7 @@ public class Constants {
 
     public static final boolean disableHAL = false;
     public static final String CANdleID = null;
+
 
 
 

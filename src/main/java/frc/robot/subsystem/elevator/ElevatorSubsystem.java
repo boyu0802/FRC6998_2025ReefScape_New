@@ -160,12 +160,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     
     public boolean isAtSetpoint() {
-    return (Math.abs(getLeftElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE);
+    return (Math.abs(getLeftElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE && Math.abs(getRightElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE);
   }
     
     public void setElevatorPosition(double position) {
         m_elevatorLeft.setControl(m_motionMagicVoltage.withPosition(position));
-        m_elevatorRight.setControl(new Follower(m_elevatorLeft.getDeviceID(),true));
+        m_elevatorRight.setControl(m_motionMagicVoltage.withPosition(position));
         currentPosition = position;
     }
     public void setElevatorPosition(ScoreState state) {
@@ -196,8 +196,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void resetPosition(){
-        m_elevatorLeft.setPosition(0);
         m_elevatorRight.setPosition(0);
+        m_elevatorLeft.setPosition(0);
+        
     }
 
     
@@ -242,7 +243,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator/elevatorPosition", getLeftElevatorPosition());
         SmartDashboard.putNumber("Elevator Velocity", getLeftElevatorVelocity());
         SmartDashboard.putNumber("Elevator/Voltage", m_elevatorLeft.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Elevator/elevatorRightP   osition", getRightElevatorPosition());
+        SmartDashboard.putNumber("Elevator/elevatorRightPosition", getRightElevatorPosition());
         elevatorLigament2d.setLength(getLeftElevatorPosition());
         SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
         SmartDashboard.putNumber("Elevator/ Rotations" ,m_elevatorLeft.getPosition().getValueAsDouble());

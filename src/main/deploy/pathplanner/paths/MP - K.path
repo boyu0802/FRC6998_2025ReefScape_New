@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.149630681818182,
-        "y": 5.565610795454545
+        "x": 7.149630681819372,
+        "y": 6.044247159087008
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.186759868421052,
-        "y": 6.045559210526315
+        "x": 6.186759868422242,
+        "y": 6.524195574158778
       },
       "isLocked": false,
       "linkedName": "Preload Point Mid"
@@ -48,7 +48,7 @@
   "folder": "Preload Mid",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.20655440273179437
   },
   "useDefaultConstraints": true
 }

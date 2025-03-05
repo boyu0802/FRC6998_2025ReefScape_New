@@ -2,6 +2,7 @@ package frc.robot.subsystem.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -10,7 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
+
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
@@ -34,10 +35,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
+
+import frc.robot.Field.ReefConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystem.vision.VisionFieldPoseEstimate;
 import frc.robot.subsystem.vision.VisionState;
+import lombok.Getter;
 
 import static frc.robot.Constants.AutoConstants.TRANSLATION_PID;
 import static frc.robot.Constants.AutoConstants.ROTATION_PID;
@@ -67,8 +70,11 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
+    @Getter private boolean waypointsTransformed = false;
     //private final SwerveSetpointGenerator setpointGenerator;
     private SwerveSetpoint previousSetpoint;
+
+    @Getter private Pose2d target = new Pose2d(0,0,new Rotation2d(0));
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -154,6 +160,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         configureAutoBuilder();
+        initializeOtf();
         
     }
 
@@ -183,6 +190,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         configureAutoBuilder();
+        initializeOtf();
     }
 
     /**
@@ -219,6 +227,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         configureAutoBuilder();
+        initializeOtf();
     }
 
     private void configureAutoBuilder() {
@@ -314,8 +323,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             () -> AutoBuilder.pathfindToPose(
                 pose,
                 new PathConstraints(
-                    3.5,
                     4.0,
+                    3.0,
                     Units.degreesToRadians(540),
                     Units.degreesToRadians(720)
                 )
@@ -323,22 +332,57 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         );
     }
 
-    public Command pathToReef(Field reef) {
+    public Command pathToReef(boolean isLeft) {
         return defer(() -> {
-            Pose2d target = null;
+            target = null;
 
             if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
                 target = this.getState().Pose.nearest(
-                    (reef == Constants.Swerve.REEFS.LEFT) ? Constants.Swerve.RIGHT_REEF_WAYPOINTS : Constants.Swerve.LEFT_REEF_WAYPOINTS
+                    isLeft ? ReefConstants.LEFT_REEF_WAYPOINTS : ReefConstants.RIGHT_REEF_WAYPOINTS
                 );
             } else {
                 target = this.getState().Pose.nearest(
-                    (reef == Constants.Swerve.REEFS.LEFT) ? Constants.Swerve.LEFT_REEF_WAYPOINTS : Constants.Swerve.RIGHT_REEF_WAYPOINTS
+                    isLeft ? ReefConstants.LEFT_REEF_WAYPOINTS :ReefConstants.RIGHT_REEF_WAYPOINTS
                 );
             }
 
             return goToPose(target).withTimeout(0.01).andThen(goToPose(target));
         });
+    }
+
+    public Command pathToStation() {
+        return defer(() -> {
+            Pose2d target = this.getState().Pose.nearest(ReefConstants.STATION_WAYPOINTS);
+
+            return goToPose(target).withTimeout(0.01).andThen(goToPose(target));
+        });
+    }
+
+    private void transformWaypointsForAlliance(List<Pose2d> waypoints) {
+        final double FIELD_LENGTH = 17.55;
+        final double X_OFFSET = 0.0;
+
+        for (int i = 0; i < waypoints.size(); i++) {
+            Pose2d bluePose = waypoints.get(i);
+            waypoints.set(
+                i,
+                new Pose2d(
+                    FIELD_LENGTH - bluePose.getX() + X_OFFSET,
+                    bluePose.getY(),
+                    Rotation2d.fromDegrees(180 - bluePose.getRotation().getDegrees())
+                )
+            );
+        }
+    }
+
+    public void initializeOtf() {
+        if ((DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) && !waypointsTransformed) {
+            waypointsTransformed = true;
+
+            transformWaypointsForAlliance(frc.robot.Field.ReefConstants.STATION_WAYPOINTS);
+            transformWaypointsForAlliance(frc.robot.Field.ReefConstants.LEFT_REEF_WAYPOINTS);
+            transformWaypointsForAlliance(frc.robot.Field.ReefConstants.RIGHT_REEF_WAYPOINTS);
+        }
     }
 
     
@@ -373,6 +417,8 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         state.addOdometryMeasurement(Timer.getTimestamp(),getState().Pose);
         field.setRobotPose(getState().Pose);
         SmartDashboard.putString("pose est.",getState().Pose.toString());
+        SmartDashboard.putBoolean("transformed",waypointsTransformed);
+        
 
         
 
