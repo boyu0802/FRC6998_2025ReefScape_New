@@ -49,7 +49,7 @@ public class Telemetry {
     private final StructArrayPublisher<SwerveModulePosition> driveModulePositions = driveStateTable.getStructArrayTopic("ModulePositions", SwerveModulePosition.struct).publish();
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
-
+    
     //private final StructPublisher<Pose2d> poseEstimator = inst.getStructTopic("poseEstimator", null)
 
     
@@ -59,6 +59,7 @@ public class Telemetry {
     private final NetworkTable table = inst.getTable("Pose");
     private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
     private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+    private final StructPublisher<Pose2d> targetPose = table.getStructTopic("Target", Pose2d.struct).publish();
 
     private MechanismRoot2d root = new Mechanism2d(5,3).getRoot("root", 2.5, 0.25);
 
@@ -109,6 +110,7 @@ public class Telemetry {
         driveModulePositions.set(state.ModulePositions);
         driveTimestamp.set(state.Timestamp);
         driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
+        
 
         /* Also write to log file */
         m_poseArray[0] = state.Pose.getX();
@@ -129,6 +131,7 @@ public class Telemetry {
         /* Telemeterize the pose to a Field2d */
         fieldTypePub.set("Field2d");
         fieldPub.set(m_poseArray);
+        //targetPose.set();
 
         /* Telemeterize the module states to a Mechanism2d */
         for (int i = 0; i < 4; ++i) {

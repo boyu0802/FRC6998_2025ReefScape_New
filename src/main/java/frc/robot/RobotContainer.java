@@ -9,7 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.EventMarker;
+
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -130,6 +130,12 @@ public class RobotContainer {
     private final Trigger ejectAlgaeL3 = m_operatorController.back();
     private final Trigger ejectAlgaeL2 = m_operatorController.start();
 
+    private final Trigger net = m_operatorController.leftStick();
+    private final Trigger toLeftReef = m_driveController.leftTrigger(0.5);
+    private final Trigger toRightReef = m_driveController.rightTrigger(0.5);
+    private final Trigger wristOutputAlgae = m_operatorController.povLeft();
+    private final Trigger grabOutputAlgae = m_operatorController.povDown();
+
 
     //Optional to mirror the NetworkTables-logged data to a file on disk
 
@@ -172,17 +178,19 @@ public class RobotContainer {
         //    point.withModuleDirection(new Rotation2d(!limelight.getTv() ? 0.0 : limelight.getTx()))
         //));
 
-        m_driveController.leftTrigger(0.5).onTrue(drivetrain.pathToReef(false));
-        m_driveController.rightTrigger(0.5).onTrue(drivetrain.pathToReef(true));
+        toLeftReef.onTrue(drivetrain.pathToReef(false));
+        toRightReef.onTrue(drivetrain.pathToReef(true));
         m_driveController.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
+        /* 
         m_driveController.back().and(m_driveController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         m_driveController.back().and(m_driveController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         m_driveController.start().and(m_driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         m_driveController.start().and(m_driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        */
 
         // reset the field-centric heading on left bumper press
         
@@ -205,10 +213,10 @@ public class RobotContainer {
             currentCoralCommand.schedule();
         }));
         
-        m_operatorController.povLeft().onTrue(coralSubsystem.outputAlgaeWithoutVision());
-        m_operatorController.povDown().onTrue(grabSubsystem.reverseWithoutVision());
+        wristOutputAlgae.onTrue(coralSubsystem.outputAlgaeWithoutVision());
+        grabOutputAlgae.onTrue(grabSubsystem.reverseWithoutVision());
 
-        m_operatorController.povRight().onTrue(new InstantCommand(()->{
+        net.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_NET);
             currentReefState.schedule();
         }));    
@@ -256,7 +264,6 @@ public class RobotContainer {
         m_driveController.povUp().whileTrue(new SetHangVelocityCommand(hangSubsystem, 10.0));
         m_driveController.povDown().whileTrue(new SetHangVelocityCommand(hangSubsystem, -10.0));
         m_driveController.povRight().onTrue(hangSubsystem.catchHang());
-        m_driveController.povLeft().onTrue(new SetHangPositionCommand(hangSubsystem, 10.0,0.2445));
 
         m_driveController.leftBumper().onTrue(new SetHangPositionCommand(hangSubsystem, 10.0,0.2445));
         m_driveController.rightBumper().onTrue(new SetHangPositionCommand(hangSubsystem, -10.0,0));

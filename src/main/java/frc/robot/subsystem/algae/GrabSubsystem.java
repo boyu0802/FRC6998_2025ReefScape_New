@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,6 +33,7 @@ import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_FEED_FO
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_OFFSET;
 import static frc.robot.Constants.HangConstants.GrabConstants.GRAB_WRIST_OFFSET_TOZERO;
 import static frc.robot.RobotMap.GRAB_INTAKE_ID;
+import static frc.robot.RobotMap.GRAB_LIMITSWITCH_ID;
 import static frc.robot.RobotMap.GRAB_WRIST_ID;
 
 public class GrabSubsystem extends SubsystemBase {
@@ -43,6 +45,8 @@ public class GrabSubsystem extends SubsystemBase {
     private final MutVoltage wrist_sysIdVoltage = Volts.mutable(0);
     private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);
     private final MutAngularVelocity wrist_sysIdVelocity = DegreesPerSecond.mutable(0);
+
+    private final DigitalOutput m_coralIntakeLimitSwitch = new DigitalOutput(GRAB_LIMITSWITCH_ID);
 
     public GrabSubsystem() {
         setName("GrabSubsystem");
@@ -57,6 +61,7 @@ public class GrabSubsystem extends SubsystemBase {
                 SparkBase.PersistMode.kPersistParameters);
 
         //m_grabWrist.getEncoder().setPosition(m_grabWrist.);
+        
         m_grabIntake.getEncoder().setPosition(0);
 
     }
@@ -111,6 +116,9 @@ public class GrabSubsystem extends SubsystemBase {
 
     public double getGrabWristVelocity(){
         return m_grabWrist.getAbsoluteEncoder().getVelocity();
+    }
+    public boolean getGrabLimit(){
+        return m_coralIntakeLimitSwitch.get();
     }
 
     public Command sysid_wristDynamic(SysIdRoutine.Direction direction){
@@ -178,7 +186,10 @@ public class GrabSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Grab/ Wrist Position", getGrabWristPosition());
         SmartDashboard.putNumber("Grab/ Wrist Velocity", getGrabWristVelocity());
         SmartDashboard.putNumber("Grab/ actual Postion", getActualPosition());
-        //SmartDashboard.getBoolean("Coral Intake Limit Switch",getCoralLimit());
+        SmartDashboard.getBoolean("Grab/ getLimit",getGrabLimit());
+        if(getGrabLimit()) {
+            m_grabWrist.getEncoder().setPosition(0);
+        }
     }
 
 

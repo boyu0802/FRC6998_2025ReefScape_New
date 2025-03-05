@@ -312,7 +312,7 @@ public class Constants {
         public static final double ELEVAROR_MAX_ACCEL = 18.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
-        public static final double ZEROED_VOLTAGE = (-1.5);
+        public static final double ZEROED_VOLTAGE = (-2.0);
         public static final double ZEROED_VELOCITY = -0.02;
 
 

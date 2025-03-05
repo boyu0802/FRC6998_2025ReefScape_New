@@ -72,7 +72,6 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
     @Getter private boolean waypointsTransformed = false;
     //private final SwerveSetpointGenerator setpointGenerator;
-    private SwerveSetpoint previousSetpoint;
 
     @Getter private Pose2d target = new Pose2d(0,0,new Rotation2d(0));
 
