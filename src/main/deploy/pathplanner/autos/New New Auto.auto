@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "MP - I"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Drive"
+            "name": "L4"
           }
         },
         {
@@ -26,12 +20,6 @@
           "type": "named",
           "data": {
             "name": "Shoot_L4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
           }
         }
       ]

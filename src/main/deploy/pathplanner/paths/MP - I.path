@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.149630681819372,
-        "y": 6.044247159087008
+        "x": 7.13354104700004,
+        "y": 5.440040639888113
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.61400568181937,
-        "y": 6.133991477268827
+        "x": 6.446035701884811,
+        "y": 5.858693938580739
       },
       "isLocked": false,
       "linkedName": "Preload Point Mid"
     },
     {
       "anchor": {
-        "x": 5.275,
-        "y": 5.084263066740553
+        "x": 5.285259311192053,
+        "y": 5.073099144751581
       },
       "prevControl": {
-        "x": 6.0726988636375525,
-        "y": 5.575582386359737
+        "x": 5.9182661581671265,
+        "y": 6.16542852368652
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,14 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "L4",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 6.0,
     "maxAcceleration": 4.5,

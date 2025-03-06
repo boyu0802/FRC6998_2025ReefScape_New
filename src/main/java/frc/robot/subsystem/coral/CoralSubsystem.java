@@ -241,7 +241,7 @@ public class CoralSubsystem extends SubsystemBase {
     public Command outputCoralWithoutVision() {
         return Commands.sequence(
                 Commands.print("running coral output"),
-                Commands.runOnce(()->setCoralIntakeVelocity(-30.0)),
+                Commands.runOnce(()->setCoralIntakeVelocity(-50.0)),
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(()->stopCoralIntake()),
                 Commands.print("coral outputted")

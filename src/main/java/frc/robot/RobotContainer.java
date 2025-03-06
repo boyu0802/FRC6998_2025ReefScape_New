@@ -18,6 +18,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ScoreState;
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.drive.DriveToPose;
+import frc.robot.commands.drive.DriveToReef;
 import frc.robot.commands.setcommand.CoralIntakeCommand;
 import frc.robot.commands.setcommand.SetCoralWristCommand;
 import frc.robot.commands.setcommand.SetElevatorCommand;
@@ -305,14 +307,21 @@ public class RobotContainer {
             coralSubsystem.collectCoralWithoutVision()
         ));
         
-        NamedCommands.registerCommand("Shoot_L4",new InstantCommand(()->{
-            currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
-            currentReefState.schedule();
-        }));
+        NamedCommands.registerCommand("Shoot_L4",Commands.sequence(
+            //Commands.runOnce(()->setRobotState(RobotState.SCORE_L4)),
+            Commands.print("score L4"),
+            coralSubsystem.outputCoralWithoutVision(),
+            Commands.waitSeconds(0.2),
+            Commands.print("Scored L4")
+            //Commands.waitSeconds(0.2),
+            //toNormalCommand()
+        ));
         NamedCommands.registerCommand("Shoot_L2",new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_L2);
             currentReefState.schedule();
         }));
+
+        
         
          
 
@@ -321,16 +330,29 @@ public class RobotContainer {
             currentReefState.schedule();
         }));
 
-        new EventTrigger("L4").onTrue(new SetElevatorCommand(ScoreState.L4, elevatorSubsystem));
+        new EventTrigger("L4").onTrue(Commands.sequence(
+            //Commands.runOnce(()->setRobotState(RobotState.PREP_L4)),
+            Commands.parallel(
+                new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
+                new SetElevatorCommand(ScoreState.L4, elevatorSubsystem)
+            ),
+            //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L4)),
+            Commands.print("PREP L4")));
         NamedCommands.registerCommand("Normal" ,new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.NORMAL);
             currentReefState.schedule();    
         }));
 
-        NamedCommands.registerCommand("L4",new InstantCommand(()->{
-            currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
-            currentReefState.schedule();
-        }));
+        NamedCommands.registerCommand("L4",Commands.sequence(
+            //Commands.runOnce(()->setRobotState(RobotState.PREP_L4)),
+            Commands.parallel(
+                new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
+                new SetElevatorCommand(ScoreState.L4, elevatorSubsystem)
+            ),
+            //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L4)),
+            Commands.print("PREP L4")
+        ));
+        NamedCommands.registerCommand("Drive",drivetrain.pathToReef(false));
     }   
 
     public Command zeroCommand = new ZeroElevatorCommand(elevatorSubsystem);

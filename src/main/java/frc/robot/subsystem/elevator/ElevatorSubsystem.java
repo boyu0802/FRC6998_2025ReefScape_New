@@ -230,7 +230,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             Commands.runOnce(()->decreaseElevatorPosition(0.05)),
             Commands.print("decreaseElevatorPositionCmd")
         
-            
+                
         );
     }
 
