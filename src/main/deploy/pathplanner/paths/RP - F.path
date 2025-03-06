@@ -48,7 +48,7 @@
   "folder": "Preload Mid",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -0.21654029793352458
   },
   "useDefaultConstraints": true
 }

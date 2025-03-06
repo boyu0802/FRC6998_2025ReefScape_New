@@ -180,8 +180,8 @@ public class RobotContainer {
         //    point.withModuleDirection(new Rotation2d(!limelight.getTv() ? 0.0 : limelight.getTx()))
         //));
 
-        toLeftReef.onTrue(drivetrain.pathToReef(false));
-        toRightReef.onTrue(drivetrain.pathToReef(true));
+        toLeftReef.onTrue(drivetrain.pathToReef(true));
+        toRightReef.onTrue(drivetrain.pathToReef(false));
         m_driveController.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
 

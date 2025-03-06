@@ -1,17 +1,18 @@
 package frc.robot.commands.setcommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
+import frc.robot.subsystem.coral.CoralSubsystem;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
 
-public class SetElevatorCommand extends InstantCommand {
-
+public class SetElevatorWristCommand extends Command {
     private final Constants.ScoreState scoreState;
     private final ElevatorSubsystem elevatorSubsystem;
-    public SetElevatorCommand(Constants.ScoreState scoreState, ElevatorSubsystem elevatorSubsystem) {
+    private final CoralSubsystem coralSubsystem;
+    public SetElevatorWristCommand(Constants.ScoreState scoreState, ElevatorSubsystem elevatorSubsystem,CoralSubsystem coralSubsystem) {
         this.scoreState = scoreState;
         this.elevatorSubsystem = elevatorSubsystem;
+        this.coralSubsystem = coralSubsystem;
         addRequirements(elevatorSubsystem);
     }
 
@@ -24,6 +25,9 @@ public class SetElevatorCommand extends InstantCommand {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        if(elevatorSubsystem.isAtWristPoint()) {
+            coralSubsystem.setCoralWristPosition(scoreState);
+        }
     }
 
     // Called once the command ends or is interrupted.
@@ -37,4 +41,5 @@ public class SetElevatorCommand extends InstantCommand {
     public boolean isFinished() {
         return elevatorSubsystem.isAtSetpoint();
     }
+    
 }

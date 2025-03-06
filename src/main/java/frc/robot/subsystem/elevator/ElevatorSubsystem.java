@@ -160,8 +160,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     
     public boolean isAtSetpoint() {
-    return (Math.abs(getLeftElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE && Math.abs(getRightElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE);
-  }
+        return (Math.abs(getLeftElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE && Math.abs(getRightElevatorPosition() - getTargetPosition()) < ELEVATOR_DEADZONE_DISTANCE);
+    }
+
+    public boolean isAtWristPoint(){
+        return  (Math.abs(getLeftElevatorPosition() - getTargetPosition()) < 0.3 && Math.abs(getRightElevatorPosition() - getTargetPosition()) < 0.3);
+    }
     
     public void setElevatorPosition(double position) {
         m_elevatorLeft.setControl(m_motionMagicVoltage.withPosition(position));

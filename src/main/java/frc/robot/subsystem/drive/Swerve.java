@@ -322,10 +322,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             () -> AutoBuilder.pathfindToPose(
                 pose,
                 new PathConstraints(
-                    4.0,
-                    3.0,
-                    Units.degreesToRadians(540),
-                    Units.degreesToRadians(720)
+                    2.0,
+                    1.0,
+                    Units.degreesToRadians(360),
+                    Units.degreesToRadians(540)
                 )
             ).finallyDo((interrupted) -> stop())
         );
@@ -337,7 +337,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
             if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
                 target = this.getState().Pose.nearest(
-                    isLeft ? ReefConstants.LEFT_REEF_WAYPOINTS : ReefConstants.RIGHT_REEF_WAYPOINTS
+                    isLeft ?  ReefConstants.RIGHT_REEF_WAYPOINTS :ReefConstants.LEFT_REEF_WAYPOINTS
                 );
             } else {
                 target = this.getState().Pose.nearest(

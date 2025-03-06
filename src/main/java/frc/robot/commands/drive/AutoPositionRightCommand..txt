@@ -1,0 +1,83 @@
+package frc.robot.commands;
+
+import com.pathplanner.lib.events.OneShotTriggerEvent;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.chassis.NAVXPoseSubsystem;
+import frc.robot.subsystems.chassis.SwerveSubsystem;
+import frc.robot.Robot;
+import frc.robot.subsystem.drive.Swerve;
+import frc.robot.subsystem.vision.VisionState;
+
+public class AutoPositionRightCommand extends Command {
+    private final Swerve swerve;
+    private VisionState pose = null;
+    private PIDController translationPID = new PIDController(4.0, 0.0, 0.0);
+    private PIDController rotationPID = new PIDController(0.01, 0,0.0001);
+
+    private Translation2d targetCoordinate;
+
+    private boolean finished = false;
+
+    public AutoPositionRightCommand(Swerve swerve){
+        this.swerve = swerve;
+        addRequirements(swerve);
+    }
+
+    @Override
+    public void initialize(){
+        finished = false;
+    }
+
+    @Override
+    public void execute(){
+        if(pose == null){
+            pose = NAVXPoseSubsystem.getInstance();
+        }
+
+        Rotation2d targetAngle = Rotation2d.fromDegrees(pose.getTargetAngle());
+        if(Robot.isRed()){
+            targetCoordinate = s_Pose.getRedRightTargetCoordinate();
+        }else{
+            targetCoordinate = s_Pose.getBlueRightTargetCoordinate();
+        }
+
+        Translation2d robotCurrentPose = new Translation2d(s_Pose.getPose().getX(), s_Pose.getPose().getY());
+
+        Rotation2d angleError = targetAngle.minus(s_Pose.getRotation());
+        Translation2d translationError = targetCoordinate.minus(robotCurrentPose);
+        double rotCorrection = rotationPID.calculate(angleError.getDegrees());
+        Translation2d transCorrection = new Translation2d(MathUtil.clamp(translationPID.calculate(translationError.getX()), -2, 2), MathUtil.clamp(translationPID.calculate(translationError.getY()), -2, 2));
+        double rotOutput = -MathUtil.clamp(rotCorrection, -0.3, 0.3);
+        if(Math.abs(translationError.getX()) < 0.015 && Math.abs(translationError.getY()) < 0.015 && Math.abs(angleError.getDegrees()) < 0.3){
+            finished = true;
+        }else{
+            finished = false;
+        }
+        s_Swerve.drive(
+            transCorrection, 
+            rotOutput * SwerveConstants.maxAngularVelocity, 
+            false);
+
+        // s_Swerve.drive(
+        //     new Translation2d(), 
+        //     rotOutput * SwerveConstants.maxAngularVelocity, 
+        //     false);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        swerve.stop()
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+}

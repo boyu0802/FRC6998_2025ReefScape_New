@@ -7,12 +7,15 @@ import com.ctre.phoenix6.signals.RobotEnableValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.TargetState;
 import frc.robot.commands.drive.SetRumbleCommand;
 import frc.robot.commands.setcommand.CoralIntakeCommand;
 import frc.robot.commands.setcommand.SetCoralWristCommand;
 import frc.robot.commands.setcommand.SetElevatorCommand;
+import frc.robot.commands.setcommand.SetElevatorWristCommand;
 import frc.robot.subsystem.algae.GrabSubsystem;
 import frc.robot.subsystem.coral.CoralSubsystem;
 import frc.robot.subsystem.elevator.ElevatorSubsystem;
@@ -117,9 +120,10 @@ public class StateManager {
                 else {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.PREP_L1)),
-                        Commands.parallel(
-                            new SetCoralWristCommand(ScoreState.L1, coralSubsystem),
-                            new SetElevatorCommand(ScoreState.L1, elevatorSubsystem)
+                        Commands.sequence(
+                            new SetElevatorCommand(ScoreState.L4, elevatorSubsystem),
+                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem)
+                            
                         ),
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L2)),
                         Commands.print("PREP L1")
@@ -141,9 +145,13 @@ public class StateManager {
                 else {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.PREP_L2)),
-                        Commands.parallel(
-                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
-                            new SetElevatorCommand(ScoreState.L2, elevatorSubsystem)
+                        Commands.sequence(
+                            /* 
+                            new SetElevatorCommand(ScoreState.L2, elevatorSubsystem),
+                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem)
+                            */
+                            new SetElevatorWristCommand(ScoreState.L2, elevatorSubsystem, coralSubsystem)
+                            
                         ),
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L2)),
                         Commands.print("PREP L2")
@@ -165,9 +173,13 @@ public class StateManager {
                 else {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.PREP_L3)),
-                        Commands.parallel(
-                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
-                            new SetElevatorCommand(ScoreState.L3, elevatorSubsystem)
+                        Commands.sequence(
+                            /* 
+                            new SetElevatorCommand(ScoreState.L2, elevatorSubsystem),
+                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem)
+                            */
+                            new SetElevatorWristCommand(ScoreState.L3, elevatorSubsystem, coralSubsystem)
+                            
                         ),
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L3)),
                         Commands.print("PREP L3")
@@ -188,9 +200,13 @@ public class StateManager {
                 else {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.PREP_L4)),
-                        Commands.parallel(
-                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
-                            new SetElevatorCommand(ScoreState.L4, elevatorSubsystem)
+                        Commands.sequence(
+                            /* 
+                            new SetElevatorCommand(ScoreState.L2, elevatorSubsystem),
+                            new SetCoralWristCommand(ScoreState.L3, coralSubsystem)
+                            */
+                            new SetElevatorWristCommand(ScoreState.L4, elevatorSubsystem, coralSubsystem)
+                            
                         ),
                         //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L4)),
                         Commands.print("PREP L4")

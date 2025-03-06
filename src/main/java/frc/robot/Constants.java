@@ -308,8 +308,8 @@ public class Constants {
             .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.43059/12.0).gravityType(GravityType.kElevator).build();
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.015;
-        public static final double ELEVAROR_MAX_VELOCITY = 9.0;
-        public static final double ELEVAROR_MAX_ACCEL = 18.0;
+        public static final double ELEVAROR_MAX_VELOCITY = 8.0;
+        public static final double ELEVAROR_MAX_ACCEL = 12.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
         public static final double ZEROED_VOLTAGE = (-2.0);
