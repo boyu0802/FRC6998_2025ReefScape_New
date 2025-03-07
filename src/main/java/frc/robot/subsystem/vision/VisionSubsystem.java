@@ -22,6 +22,8 @@ import frc.lib.limelight.LimelightHelpers;
 import frc.lib.limelight.LimelightHelpers.RawFiducial;
 import frc.robot.Constants.HangConstants.VisionConstants;
 
+import static frc.robot.Constants.PhotonAprilTagConstants.*;
+
 
 public class VisionSubsystem extends SubsystemBase{
     private final VisionState visionState;
@@ -31,6 +33,8 @@ public class VisionSubsystem extends SubsystemBase{
     private final static Set<Integer> BLUE_REEF_TAGS = new HashSet<>(List.of(17,18,19,20,21,22));
     private final static Set<Integer> RED_REEF_TAGS = new HashSet<>(List.of(6,7,8,9,10,11));
     private Set<Integer> currentReefTags;
+
+
     public VisionSubsystem(VisionState visionState){
         this.visionState = visionState;
         currentReefTags = visionState.isRedAlliance() ? RED_REEF_TAGS : BLUE_REEF_TAGS;
@@ -130,28 +134,47 @@ public class VisionSubsystem extends SubsystemBase{
         //var estStdDevs = kSingleTagStdDevs;
         if(estFieldToRobot.isEmpty()) return Optional.empty();
         double poseDifference = estFieldToRobot.get().getTranslation().getDistance(realFieldToRobot.get().getTranslation());
+        
+        var estStdDevs = kSingleTagStdDevs;
+        
+        
         if(poseEstimate.rawFiducials.length  > 0){
-            double xyStd = 2.0;  
-            double thetaStdDevModel = Units.degreesToRadians(50.0);
-            if(poseEstimate.rawFiducials.length == 1) {
-                
-            }  
+            
+            
+            double xyStdDev = 2.0;  
+            double thetaStdDev = Units.degreesToRadians(50.0);
+            double avgDist = poseEstimate.avgTagDist;
+            
 
-            
-            if(poseEstimate.rawFiducials.length >= 2 && poseEstimate.avgTagArea > 0.1){
-                xyStd = 0.1;
-            }else if(seesReefTag(poseEstimate.rawFiducials) && poseEstimate.avgTagArea > 0.4){
-                xyStd = 0.34;
-            }else if (poseEstimate.avgTagArea > 0.8 && poseDifference < 0.5) {
-                xyStd = 0.5;
-            }else if (poseEstimate.avgTagArea > 0.1 && poseDifference < 0.3) {
-                xyStd = 1.0;
-            }else if (poseEstimate.rawFiducials.length > 1) {
-                xyStd = 1.2;
+
+            if(poseEstimate.rawFiducials.length == 1) {
+                xyStdDev = xyStdDevModel.predict(avgDist);
+                thetaStdDev = thetaStdDevModel.predict(avgDist);
+                estStdDevs = VecBuilder.fill(xyStdDev*59.4, xyStdDev*59.4, thetaStdDev*59.4);
             }
+            else if(poseEstimate.rawFiducials.length > 1) {
+                xyStdDev = Math.pow(avgDist, 2.0) / poseEstimate.rawFiducials.length;
+                thetaStdDev = Math.pow(avgDist, 2.0) / poseEstimate.rawFiducials.length;
+                estStdDevs = VecBuilder.fill(xyStdDev*59.4, xyStdDev*59.4, thetaStdDev*59.4);
+            }
+            /* 
+            if(poseEstimate.rawFiducials.length >= 2 && poseEstimate.avgTagArea > 0.1){
+                xyStdDev = 0.1;
+            }else if(seesReefTag(poseEstimate.rawFiducials) && poseEstimate.avgTagArea > 0.4){
+                xyStdDev = 0.34;
+            }else if (poseEstimate.avgTagArea > 0.8 && poseDifference < 0.5) {
+                xyStdDev = 0.5;
+            }else if (poseEstimate.avgTagArea > 0.1 && poseDifference < 0.3) {
+                xyStdDev = 1.0;
+            }else if (poseEstimate.rawFiducials.length > 1) {
+                xyStdDev = 1.2;
+            }
+                */
             
-            Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStd, xyStd, Units.degreesToRadians(10.0));;
+            Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev);
+            
             Pose2d fieldToRobotEstimate = new Pose2d(estFieldToRobot.get().getTranslation(), realFieldToRobot.get().getRotation());
+            
             return Optional.of(new VisionFieldPoseEstimate(fieldToRobotEstimate, timeStamp, visionMeasurementStdDevs));
         }
         return Optional.empty();

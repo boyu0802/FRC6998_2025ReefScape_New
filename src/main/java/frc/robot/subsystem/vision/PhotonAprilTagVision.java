@@ -284,8 +284,6 @@ public class PhotonAprilTagVision extends SubsystemBase {
             return numTags == 0 ? Double.MAX_VALUE : avgDist / numTags;
 }
 
-    
-
 
 
 }
