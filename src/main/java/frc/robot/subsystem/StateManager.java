@@ -220,6 +220,30 @@ public class StateManager {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.SCORE_STATION)),
                         Commands.print("score STATION"),
+                        coralSubsystem.stopIntake(),
+                        //Commands.waitSeconds(0.2),
+                        //Commands.runOnce(()->elevatorSubsystem.setRobotState(RobotState.SCORE_STATION)),
+                        Commands.print("Scored STATION")
+                    );
+                }
+                else {
+                    return Commands.sequence(
+                        Commands.runOnce(()->setRobotState(RobotState.PREP_STATION)),
+                        Commands.parallel(
+                            new SetCoralWristCommand(ScoreState.STATION, coralSubsystem),
+                            new SetElevatorCommand(ScoreState.STATION, elevatorSubsystem),
+                            coralSubsystem.collectCoralWithoutVision()
+                        ),
+                        Commands.runOnce(()-> setRobotState(RobotState.PREP_STATION)),
+                        Commands.print("PREP STATION")
+                    );
+                }
+                case AUTO_STATION:
+                if(this.currentRobotState == RobotState.PREP_STATION) {
+                    
+                    return Commands.sequence(
+                        Commands.runOnce(()->setRobotState(RobotState.SCORE_STATION)),
+                        Commands.print("score STATION"),
                         coralSubsystem.collectCoralWithoutVision(),
                         //Commands.waitSeconds(0.2),
                         //Commands.runOnce(()->elevatorSubsystem.setRobotState(RobotState.SCORE_STATION)),

@@ -186,6 +186,10 @@ public class CoralSubsystem extends SubsystemBase {
         m_coralIntake.set(0.0);
     }
 
+    public Command stopIntake() {
+        return Commands.runOnce(this::stopCoralIntake);
+    }
+
     public boolean getCoralWristAtSetpoint(){
         return abs(edu.wpi.first.math.util.Units.rotationsToDegrees(m_coralWrist.getPosition().getValueAsDouble()) - targetPosition) < 2.5;
     }

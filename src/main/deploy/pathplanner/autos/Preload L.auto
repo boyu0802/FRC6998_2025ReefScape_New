@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RP-E"
+            "pathName": "MP - J"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.6
+            "waitTime": 2.0
           }
         },
         {
@@ -25,13 +25,26 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 1.0
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "E - RS"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "J - LS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Normal"
+                }
+              }
+            ]
           }
         },
         {
@@ -43,19 +56,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RS - D"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "LS -K"
           }
         },
         {
@@ -67,25 +74,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Normal"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
+            "waitTime": 0.5
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Mid Left-2",
+  "folder": "Mid Left",
   "choreoAuto": false
 }

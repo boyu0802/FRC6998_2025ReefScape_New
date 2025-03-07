@@ -68,7 +68,8 @@ public class Constants {
         NORMAL(0.05, 90.0),
         STATION(0.125, 45.0),
         NET(1.285,60.0),
-        ALGAE_NORMAL(0.15,90.0);
+        ALGAE_NORMAL(0.15,90.0),
+        AUTO_STATION(0.095,45.0);
 
         public double elevatorPosition;
         public double armPosition;
@@ -100,6 +101,7 @@ public class Constants {
         PREP_PROCESSOR,
         SCORE_PROCESSOR,
         RESET,
+        AUTO_STATION
 
 
     }
@@ -117,6 +119,7 @@ public class Constants {
         HANG,
         RESET,
         PREP_NET,
+        AUTO_STATION
 
     }
 
