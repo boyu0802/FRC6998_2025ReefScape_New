@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MP - K"
+            "pathName": "MP - J"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "K - LS"
+            "waitTime": 2.0
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "LS - J"
+            "name": "Shoot_L4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -29,27 +35,39 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "LS - I"
+            "name": "Collect"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "IJ to Net Mid"
+            "pathName": "LS -K"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Net Mid to Leave"
+            "name": "Shoot_L4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Mid Right",
+  "folder": null,
   "choreoAuto": false
 }

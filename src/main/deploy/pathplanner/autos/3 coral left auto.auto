@@ -23,12 +23,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "E - RS"
@@ -43,13 +37,43 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "RS - D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D - RS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Collect"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RS - C "
           }
         },
         {

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1956925675675674,
-        "y": 0.9814189189189176
+        "x": 7.119715909086262,
+        "y": 2.374701704552342
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7860448448620019,
-        "y": 1.3111781250531651
+        "x": 5.853323863631718,
+        "y": 2.713735795461432
       },
       "isLocked": false,
-      "linkedName": "Right Station"
+      "linkedName": "Station Mid Right"
     },
     {
       "anchor": {
-        "x": 3.6923713205847504,
-        "y": 2.9690540497274625
+        "x": 4.995411063442967,
+        "y": 2.806794508334991
       },
       "prevControl": {
-        "x": 2.413125,
-        "y": 1.5670028409090897
+        "x": 6.132528409086262,
+        "y": 2.4943607954614335
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "C"
+      "linkedName": "E"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "L4",
-      "waypointRelativePos": 0.7971586424625154,
+      "waypointRelativePos": 0.700868192580901,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -49,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 60.36161631184871
+    "rotation": 118.51124629410874
   },
   "reversed": false,
-  "folder": "Point to Right Station",
+  "folder": "Preload Mid",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -126.86989764584393
+    "rotation": -0.21654029793352458
   },
   "useDefaultConstraints": true
 }

@@ -39,6 +39,7 @@ import frc.robot.commands.drive.DriveToReef;
 import frc.robot.commands.setcommand.CoralIntakeCommand;
 import frc.robot.commands.setcommand.SetCoralWristCommand;
 import frc.robot.commands.setcommand.SetElevatorCommand;
+import frc.robot.commands.setcommand.SetElevatorWristCommand;
 import frc.robot.commands.setcommand.SetHangPositionCommand;
 import frc.robot.commands.setcommand.SetHangVelocityCommand;
 import frc.robot.commands.zeroing.ZeroElevatorCommand;
@@ -300,10 +301,7 @@ public class RobotContainer {
     private void registerCommand(){
         
         NamedCommands.registerCommand("Collect",new ParallelCommandGroup(
-            new InstantCommand(() ->{
-                currentReefState = stateManager.SetReefState(TargetState.PREP_STATION);
-            currentReefState.schedule();
-            }),
+            
             coralSubsystem.collectCoralWithoutVision()
         ));
         
@@ -342,6 +340,18 @@ public class RobotContainer {
             currentReefState = stateManager.SetReefState(TargetState.NORMAL);
             currentReefState.schedule();    
         }));
+
+        new EventTrigger("Normal").onTrue(Commands.sequence(
+            Commands.sequence(
+            //Commands.runOnce(()->setRobotState(RobotState.NORMAL)),
+            new SetCoralWristCommand(ScoreState.NORMAL, coralSubsystem),
+            Commands.waitSeconds(0.2),
+            new SetElevatorWristCommand(ScoreState.STATION, elevatorSubsystem, coralSubsystem),
+            Commands.print("toNormalPosition")
+            )
+        ));
+
+        //new EventTrigger()
 
         NamedCommands.registerCommand("L4",Commands.sequence(
             //Commands.runOnce(()->setRobotState(RobotState.PREP_L4)),
