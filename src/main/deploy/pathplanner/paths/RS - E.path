@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.995411063442967,
-        "y": 2.806794508334991
+        "x": 5.032239202533584,
+        "y": 2.832267962710795
       },
       "prevControl": {
-        "x": 4.300904605260124,
-        "y": 1.6099506578950615
+        "x": 4.337732744350741,
+        "y": 1.6354241122708655
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 118.51124629410874
+    "rotation": 121.86597769360368
   },
   "reversed": false,
   "folder": "Point to Right Station",

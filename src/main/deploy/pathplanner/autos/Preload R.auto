@@ -29,9 +29,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "J - LS"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "J - LS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Normal"
+                }
+              }
+            ]
           }
         },
         {
@@ -68,6 +81,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Mid Right",
   "choreoAuto": false
 }

@@ -127,10 +127,17 @@ public class VisionSubsystem extends SubsystemBase{
         var realFieldToRobot = visionState.getFieldToRobot(timeStamp);
         if(realFieldToRobot.isEmpty()) return Optional.empty();
         var estFieldToRobot = getFieldToRobot(poseEstimate, LimelightName);
+        //var estStdDevs = kSingleTagStdDevs;
         if(estFieldToRobot.isEmpty()) return Optional.empty();
         double poseDifference = estFieldToRobot.get().getTranslation().getDistance(realFieldToRobot.get().getTranslation());
         if(poseEstimate.rawFiducials.length  > 0){
             double xyStd = 2.0;  
+            double thetaStdDevModel = Units.degreesToRadians(50.0);
+            if(poseEstimate.rawFiducials.length == 1) {
+                
+            }  
+
+            
             if(poseEstimate.rawFiducials.length >= 2 && poseEstimate.avgTagArea > 0.1){
                 xyStd = 0.1;
             }else if(seesReefTag(poseEstimate.rawFiducials) && poseEstimate.avgTagArea > 0.4){
@@ -142,7 +149,8 @@ public class VisionSubsystem extends SubsystemBase{
             }else if (poseEstimate.rawFiducials.length > 1) {
                 xyStd = 1.2;
             }
-            Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStd, xyStd, Units.degreesToRadians(50.0));
+            
+            Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStd, xyStd, Units.degreesToRadians(10.0));;
             Pose2d fieldToRobotEstimate = new Pose2d(estFieldToRobot.get().getTranslation(), realFieldToRobot.get().getRotation());
             return Optional.of(new VisionFieldPoseEstimate(fieldToRobotEstimate, timeStamp, visionMeasurementStdDevs));
         }

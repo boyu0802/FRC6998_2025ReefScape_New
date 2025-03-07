@@ -273,7 +273,9 @@ public class RobotContainer {
         testController2.a().onTrue(grabSubsystem.setGrabto27deg());
         testController2.b().onTrue(grabSubsystem.setGrabto75deg());
         testController2.x().onTrue(grabSubsystem.setGrabto10deg());
-        testController2.y().onTrue(grabSubsystem.reverseWithoutVision()); 
+        testController2.y().onTrue(grabSubsystem.reverseWithoutVision());
+
+
         
         
         
@@ -300,9 +302,8 @@ public class RobotContainer {
 
     private void registerCommand(){
         
-        NamedCommands.registerCommand("Collect",new ParallelCommandGroup(
+        NamedCommands.registerCommand("Collect",Commands.sequence(
             
-            coralSubsystem.collectCoralWithoutVision()
         ));
         
         NamedCommands.registerCommand("Shoot_L4",Commands.sequence(

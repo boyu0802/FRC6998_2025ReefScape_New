@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     autoZeroed = m_robotContainer.isZeroed();
-
+    /* 
     if (autoZeroed && m_autonomousCommand != null) {
       Commands.deferredProxy(() -> m_autonomousCommand).schedule();
     } else if (m_autonomousCommand != null) {
@@ -75,6 +75,7 @@ public class Robot extends TimedRobot {
     } else {
       m_robotContainer.zeroCommand.schedule();
     }
+      */
 
     haveAutoRun = true;
   }
