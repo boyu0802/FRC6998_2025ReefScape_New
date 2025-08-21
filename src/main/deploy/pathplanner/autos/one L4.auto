@@ -7,43 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MP - I"
+            "pathName": "MP - J"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "I - LS"
+            "waitTime": 0.2
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "LS - J"
+            "name": "L4"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "J - LS"
+            "waitTime": 0.1
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "LS -PK"
+            "name": "Shoot_L4"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "K - PLS"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Station to PL"
+            "name": "Normal"
           }
         }
       ]

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.049015609922748,
-        "y": 2.4340371621621615
+        "x": 6.061581802855389,
+        "y": 2.643799988177381
       },
       "isLocked": false,
       "linkedName": "Station Mid Right"
@@ -20,8 +20,8 @@
         "y": 2.816556665338984
       },
       "prevControl": {
-        "x": 5.373568826458297,
-        "y": 2.325218496589843
+        "x": 5.045624999999999,
+        "y": 1.88609375
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.25,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.3391188251001349,
+      "rotationDegrees": 125.00000000000001
     }
   ],
   "constraintZones": [
@@ -50,19 +50,12 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "L4",
-      "waypointRelativePos": 0.95,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 700.0,
+    "maxAngularAcceleration": 800.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

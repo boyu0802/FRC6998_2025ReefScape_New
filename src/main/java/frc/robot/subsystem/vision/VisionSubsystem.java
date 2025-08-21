@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,12 +40,13 @@ public class VisionSubsystem extends SubsystemBase{
     public VisionSubsystem(VisionState visionState){
         this.visionState = visionState;
         currentReefTags = visionState.isRedAlliance() ? RED_REEF_TAGS : BLUE_REEF_TAGS;
-
+        
+       
     }
 
     @Override
     public void periodic(){
-        
+                
         updateVision(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_ELEVATOR), LIMELIGHT_ELEVATOR);
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_ELEVATOR,visionState.getPigeonYaw(),0,0,0,0,0);        
 
@@ -51,9 +54,12 @@ public class VisionSubsystem extends SubsystemBase{
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_LEFT,visionState.getPigeonYaw(),0,0,0,0,0);        
 
         updateVision( LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_RIGHT), LIMELIGHT_RIGHT);
-        LimelightHelpers.SetRobotOrientation(LIMELIGHT_RIGHT,visionState.getPigeonYaw(),0,0,0,0,0);        
-        
-        
+        LimelightHelpers.SetRobotOrientation(LIMELIGHT_RIGHT,visionState.getPigeonYaw(),0,0,0,0,0);      
+
+
+        // Logger.recordOutput("Vision/LIMELIGHT_RIGHT/Pose", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_RIGHT).pose);
+        // Logger.recordOutput("Vision/LIMELIGHT_LEFT/Pose", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_LEFT).pose);
+        // Logger.recordOutput("Vision/LIMELIGHT_ELEVATOR/Pose", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_ELEVATOR).pose);
         //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
         //LimelightHelpers.SetRobotOrientation(LimelightName,visionState.getPigeonYaw(),0,0,0,0,0);        
     
@@ -97,6 +103,7 @@ public class VisionSubsystem extends SubsystemBase{
                     if(shouldUseMegatag2(megaTag2Pose) ){
                         //usedMegaTag = false;
                         usedMegaTag2 = true;
+                        Logger.recordOutput(LimelightName, megaTag2Estimate.get().getVisionRobotPoseMeters());
                         visionState.addVisionFieldPoseEstimate(megaTag2Estimate.get());
                     }
                 }

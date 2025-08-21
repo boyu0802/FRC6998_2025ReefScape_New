@@ -1,6 +1,7 @@
 package frc.robot.subsystem.elevator;
 
 
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -36,8 +37,11 @@ import frc.robot.subsystem.StateManager;
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ElevatorConstants.*;
 import static frc.robot.RobotMap.*;
+import static java.lang.Math.E;
 
 import java.util.function.BooleanSupplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX m_elevatorLeft = new TalonFX(ELEVATOR_ID_LEFT.getDeviceNumber());
@@ -50,6 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MutDistance m_distance = Meters.mutable(0);
     private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
+    // private final DynamicMotionMagicVoltage m_dynamicMotionMagic = new DynamicMotionMagicVoltage(0,ELEVAROR_MAX_VELOCITY,ELEVAROR_MAX_ACCEL,ELEVATOR_MAX_JERK);
     private final MotionMagicVoltage m_motionMagicVoltage = new MotionMagicVoltage(0.01);
     private final DigitalInput m_elevatorLimit = new DigitalInput(ELEVATOR_LIMITSWITCH_ID);
 
@@ -63,16 +68,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double currentPosition = 0.01;
 
 
-    private final ElevatorSim elevatorSim = new ElevatorSim(
-        DCMotor.getKrakenX60Foc(ELEVATOR_ID_LEFT.getDeviceNumber()),
-        9.0,
-        12.0,
-        ELEVATOR_LENGTH,
-        0.0,
-        2.1,
-        true,
-        0.0
-    );
+    // private final ElevatorSim elevatorSim = new ElevatorSim(
+    //     DCMotor.getKrakenX60Foc(ELEVATOR_ID_LEFT.getDeviceNumber()),
+    //     9.0,
+    //     12.0,
+    //     ELEVATOR_LENGTH,
+    //     0.0,
+    //     2.1,
+    //     true,
+    //     0.0
+    // );
 
     private double simVelocity = 0.0;
 
@@ -150,6 +155,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_elevatorRight.getConfigurator().apply(ELEVATOR_CONFIG_R);
     }
     
+    @AutoLogOutput
     public boolean getElevatorLimit(){
         return (!m_elevatorLimit.get());
     }
@@ -176,19 +182,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         setElevatorPosition(state.elevatorPosition);
     }
     public void increaseElevatorPosition(double position) {
-        setElevatorPosition(currentPosition + 0.05);
+        setElevatorPosition(currentPosition + position);
     }
     public void decreaseElevatorPosition(double position) {
-        setElevatorPosition(currentPosition - 0.05);
+        setElevatorPosition(currentPosition - position);
     }
-    public double elevatorPositiontoRotations(double position){
-        return position/ELEVATOR_LENGTH;
-    }
+    // public double elevatorPositiontoRotations(double position){
+    //     return position/ELEVATOR_LENGTH;
+    // }
 
+    @AutoLogOutput
     public double getLeftElevatorPosition() {
         return m_elevatorLeft.getPosition().getValueAsDouble() ;
     }
-
+    @AutoLogOutput
     public double getLeftElevatorVelocity() {
         return m_elevatorLeft.getVelocity().getValueAsDouble();
     }
@@ -205,7 +212,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         
     }
 
-    
+    public void controlVelocity(double value){
+        m_elevatorLeft.set(value);
+        m_elevatorRight.set(value);
+    }
     
     
 
@@ -238,24 +248,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         );
     }
 
+
     
 
     
     @Override
     public void periodic(){
         
-        SmartDashboard.putNumber("Elevator/elevatorPosition", getLeftElevatorPosition());
-        SmartDashboard.putNumber("Elevator Velocity", getLeftElevatorVelocity());
-        SmartDashboard.putNumber("Elevator/Voltage", m_elevatorLeft.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Elevator/elevatorRightPosition", getRightElevatorPosition());
+        // SmartDashboard.putNumber("Elevator/elevatorPosition", getLeftElevatorPosition());
+        // SmartDashboard.putNumber("Elevator Velocity", getLeftElevatorVelocity());
+        // SmartDashboard.putNumber("Elevator/Voltage", m_elevatorLeft.getMotorVoltage().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator/elevatorRightPosition", getRightElevatorPosition());
         elevatorLigament2d.setLength(getLeftElevatorPosition());
-        SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
-        SmartDashboard.putNumber("Elevator/ Rotations" ,m_elevatorLeft.getPosition().getValueAsDouble());
+        // SmartDashboard.putData("Elevator 1",elevatorMechanism2d);
+        // SmartDashboard.putNumber("Elevator/ Rotations" ,m_elevatorLeft.getPosition().getValueAsDouble());
         //SmartDashboard.putNumber("Elevator/score state",elevatorPositiontoRotations(0.8));
-        SmartDashboard.putNumber("Elevator/ Velocity", getLeftElevatorVelocity());
-        SmartDashboard.putNumber("Elevator/ current position ", currentPosition);
-        SmartDashboard.putBoolean("Elevator/ setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("Elevator/ getLimit", getElevatorLimit());
+        // SmartDashboard.putNumber("Elevator/ Velocity", getLeftElevatorVelocity());
+        // SmartDashboard.putNumber("Elevator/ current position ", currentPosition);
+        // SmartDashboard.putBoolean("Elevator/ setpoint", isAtSetpoint());
+        // SmartDashboard.putBoolean("Elevator/ getLimit", getElevatorLimit());
         //SmartDashboard.putString("Command : RobotState", getRobotState().toString());
     }
 

@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.RobotEnableValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -215,18 +216,6 @@ public class StateManager {
             
             // TODO: Should change by added vision.
             case PREP_STATION:
-                if(this.currentRobotState == RobotState.PREP_STATION) {
-                    
-                    return Commands.sequence(
-                        Commands.runOnce(()->setRobotState(RobotState.SCORE_STATION)),
-                        Commands.print("score STATION"),
-                        coralSubsystem.stopIntake(),
-                        //Commands.waitSeconds(0.2),
-                        //Commands.runOnce(()->elevatorSubsystem.setRobotState(RobotState.SCORE_STATION)),
-                        Commands.print("Scored STATION")
-                    );
-                }
-                else {
                     return Commands.sequence(
                         Commands.runOnce(()->setRobotState(RobotState.PREP_STATION)),
                         Commands.parallel(
@@ -234,10 +223,10 @@ public class StateManager {
                             new SetElevatorCommand(ScoreState.STATION, elevatorSubsystem),
                             coralSubsystem.collectCoralWithoutVision()
                         ),
-                        Commands.runOnce(()-> setRobotState(RobotState.PREP_STATION)),
+                        toNormalCommand(),
+                        Commands.runOnce(()-> setRobotState(RobotState.SCORE_STATION)),
                         Commands.print("PREP STATION")
                     );
-                }
                 case AUTO_STATION:
                 if(this.currentRobotState == RobotState.PREP_STATION) {
                     
@@ -308,6 +297,7 @@ public class StateManager {
                         new SetCoralWristCommand(ScoreState.NORMAL, coralSubsystem),
                         new SetElevatorCommand(ScoreState.NORMAL, elevatorSubsystem)
                     ),
+                    coralSubsystem.stopIntake(),
                     Commands.runOnce(()-> setRobotState(RobotState.NORMAL)),
                     Commands.print("NORMAL")
                 );

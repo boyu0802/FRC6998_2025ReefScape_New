@@ -60,13 +60,13 @@ public class Constants {
 
     public static enum ScoreState {
         L1(0.05, 0.0),
-        L2(0.25, -45.0),
+        L2(0.25, -45.0),//TODO CHANGE BACK
         L3(0.65, -45.0),
         L4(1.28, -45.0),
-        ALGAE_L2(0.23, -25.0), //todo: TEST
-        ALGAE_L3(0.66, -20.0),
+        ALGAE_L2(0.33, -25.0), //todo: TEST
+        ALGAE_L3(0.68, -20.0),
         NORMAL(0.05, 90.0),
-        STATION(0.125, 45.0),
+        STATION(0.14, 45.0),
         NET(1.285,60.0),
         ALGAE_NORMAL(0.15,90.0),
         AUTO_STATION(0.095,45.0);
@@ -182,7 +182,7 @@ public class Constants {
 
         // TODO : Need to be Tuned.
         public static final PIDConfig CORAL_INTAKE_FEEDBACK = new PIDConfig(0.11, 0, 0.0001,0.0292);
-        public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(54.279, 0, 0.53262);
+        public static final PIDConfig CORAL_WRIST_FEEDBACK = new PIDConfig(102.279, 0.031, 0.23262);
 
         public static final double CORAL_WRIST_KS = 0.60946/12;
         public static final double CORAL_WRIST_KV = 4.7417/12;
@@ -194,7 +194,7 @@ public class Constants {
             .kS(0.01).kV(0.04).kA(0.0005).build();
 
         public static final FeedForward CORAL_WRIST_FF = FeedForward.builder()
-            .kS(0.60946/12.0).kV(4.7417/12.0).kA(0.67673/12.0).kG(0.59022/12.0).build();
+            .kS(1.00946/12.0).kV(5.6417/12.0).kA(0.67673/12.0).kG(0.79022/12.0).build();
         
         public static final double CORAL_INTAKE_VELOCITY = 30.0;
         
@@ -202,9 +202,9 @@ public class Constants {
         public static final double CORAL_WRIST_REVERSE_SOFT_LIMIT = -54.0;
 
         public static final double CORAL_ENCODER_OFFSET = -0.06103515625;
-        public static final double CORAL_WRIST_MAX_VELOCITY = 10.0;
-        public static final double CORAL_WRIST_MAX_ACCEL = 20.0;
-        public static final double CORAL_WRIST_MAX_JERK = 200.0;
+        public static final double CORAL_WRIST_MAX_VELOCITY = 180;
+        public static final double CORAL_WRIST_MAX_ACCEL = 60.0;
+        public static final double CORAL_WRIST_MAX_JERK = 500.0;
 
 
         
@@ -298,7 +298,7 @@ public class Constants {
        
 
         public static final double ELEVATOR_LENGTH = 0.06*2;
-        public static final double ELEVATOR_GEAR_RATIO = 9.0/ELEVATOR_LENGTH;
+        public static final double ELEVATOR_GEAR_RATIO = 75;
 
         // TODO : Need to be Tuned.
         
@@ -308,11 +308,12 @@ public class Constants {
 
 
         public static final FeedForward ELEVATOR_FEEDFORWARD = FeedForward.builder()
-            .kS(0.26859/12.0).kV(10.923/12.0).kA(1.7629/12.0).kG(0.43059/12.0).gravityType(GravityType.kElevator).build();
+            .kS(1.36859/12.0).kV(12.923/12.0).kA(1.8629/12.0).kG(1.43059/12.0).gravityType(GravityType.kElevator).build();
 
         public static final double ELEVATOR_DEADZONE_DISTANCE = 0.015;
-        public static final double ELEVAROR_MAX_VELOCITY = 8.0;
-        public static final double ELEVAROR_MAX_ACCEL = 12.0;
+        public static final double ELEVAROR_MAX_VELOCITY = 300.0;
+        public static final double ELEVAROR_MAX_ACCEL = 150.0;
+        public static final double ELEVATOR_MAX_JERK = 1600.0;
 
         public static final double WITH_ZERO_TIMEOUT = 3.0;
         public static final double ZEROED_VOLTAGE = (-2.0);
@@ -320,7 +321,7 @@ public class Constants {
 
 
 
-        public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(56.629, 0, 0.16814);
+        public static final PIDConfig ELEVATOR_FEEDBACK = new PIDConfig(109.629, 0, 0.16814);
 
         public static final TalonFXConfiguration ELEVATOR_CONFIG_L = new TalonFXConfiguration()
             .withCurrentLimits(
@@ -348,10 +349,11 @@ public class Constants {
                     .withKV(ELEVATOR_FEEDFORWARD.getKV())
                     .withKA(ELEVATOR_FEEDFORWARD.getKA()))
 
-                .withMotionMagic(new MotionMagicConfigs()
+                .withMotionMagic(
+                    new MotionMagicConfigs()
                     .withMotionMagicCruiseVelocity(ELEVAROR_MAX_VELOCITY)
                     .withMotionMagicAcceleration(ELEVAROR_MAX_ACCEL)
-                    //.withMotionMagicJerk(20.0)
+                    .withMotionMagicJerk(ELEVATOR_MAX_JERK)
                     )
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                     .withForwardSoftLimitEnable(true)
@@ -388,7 +390,7 @@ public class Constants {
                     .withMotionMagic(new MotionMagicConfigs()
                         .withMotionMagicCruiseVelocity(ELEVAROR_MAX_VELOCITY)
                         .withMotionMagicAcceleration(ELEVAROR_MAX_ACCEL)
-                        //.withMotionMagicJerk(20.0)
+                        .withMotionMagicJerk(ELEVATOR_MAX_JERK)
                         )
                     .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitEnable(true)
@@ -561,13 +563,12 @@ public class Constants {
 
                 GRAB_WRIST_CONFIG.idleMode(IdleMode.kBrake).smartCurrentLimit(60).voltageCompensation(12).inverted(false)
                 .softLimit
-                    .forwardSoftLimit(Units.degreesToRotations(105f))
+                    .forwardSoftLimit(0.256)
                     .forwardSoftLimitEnabled(true)
-                    .reverseSoftLimit(Units.degreesToRotations(0f))
+                    .reverseSoftLimit(0.016)
                     .reverseSoftLimitEnabled(true);
                 GRAB_WRIST_CONFIG.closedLoop
                         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-                        // Set PID values for elevatorPosition control
                         // TODO: Need To be Tuned.
                         .apply(GRAB_WRIST_FEEDBACK.createSparkMaxConfig())
                         .iZone(0)

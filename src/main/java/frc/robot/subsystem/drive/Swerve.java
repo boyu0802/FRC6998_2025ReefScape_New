@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.*;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -233,9 +235,9 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         try {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
-                () -> state.getLatestFieldToRobot(),   // Supplier of current robot pose
+                () -> this.getPose(),   // Supplier of current robot pose
                 this::resetPose,         // Consumer for seeding pose against auto
-                () -> state.getRobotRelativeSpeeds(), // Supplier of current robot speeds
+                () -> this.getState().Speeds, // Supplier of current robot speeds
                 // Consumer of ChassisSpeeds and feedforwards to drive the robot
                 (speeds, feedforwards) -> setControl(
                     m_pathApplyRobotSpeeds.withSpeeds(speeds)
@@ -263,6 +265,11 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
         
 
+    }
+
+
+    private Pose2d getPose(){
+        return getState().Pose;
     }
 
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
@@ -318,13 +325,14 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     }
 
     public Command goToPose(Pose2d pose) {
+        Logger.recordOutput("target pose", pose);
         return defer(
             () -> AutoBuilder.pathfindToPose(
                 pose,
                 new PathConstraints(
-                    2.0,
-                    1.0,
-                    Units.degreesToRadians(360),
+                    4,
+                    2,
+                    Units.degreesToRadians(480),
                     Units.degreesToRadians(540)
                 )
             ).finallyDo((interrupted) -> stop())
@@ -414,10 +422,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             getState().Pose.getRotation()),
             getState().Pose.getRotation().getDegrees());
         state.addOdometryMeasurement(Timer.getTimestamp(),getState().Pose);
-        field.setRobotPose(getState().Pose);
-        SmartDashboard.putString("pose est.",getState().Pose.toString());
-        SmartDashboard.putBoolean("transformed",waypointsTransformed);
-        
+        // field.setRobotPose(getState().Pose);
+        // SmartDashboard.putString("pose est.",getState().Pose.toString());
+        // SmartDashboard.putBoolean("transformed",waypointsTransformed);
+        Logger.recordOutput("Swerve/pose",getState().Pose);
 
         
 

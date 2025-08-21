@@ -12,8 +12,8 @@ public class RobotMap {
     public static final CANDeviceId GRAB_INTAKE_ID = new CANDeviceId(4);
     public static final CANDeviceId GRAB_WRIST_ID = new CANDeviceId(3);
 
-    public static final int GRAB_LIMITSWITCH_ID = 9;
-
+    public static final int GRAB_LIMITSWITCH_ID = 3;
+        
     
 
     public static final CANDeviceId ELEVATOR_ID_LEFT = new CANDeviceId(15);
@@ -24,7 +24,7 @@ public class RobotMap {
     public static final CANDeviceId CATCH_HANG_ID = new CANDeviceId(2);
     public static final CANDeviceId HANG_ENCODER_ID = new CANDeviceId(6);
 
-    public static final int HANG_LIMITSWITCH_ID = 4;
+    public static final int HANG_LIMITSWITCH_ID = 2;
 
 
     public static final int CANDLE_ID = 1;

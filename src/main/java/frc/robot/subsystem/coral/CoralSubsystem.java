@@ -49,6 +49,9 @@ import static frc.robot.RobotMap.CORAL_INTAKE_LIMITSWITCH_ID;
 
 import static java.lang.Math.abs;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 //@Logged(name = "CoralSubsystem")
 public class CoralSubsystem extends SubsystemBase {
 
@@ -61,7 +64,7 @@ public class CoralSubsystem extends SubsystemBase {
     
     private final CANcoder m_coralWristEncoder = new CANcoder(CORAL_WRIST_ENCODER_ID.getDeviceNumber());
 
-    private final DigitalOutput m_coralIntakeLimitSwitch = new DigitalOutput(CORAL_INTAKE_LIMITSWITCH_ID);
+    private final DigitalInput m_coralIntakeLimitSwitch = new DigitalInput(CORAL_INTAKE_LIMITSWITCH_ID);
 
     //private final TrapezoidProfile m_Profile = new TrapezoidProfile()
     //private final PositionTorqueCurrentFOC m_positionTorque = new PositionTorqueCurrentFOC(0).withSlot(0);
@@ -137,21 +140,12 @@ public class CoralSubsystem extends SubsystemBase {
                             Volts.of(1).per(Seconds),
                             Volts.of(4),
                             Seconds.of(5),
-                            null
+                            (state) -> Logger.recordOutput("Coral/SysId", state.toString())
 
                     ),
                     new SysIdRoutine.Mechanism(
-                            volts -> m_coralWrist.setControl(m_voltageOut.withOutput(volts)),
-                            log ->{
-                                // Record a frame for the shooter motor.
-                                log.motor("wrist-coral")
-                                        .voltage(wrist_sysIdVoltage.mut_replace(
-                                                m_coralWrist.getMotorVoltage().getValueAsDouble(), Volts))
-                                        .angularPosition(wrist_sysIdAngle.mut_replace(
-                                                m_coralWrist.getPosition().getValueAsDouble(), Rotations))
-                                        .angularVelocity(wrist_sysIdVelocity.mut_replace(
-                                                m_coralWrist.getVelocity().getValueAsDouble(),RotationsPerSecond));
-                            },
+                            (volts) -> m_coralWrist.setControl(m_voltageOut.withOutput(volts)),
+                            null,
                             this));
 
 
@@ -169,16 +163,36 @@ public class CoralSubsystem extends SubsystemBase {
         setCoralWristPosition(state.armPosition);
     }
 
+    
+    @AutoLogOutput
+    public double getCoralWristVoltage(){
+        return m_coralWrist.getMotorVoltage().getValueAsDouble();
+    }
+
+    @AutoLogOutput
     public double getCoralIntakeVelocity(){
         return m_coralIntake.getVelocity().getValueAsDouble();
     }
 
+
+
+    @AutoLogOutput
     public double getCoralAbsoultePosition(){
         return m_coralWristEncoder.getAbsolutePosition().getValueAsDouble();
     }
+
+    @AutoLogOutput
     public double getCoralWristPosition(){
         return m_coralWrist.getPosition().getValueAsDouble();
     }
+
+    @AutoLogOutput
+    public double getCoralWristVelocity(){
+        return m_coralWrist.getVelocity().getValueAsDouble();
+    }
+
+
+    @AutoLogOutput
     public boolean getCoralLimit() {
         return m_coralIntakeLimitSwitch.get();
     }
@@ -205,16 +219,21 @@ public class CoralSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         
-        SmartDashboard.putNumber("Coral/intake/ Coral Intake Velocity",getCoralIntakeVelocity());
-        SmartDashboard.putNumber("Coral/intake/ Coral Intake Position",getCoralIntakeVelocity()*60);
+        // SmartDashboard.putNumber("Coral/intake/ Coral Intake Velocity",getCoralIntakeVelocity());
+        // SmartDashboard.putNumber("Coral/intake/ Coral Intake Position",getCoralIntakeVelocity()*60);
         //SmartDashboard.putNumber("Coral/intake/ voltage", m_coralIntake.getAppliedOutput()* m_coralIntake.getBusVoltage());
         //SmartDashboard.putNumber("Coral/intake/ Current",m_coralIntake.getOutputCurrent());
-        SmartDashboard.putBoolean("Coral/intake/ limit switch ", getCoralLimit());
+        // SmartDashboard.putBoolean("Coral/intake/ limit switch ", getCoralLimit());
+        // SmartDashboard.putBoolean("Coral/intake/ limit switc1h ", m_coralIntakeLimitSwitch.get());
+        // SmartDashboard.putNumber("Coral/intake/ limit swit2c1h ", m_coralIntakeLimitSwitch.getAnalogTriggerTypeForRouting());
+        // SmartDashboard.putNumber("Coral/intake/ limit swite", m_coralIntakeLimitSwitch.getPortHandleForRouting());
 
-        SmartDashboard.putNumber("Coral/wrist/ Position", getCoralWristPosition());
-        SmartDashboard.putNumber("Coral/wrist/ Absolute Position", getCoralAbsoultePosition());
+
+
+        // SmartDashboard.putNumber("Coral/wrist/ Position", getCoralWristPosition());
+        // SmartDashboard.putNumber("Coral/wrist/ Absolute Position", getCoralAbsoultePosition());
         //SmartDashboard.getNumber("Coral/Coral Wrist Position", getCoralWristPosition());
-        //SmartDashboard.getBoolean("Coral/Intake Limit Switch", getCoralLimit());
+        // SmartDashboard.getBoolean("Coral/Intake Limit Switch", getCoralLimit());
 
         
     }
@@ -235,10 +254,9 @@ public class CoralSubsystem extends SubsystemBase {
     public SequentialCommandGroup collectCoralWithoutVision() {
         return new SequentialCommandGroup(
             new InstantCommand(()-> setCoralIntakeVelocity(15)),
-            new ParallelDeadlineGroup(
-                new WaitCommand(2.0),
-                new WaitUntilCommand(()->getCoralLimit())),
+            new WaitUntilCommand(()->getCoralLimit()),
             new InstantCommand(() -> stopCoralIntake())
+            
         );
     }
     

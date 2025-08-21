@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.154867807065971,
-        "y": 6.150667584668573
+        "x": 7.201352073284254,
+        "y": 5.703444059811273
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.439728406977249,
-        "y": 6.1435869965488825
+        "x": 6.486212673195532,
+        "y": 5.696363471691582
       },
       "isLocked": false,
       "linkedName": "Preload Point Mid"
@@ -54,10 +54,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 700.0,
+    "maxAngularAcceleration": 800.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

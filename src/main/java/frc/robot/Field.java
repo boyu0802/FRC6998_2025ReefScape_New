@@ -258,7 +258,7 @@ public static final FieldType fieldType = FieldType.WELDED;
         new Pose2d(5.2619, 3.05047, Rotation2d.fromDegrees(120)) // 22 Right
       )
     );
-
+    
     public static final List<Pose2d> STATION_WAYPOINTS = new ArrayList<Pose2d>(
             List.of(
                 new Pose2d(1.151, 1.03, Rotation2d.fromDegrees(55)), // 12 Station
@@ -266,4 +266,6 @@ public static final FieldType fieldType = FieldType.WELDED;
             )
         );
   }
+
+  
 }

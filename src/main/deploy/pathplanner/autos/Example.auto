@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test Straight"
+            "pathName": "J - LS"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

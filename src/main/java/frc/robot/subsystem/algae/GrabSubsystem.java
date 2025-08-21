@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,8 @@ import static frc.robot.RobotMap.GRAB_INTAKE_ID;
 import static frc.robot.RobotMap.GRAB_LIMITSWITCH_ID;
 import static frc.robot.RobotMap.GRAB_WRIST_ID;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 public class GrabSubsystem extends SubsystemBase {
     private final SparkFlex m_grabIntake = new SparkFlex(GRAB_INTAKE_ID.getDeviceNumber(), SparkLowLevel.MotorType.kBrushless);
     private final SparkFlex m_grabWrist = new SparkFlex(GRAB_WRIST_ID.getDeviceNumber(), SparkLowLevel.MotorType.kBrushless);
@@ -46,7 +49,7 @@ public class GrabSubsystem extends SubsystemBase {
     private final MutAngle wrist_sysIdAngle = Degrees.mutable(0);
     private final MutAngularVelocity wrist_sysIdVelocity = DegreesPerSecond.mutable(0);
 
-    private final DigitalOutput m_coralIntakeLimitSwitch = new DigitalOutput(GRAB_LIMITSWITCH_ID);
+    private final DigitalInput m_coralIntakeLimitSwitch = new DigitalInput(GRAB_LIMITSWITCH_ID);
 
     public GrabSubsystem() {
         setName("GrabSubsystem");
@@ -100,23 +103,31 @@ public class GrabSubsystem extends SubsystemBase {
     }
     public void setGrabWristPosition(double position){
         m_grabWrist.getClosedLoopController().
-                setReference(setActualPosition(position), SparkFlex.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0,GRAB_WRIST_FEED_FORWARD.calculate(getActualPosition(),0));
+                setReference(position, SparkFlex.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0,GRAB_WRIST_FEED_FORWARD.calculate(getActualPosition(),0));
     }
 
     public double setActualPosition(double position){
-        return Units.degreesToRotations(GRAB_WRIST_OFFSET_TOZERO-position);
+        return Units.degreesToRotations(position);
     }
 
     public double getGrabIntakeVelocity(){
         return m_grabIntake.getEncoder().getVelocity();
     }
+
+    @AutoLogOutput
     public double getGrabWristPosition(){
         return m_grabWrist.getAbsoluteEncoder().getPosition();
     }
 
+    public double getGrabEncoderWristPosition(){
+        return m_grabWrist.getEncoder().getPosition();
+    }
+
+    
     public double getGrabWristVelocity(){
         return m_grabWrist.getAbsoluteEncoder().getVelocity();
     }
+    @AutoLogOutput
     public boolean getGrabLimit(){
         return m_coralIntakeLimitSwitch.get();
     }
@@ -128,27 +139,29 @@ public class GrabSubsystem extends SubsystemBase {
         return wristSysIdRoutine.quasistatic(direction);
     }
 
+
+    @AutoLogOutput
     private double getActualPosition(){
-        return GRAB_WRIST_OFFSET_TOZERO-getGrabWristPosition()*360.0;
+        return getGrabWristPosition()*360.0;
     }
     
 
     public Command setGrabto10deg(){
         return Commands.parallel(
-            runOnce(()-> setGrabWristPosition(-17.5)),
+            runOnce(()-> setGrabWristPosition(0.037)),
             collectWithoutVision()
             );}
 
     public Command setGrabto27deg(){
         return Commands.parallel(
-            runOnce(()-> setGrabWristPosition(27.5)),
+            runOnce(()-> setGrabWristPosition(0.208)),
             collectWithoutVision()
             );}
     
 
     public Command setGrabto75deg(){
         return Commands.sequence(
-            runOnce(()-> setGrabWristPosition(55.0)),
+            runOnce(()-> setGrabWristPosition(0.208)),
             runOnce(()-> setGrabIntakeVelocity(-20.0))
             );
     }
@@ -182,14 +195,14 @@ public class GrabSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
 
-        SmartDashboard.putNumber("Grab/ Intake Velocity", getGrabIntakeVelocity());
-        SmartDashboard.putNumber("Grab/ Wrist Position", getGrabWristPosition());
-        SmartDashboard.putNumber("Grab/ Wrist Velocity", getGrabWristVelocity());
-        SmartDashboard.putNumber("Grab/ actual Postion", getActualPosition());
-        SmartDashboard.getBoolean("Grab/ getLimit",getGrabLimit());
-        if(getGrabLimit()) {
-            m_grabWrist.getEncoder().setPosition(0);
-        }
+        // SmartDashboard.putNumber("Grab/ Intake Velocity", getGrabIntakeVelocity());
+        // SmartDashboard.putNumber("Grab/ Wrist Position", getGrabWristPosition());
+        // SmartDashboard.putNumber("Grab/ Wrist Velocity", getGrabWristVelocity());
+        // SmartDashboard.putNumber("Grab/ actual Postion", getActualPosition());
+        // SmartDashboard.getBoolean("Grab/ getLimit",getGrabLimit());
+        // if(!getGrabLimit()) {
+        //     m_grabWrist.getEncoder().setPosition(0);
+        // }
     }
 
 

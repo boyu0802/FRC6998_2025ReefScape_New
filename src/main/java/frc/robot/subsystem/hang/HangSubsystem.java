@@ -16,6 +16,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,12 +35,14 @@ import static frc.robot.RobotMap.HANG_ENCODER_ID;
 import static frc.robot.RobotMap.HANG_ID;
 import static frc.robot.RobotMap.HANG_LIMITSWITCH_ID;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 public class HangSubsystem extends SubsystemBase {
     private final SparkFlex m_catchHang = new SparkFlex(CATCH_HANG_ID.getDeviceNumber(), SparkFlex.MotorType.kBrushless);
     private final TalonFX m_hangMotor = new TalonFX(HANG_ID.getDeviceNumber());
     private final CANcoder m_hangMotorEncoder = new CANcoder(HANG_ENCODER_ID.getDeviceNumber());
 
-    private final DigitalOutput m_hangLimit = new DigitalOutput(HANG_LIMITSWITCH_ID);
+    private final DigitalInput m_hangLimit = new DigitalInput(HANG_LIMITSWITCH_ID);
 
     private final MotionMagicVoltage m_MotionMagicVoltage = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
@@ -135,6 +138,11 @@ public class HangSubsystem extends SubsystemBase {
      * @param position (in degrees)
     */
     
+    @AutoLogOutput
+    private boolean getHangLimit(){
+        return m_hangLimit.get();
+    }
+
     private void setHangPosition(double position){
         m_hangMotor.setControl(m_MotionMagicVoltage.withPosition(Units.degreesToRotations(position)));
     }
@@ -167,15 +175,15 @@ public class HangSubsystem extends SubsystemBase {
     
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Hang/ catch hang velocity", getHangIntakeVelocity());
-        SmartDashboard.putNumber("Hang/ hang position", getHangWristPosition());
-        
-        SmartDashboard.putNumber("Hang/ hang absolute Position.", gethangAbsoultePosition());
-        SmartDashboard.putNumber("Hang/ Accel", m_hangMotor.getAcceleration().getValueAsDouble());
-        SmartDashboard.putNumber("Hang/ hang current",m_hangMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Hang/ hang torque current",m_hangMotor.getTorqueCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Hang/ catch hang velocity", getHangIntakeVelocity());
+        // SmartDashboard.putNumber("Hang/ hang position", getHangWristPosition());
+        // SmartDashboard.putBoolean("Hang/ limit",getHangLimit());
+        // SmartDashboard.putNumber("Hang/ hang absolute Position.", gethangAbsoultePosition());
+        // SmartDashboard.putNumber("Hang/ Accel", m_hangMotor.getAcceleration().getValueAsDouble());
+        // SmartDashboard.putNumber("Hang/ hang current",m_hangMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Hang/ hang torque current",m_hangMotor.getTorqueCurrent().getValueAsDouble());
 
-        SmartDashboard.putNumber("Hang/ hang velocity", m_hangMotor.getVelocity().getValueAsDouble());
+        // SmartDashboard.putNumber("Hang/ hang velocity", m_hangMotor.getVelocity().getValueAsDouble());
     }
 
                 
