@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "RP-E"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RP-E"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3 Elevator"
+                }
+              }
+            ]
           }
         },
         {
@@ -19,19 +32,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.8
+            "waitTime": 0.2
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot_L4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Normal"
           }
         },
         {
@@ -54,9 +61,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "RS - C "
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RS - C "
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3"
+                }
+              }
+            ]
           }
         },
         {
