@@ -3,53 +3,67 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.9986112128398075,
-        "y": 5.246947119677852
+        "x": 5.2626451891557,
+        "y": 5.05260338776935
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.4067434210526315,
-        "y": 6.4496710526315795
+        "x": 5.451568022206753,
+        "y": 5.572137697527557
       },
       "isLocked": false,
-      "linkedName": "J"
+      "linkedName": "PJ"
     },
     {
       "anchor": {
-        "x": 1.653541507539224,
-        "y": 7.364620152890129
+        "x": 5.552292220052633,
+        "y": 5.531882949820029
       },
       "prevControl": {
-        "x": 3.396463815789474,
-        "y": 6.786430921052631
+        "x": 5.2340306754163315,
+        "y": 4.989801941844886
+      },
+      "nextControl": {
+        "x": 5.705587257972386,
+        "y": 5.792983701932856
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.1249893362340664,
+        "y": 6.862493305231819
+      },
+      "prevControl": {
+        "x": 0.9782956875019128,
+        "y": 5.57834629780062
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Station"
+      "linkedName": "P-J-LS"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.4072096128170923,
+      "rotationDegrees": 117.86525553020283
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Normal",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 700.0,
+    "maxAngularAcceleration": 800.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 126.08507304285207
+    "velocity": 0.0,
+    "rotation": 125.27242144859841
   },
   "reversed": false,
   "folder": "Point to Left Station",

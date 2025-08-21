@@ -3,6 +3,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -34,7 +37,7 @@ public class VisionState {
     }
 
     
-
+    @AutoLogOutput
     public double getPigeonYaw(){
         return pigeonYaw;
     }
@@ -69,10 +72,12 @@ public class VisionState {
     }
 
     public void addVisionFieldPoseEstimate(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-        SmartDashboard.putNumber("estimator x",visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
-        SmartDashboard.putNumber("estimator y",visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
-        SmartDashboard.putNumber("estimator time",visionFieldPoseEstimate.getTimestampSeconds());
-        SmartDashboard.putString("estimator stdDev",visionFieldPoseEstimate.getVisionMeasurementStdDevs().toString());
+        // SmartDashboard.putNumber("estimator x",visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
+        // SmartDashboard.putNumber("estimator y",visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
+        // SmartDashboard.putNumber("estimator time",visionFieldPoseEstimate.getTimestampSeconds());
+        // SmartDashboard.putString("estimator stdDev",visionFieldPoseEstimate.getVisionMeasurementStdDevs().toString());
+        
+        Logger.recordOutput("VisionState/vision Pose",visionFieldPoseEstimate.getVisionRobotPoseMeters());
         visionFieldPoseEstimateConsumer.accept(visionFieldPoseEstimate);
         
     }

@@ -3,45 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.154867807065971,
-        "y": 6.150667584668573
+        "x": 7.201352073284254,
+        "y": 5.703444059811273
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.941832519984631,
-        "y": 6.582507447108765
+        "x": 5.35887924122148,
+        "y": 6.116527301935517
       },
       "isLocked": false,
       "linkedName": "Preload Point Mid"
     },
     {
       "anchor": {
-        "x": 4.9986112128398075,
-        "y": 5.246947119677852
+        "x": 5.2626451891557,
+        "y": 5.05260338776935
       },
       "prevControl": {
-        "x": 5.465131578947368,
-        "y": 5.564473684210526
+        "x": 5.381173051016909,
+        "y": 5.283085347633952
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "J"
+      "linkedName": "PJ"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.383177570093465,
+      "rotationDegrees": -119.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 4.5,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 700.0,
+    "maxAngularAcceleration": 800.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.3,
     "rotation": -119.74488129694225
   },
   "reversed": false,

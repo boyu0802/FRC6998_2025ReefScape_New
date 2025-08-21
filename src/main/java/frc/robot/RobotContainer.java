@@ -10,8 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 
-
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
@@ -63,6 +62,7 @@ import static frc.robot.Constants.SwerveConstants.MaxSpeed;
 
 import java.util.function.Consumer;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 
 import static frc.robot.Constants.SwerveConstants.MaxAngularRate;
 
@@ -86,13 +86,13 @@ public class RobotContainer {
     private final CommandXboxController m_operatorController = new CommandXboxController(1);
 
     private final CommandXboxController testController2 = new CommandXboxController(2);
-    private final CommandXboxController testController3 = new CommandXboxController(3);
+    // private final CommandXboxController testController3 = new CommandXboxController(3);
     private final Consumer<VisionFieldPoseEstimate> visionFieldPoseEstimateConsumer = new Consumer<VisionFieldPoseEstimate>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
             drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
-            SmartDashboard.putNumber("vision X into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
-            SmartDashboard.putNumber("vision Y into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
+            // SmartDashboard.putNumber("vision X into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getX());
+            // SmartDashboard.putNumber("vision Y into drivetrain", visionFieldPoseEstimate.getVisionRobotPoseMeters().getY());
             
         }
     };
@@ -111,7 +111,7 @@ public class RobotContainer {
     private final GrabSubsystem grabSubsystem = new GrabSubsystem();
     private final HangSubsystem hangSubsystem = new HangSubsystem();
 
-    private final LedSubsystem ledSubsystem = new LedSubsystem();
+    // private final LedSubsystem ledSubsystem = new LedSubsystem();
     
     StateManager stateManager = StateManager.getInstance(coralSubsystem, grabSubsystem, elevatorSubsystem);
     private SequentialCommandGroup currentCoralCommand = new SequentialCommandGroup();
@@ -157,6 +157,10 @@ public class RobotContainer {
 
     }
     
+    @AutoLogOutput
+    public boolean nearStation(Pose2d pose){
+        return pose.getX() < 1.524 || pose.getX() > 16.026;
+    }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -173,6 +177,10 @@ public class RobotContainer {
     
         );
 
+        m_operatorController.rightStick().whileTrue(
+            new InstantCommand(()->elevatorSubsystem.increaseElevatorPosition(-m_operatorController.getRightY() * 0.1))
+        );
+        
         
         //m_driveController.leftTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, true,m_driveController));
         //m_driveController.rightTrigger(0.9).whileTrue(new DriveToPose(drivetrain, visionState, false,m_driveController));
@@ -194,6 +202,9 @@ public class RobotContainer {
         m_driveController.start().and(m_driveController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         m_driveController.start().and(m_driveController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
         */
+
+        
+
 
         // reset the field-centric heading on left bumper press
         
@@ -237,10 +248,13 @@ public class RobotContainer {
             currentReefState = stateManager.SetReefState(TargetState.PREP_L3);
             currentReefState.schedule();
         }));
-        coralLevel4.onTrue(new InstantCommand(()->{
-            currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
-            currentReefState.schedule();
-        }));
+
+        // if(!nearStation(drivetrain.getState().Pose) || m_operatorController.povRight().getAsBoolean()){
+            coralLevel4.onTrue(new InstantCommand(()->{
+                currentReefState = stateManager.SetReefState(TargetState.PREP_L4);
+                currentReefState.schedule();
+            }));
+        // }
 
         station.onTrue(new InstantCommand(()->{
             currentReefState = stateManager.SetReefState(TargetState.PREP_STATION);
@@ -268,31 +282,36 @@ public class RobotContainer {
         m_driveController.povDown().whileTrue(new SetHangVelocityCommand(hangSubsystem, -10.0));
         m_driveController.povRight().onTrue(hangSubsystem.catchHang());
 
-        m_driveController.leftBumper().onTrue(new SetHangPositionCommand(hangSubsystem, 10.0,0.2445));
+        m_driveController.leftBumper().onTrue(new SetHangPositionCommand(hangSubsystem, 18.0,0.2445));
         m_driveController.rightBumper().onTrue(new SetHangPositionCommand(hangSubsystem, -10.0,0));
-        testController2.a().onTrue(grabSubsystem.setGrabto27deg());
-        testController2.b().onTrue(grabSubsystem.setGrabto75deg());
-        testController2.x().onTrue(grabSubsystem.setGrabto10deg());
-        testController2.y().onTrue(grabSubsystem.reverseWithoutVision());
+        // testController2.a().onTrue(grabSubsystem.setGrabto27deg());
+        // testController2.b().onTrue(grabSubsystem.setGrabto75deg());
+        // testController2.x().onTrue(grabSubsystem.setGrabto10deg());
+        // testController2.y().onTrue(grabSubsystem.reverseWithoutVision());   
 
 
         
         
         
+        
 
 
         
 
-        testController3.back().and(testController3.y()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kForward));
-        testController3.back().and(testController3.x()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kReverse));
-        testController3.start().and(testController3.y()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kForward));
-        testController3.start().and(testController3.x()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kReverse));
+        // testController3.back().and(testController3.y()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kForward));
+        // testController3.back().and(testController3.x()).whileTrue(elevatorSubsystem.sysid_elevatorQuasistatic(Direction.kReverse));
+        // testController3.start().and(testController3.y()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kForward));
+        // testController3.start().and(testController3.x()).whileTrue(elevatorSubsystem.sysid_elevatorDynamic(Direction.kReverse));
+
+        
+        testController2.a().whileTrue(coralSubsystem.sysid_wristDynamic(Direction.kForward));
+        testController2.b().whileTrue(coralSubsystem.sysid_wristDynamic(Direction.kReverse));
+        testController2.x().whileTrue(coralSubsystem.sysid_wristQuasistatic(Direction.kForward));
+        testController2.y().whileTrue(coralSubsystem.sysid_wristQuasistatic(Direction.kReverse));
 
         
 
-        
-
-        SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());
+        // SmartDashboard.putNumber("Battery", RobotController.getBatteryVoltage());
 
     }
 
@@ -303,15 +322,19 @@ public class RobotContainer {
     private void registerCommand(){
         
         NamedCommands.registerCommand("Collect",Commands.sequence(
-            
+            Commands.parallel(
+                new SetCoralWristCommand(ScoreState.STATION, coralSubsystem),
+                new SetElevatorCommand(ScoreState.STATION, elevatorSubsystem)
+            ),
+            coralSubsystem.collectCoralWithoutVision()
         ));
         
         NamedCommands.registerCommand("Shoot_L4",Commands.sequence(
             //Commands.runOnce(()->setRobotState(RobotState.SCORE_L4)),
-            Commands.print("score L4"),
-            coralSubsystem.outputCoralWithoutVision(),
-            Commands.waitSeconds(0.2),
-            Commands.print("Scored L4")
+            // Commands.print("score L4"),
+            coralSubsystem.outputCoralWithoutVision()
+            // Commands.waitSeconds(0.2),
+            // Commands.print("Scored L4")
             //Commands.waitSeconds(0.2),
             //toNormalCommand()
         ));
@@ -321,7 +344,11 @@ public class RobotContainer {
         }));
 
         
-        
+        // NamedCommands.registerCommand("driveToRightReef", new InstantCommand(
+        //     () -> {
+               
+        //     }
+        // ));
          
 
         new EventTrigger("L2").onTrue(new InstantCommand(()->{
@@ -337,18 +364,35 @@ public class RobotContainer {
             ),
             //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L4)),
             Commands.print("PREP L4")));
-        NamedCommands.registerCommand("Normal" ,new InstantCommand(()->{
-            currentReefState = stateManager.SetReefState(TargetState.NORMAL);
-            currentReefState.schedule();    
-        }));
+
+        NamedCommands.registerCommand("Normal" ,Commands.sequence(
+            new SetCoralWristCommand(ScoreState.NORMAL, coralSubsystem),
+            Commands.waitSeconds(0.1),
+            new SetElevatorWristCommand(ScoreState.NORMAL, elevatorSubsystem, coralSubsystem)
+        ));
+
+
+        NamedCommands.registerCommand("L3 Elevator",Commands.sequence(
+            Commands.waitSeconds(0.5),
+            new SetElevatorCommand(ScoreState.L3, elevatorSubsystem)
+        ) );
+
+        NamedCommands.registerCommand("L3", Commands.sequence(
+            Commands.waitSeconds(0.5),
+            new SetElevatorWristCommand(ScoreState.L3, elevatorSubsystem, coralSubsystem)
+        )
+        );
+
+        NamedCommands.registerCommand("alignLeftReef",drivetrain.pathToReef(true));         
+        
+        NamedCommands.registerCommand("alignRightReef", drivetrain.pathToReef(false));
 
         new EventTrigger("Normal").onTrue(Commands.sequence(
             Commands.sequence(
             //Commands.runOnce(()->setRobotState(RobotState.NORMAL)),
             new SetCoralWristCommand(ScoreState.NORMAL, coralSubsystem),
-            Commands.waitSeconds(0.2),
-            new SetElevatorWristCommand(ScoreState.STATION, elevatorSubsystem, coralSubsystem),
-            Commands.print("toNormalPosition")
+            Commands.waitSeconds(0.3),
+            new SetElevatorWristCommand(ScoreState.NORMAL, elevatorSubsystem, coralSubsystem)
             )
         ));
 
@@ -356,13 +400,13 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("L4",Commands.sequence(
             //Commands.runOnce(()->setRobotState(RobotState.PREP_L4)),
-            Commands.parallel(
-                new SetCoralWristCommand(ScoreState.L3, coralSubsystem),
-                new SetElevatorCommand(ScoreState.L4, elevatorSubsystem)
-            ),
+            // drivetrain.pathToReef(false),
+            // Commands.waitSeconds(1),
+            new SetElevatorWristCommand(ScoreState.L4, elevatorSubsystem, coralSubsystem)
+
             //Commands.runOnce(()-> elevatorSubsystem.setRobotState(RobotState.PREP_L4)),
-            Commands.print("PREP L4")
         ));
+
         NamedCommands.registerCommand("Drive",drivetrain.pathToReef(false));
     }   
 
@@ -372,5 +416,7 @@ public class RobotContainer {
     public boolean isZeroed() {
         return elevatorSubsystem.getElevatorLimit();
     }
+
+ 
     
 }
